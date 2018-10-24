@@ -18,5 +18,5 @@ expression: '(' expression ')'
 		  | expression '*' expression
 		  | expression '+' expression
 		  | expression '-' expression
-		  |	NUMBER ';'? expression?
+		  |	NUMBER
 		  ;						
