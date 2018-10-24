@@ -1,5 +1,6 @@
 package de.lab4inf.wrb;
 
+import java.util.ArrayList;
 import java.util.LinkedList;
 
 //import org.antlr.v4.runtime.ParserRuleContext;
@@ -30,19 +31,24 @@ public class MyVisitor extends DemoBaseVisitor<String> {
 //		return null;
 //	}
 	
-	double solution;
-//	LinkedList<Double> solutionList = new LinkedList<Double>();
+	//double solution;
+	LinkedList<Double> solutionList = new LinkedList<Double>();
 	
 	public double getErgebnis() {
-		return solution;
+		return solutionList.getLast();
 	}
 	
 	@Override public String visitExpression(DemoParser.ExpressionContext ctx) {
-		solution = 0;
-		double finalSolution = rechnen(ctx);
-		if(solution == 0)
-			solution = finalSolution;
-		System.out.println(solution);
+		for(int i = 0; i >= ctx.getChildCount(); i++) {
+			if(!ctx.getChild(i).getText().equals(";")) {
+				this.solutionList.add(rechnen(ctx.getChild(i)));
+			}
+		}
+//		solution = 0;
+//		double finalSolution = rechnen(ctx);
+//		if(solution == 0)
+//			solution = finalSolution;
+//		System.out.println(solution);
 		return null;
 	}
 	
@@ -57,9 +63,9 @@ public class MyVisitor extends DemoBaseVisitor<String> {
 				case "*": return rechnen(ctx.getChild(0)) * rechnen(ctx.getChild(2));
 				case "+": return rechnen(ctx.getChild(0)) + rechnen(ctx.getChild(2));
 				case "-": return rechnen(ctx.getChild(0)) - rechnen(ctx.getChild(2));
-				case ";": solution = rechnen(ctx.getChild(2));
+				/*case ";": solution = rechnen(ctx.getChild(2));
 //						solutionList.add(rechnen(ctx.getChild(0)));
-						return 0;
+						return 0;*/
 				default:
 					if(ctx.getChild(0).getText().equals("(")) {
 						return rechnen(ctx.getChild(1));
