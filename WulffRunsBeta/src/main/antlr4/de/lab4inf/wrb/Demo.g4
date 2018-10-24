@@ -7,7 +7,7 @@ LETTER: ('a-z' | 'A-z')+;
 DOT: [.];
 VARIABLE: LETTER+ NUMBER*;
 
-prog: expression;
+prog: root;
 
 root: expression (';' expression)* ';'?;
 
