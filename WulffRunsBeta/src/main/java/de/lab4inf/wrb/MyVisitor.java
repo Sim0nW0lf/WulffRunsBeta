@@ -1,5 +1,7 @@
 package de.lab4inf.wrb;
 
+import java.util.LinkedList;
+
 //import org.antlr.v4.runtime.ParserRuleContext;
 import org.antlr.v4.runtime.tree.ParseTree;
 
@@ -28,15 +30,19 @@ public class MyVisitor extends DemoBaseVisitor<String> {
 //		return null;
 //	}
 	
-	double ergebnis;
+	double solution;
+//	LinkedList<Double> solutionList = new LinkedList<Double>();
 	
 	public double getErgebnis() {
-		return ergebnis;
+		return solution;
 	}
 	
 	@Override public String visitExpression(DemoParser.ExpressionContext ctx) {
-		ergebnis = rechnen(ctx);
-		System.out.println(ergebnis);
+		solution = 0;
+		double finalSolution = rechnen(ctx);
+		if(solution == 0)
+			solution = finalSolution;
+		System.out.println(solution);
 		return null;
 	}
 	
@@ -51,6 +57,9 @@ public class MyVisitor extends DemoBaseVisitor<String> {
 				case "*": return rechnen(ctx.getChild(0)) * rechnen(ctx.getChild(2));
 				case "+": return rechnen(ctx.getChild(0)) + rechnen(ctx.getChild(2));
 				case "-": return rechnen(ctx.getChild(0)) - rechnen(ctx.getChild(2));
+				case ";": solution = rechnen(ctx.getChild(2));
+//						solutionList.add(rechnen(ctx.getChild(0)));
+						return 0;
 				default:
 					if(ctx.getChild(0).getText().equals("(")) {
 						return rechnen(ctx.getChild(1));
