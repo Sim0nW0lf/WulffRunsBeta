@@ -35,12 +35,19 @@ public class MyVisitor extends DemoBaseVisitor<String> {
 	LinkedList<Double> solutionList = new LinkedList<Double>();
 	
 	public double getErgebnis() {
+		System.out.println(solutionList.size());
 		return solutionList.getLast();
 	}
 	
-	@Override public String visitExpression(DemoParser.ExpressionContext ctx) {
-		for(int i = 0; i >= ctx.getChildCount(); i++) {
+	@Override public String visitRoot(DemoParser.RootContext ctx){
+		if(ctx.getParent() == null)
+			System.out.println("Kein Parent verfügbar");
+		System.out.println("ChildCount: " + ctx.getChildCount());
+		for(int i = 0; i < ctx.getChildCount(); i++) {
+			System.out.println("i = " + i);
 			if(!ctx.getChild(i).getText().equals(";")) {
+				System.out.println("geht rein: visitExpression -> if");
+				System.out.println("ChildCount: " + ctx.getChildCount() + "nächste Ebene: " + ctx.getChild(0).getChildCount());
 				this.solutionList.add(rechnen(ctx.getChild(i)));
 			}
 		}
@@ -50,11 +57,14 @@ public class MyVisitor extends DemoBaseVisitor<String> {
 //			solution = finalSolution;
 //		System.out.println(solution);
 //		
-		return null;
+		return "hello";
 	}
 	
 	double rechnen(ParseTree ctx) {
+		System.out.println("geht rein: rechnen");
+		System.out.println("ChildCount: " + ctx.getChildCount());
 		if(ctx.getChildCount() == 1) {
+			System.out.println("geht rein: rechnen -> if");
 			double x = Double.parseDouble(ctx.getText());
 //			System.out.println(x);
 			return x;

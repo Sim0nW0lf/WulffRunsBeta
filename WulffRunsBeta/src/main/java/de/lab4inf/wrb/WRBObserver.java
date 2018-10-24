@@ -19,7 +19,7 @@ public class WRBObserver extends DemoBaseVisitor<String> {
 		CommonTokenStream tokens = new CommonTokenStream(lexer);
 		DemoParser parser = new DemoParser(tokens);
 		
-		ParseTree tree = parser.expression();
+		ParseTree tree = parser.root();
 		new MyVisitor().visit(tree);
 	}
 

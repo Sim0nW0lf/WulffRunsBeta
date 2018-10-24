@@ -23,7 +23,7 @@ public class WRBScript implements Script {
 		CommonTokenStream tokens = new CommonTokenStream(lexer);
 		DemoParser parser = new DemoParser(tokens);
 		
-		ParseTree tree = parser.expression();
+		ParseTree tree = parser.root();
 		MyVisitor visitor = new MyVisitor();
 		visitor.visit(tree);
 		return visitor.getErgebnis();
