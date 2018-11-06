@@ -13,10 +13,13 @@ root: expression (';' expression)* ';'?;
 
 assignment : VARIABLE '=' expression;
 
+function: LETTER '(' VARIABLE ')' '=' expression;
+
 expression: '(' expression ')'
 		  | expression '/' expression
 		  | expression '*' expression
 		  | expression '+' expression
 		  | expression '-' expression
 		  |	NUMBER
-		  ;						
+		  | VARIABLE
+		  ;

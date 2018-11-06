@@ -12,9 +12,9 @@ import org.antlr.v4.runtime.tree.ParseTree;
 
 public class WRBScript implements Script {
 	
-	LinkedList<String> varName = new LinkedList<String>();
-	LinkedList<Double> varValue = new LinkedList<Double>();
-	
+//	LinkedList<String> varName = new LinkedList<String>();
+//	LinkedList<Double> varValue = new LinkedList<Double>();
+	MyVisitor visitor = new MyVisitor();
 
 	@Override
 	public double parse(String definition) {
@@ -24,7 +24,6 @@ public class WRBScript implements Script {
 		DemoParser parser = new DemoParser(tokens);
 		
 		ParseTree tree = parser.root();
-		MyVisitor visitor = new MyVisitor();
 		visitor.visit(tree);
 		return visitor.getErgebnis();
 	}
@@ -60,20 +59,22 @@ public class WRBScript implements Script {
 
 	@Override
 	public double getVariable(String name) throws IllegalArgumentException {
-			int index = varName.indexOf(name);
-			if (index != -1)
-				return varValue.get(index);
-			throw new IllegalArgumentException("Variable " + name + " not found");
+		return visitor.getVariable(name).getValue();
+//			int index = varName.indexOf(name);
+//			if (index != -1)
+//				return varValue.get(index);
+//			throw new IllegalArgumentException("Variable " + name + " not found");
 	}
 
 	@Override
 	public void setVariable(String name, double value) {
-		if(!varName.contains(name)) {
-			varName.add(name);
-			varValue.add(value);
-		}else {
-			varValue.add(varName.indexOf(name), value);
-		}
+		visitor.setVariable(name, value);
+//		if(!varName.contains(name)) {
+//			varName.add(name);
+//			varValue.add(value);
+//		}else {
+//			varValue.add(varName.indexOf(name), value);
+//		}
 	}
 
 }
