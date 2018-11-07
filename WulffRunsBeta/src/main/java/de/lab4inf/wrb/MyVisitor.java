@@ -1,7 +1,9 @@
 package de.lab4inf.wrb;
 
+import java.util.HashMap;
 //import java.util.ArrayList;
 import java.util.LinkedList;
+import java.util.Map;
 
 //import org.antlr.v4.runtime.ParserRuleContext;
 import org.antlr.v4.runtime.tree.ParseTree;
@@ -34,6 +36,7 @@ public class MyVisitor extends DemoBaseVisitor<String> {
 	//double solution;
 	LinkedList<Double> solutionList = new LinkedList<Double>();
 	LinkedList<Variable> varList = new LinkedList<Variable>();
+	HashMap<String, Variable> varMap = new HashMap<String, Variable>();
 	
 	/**
 	 * @return the last Entry to solutionList, the most recent solved equation. 
@@ -79,13 +82,19 @@ public class MyVisitor extends DemoBaseVisitor<String> {
 				x = Double.parseDouble(ctx.getText());
 			} catch (Exception e) {
 				Variable v = null;
-				try {
-					v = getVariable(ctx.getText());
+				if(this.varMap.containsKey(ctx.getText())) {
+					v = this.varMap.get(ctx.getText()); 
 					x = v.getValue();
+				} else {
+					x = 0;
+					System.out.println("Unable to map Variable to " + ctx.getText() + ". \n");
+				}
+				/*try {
+					v = getVariable(ctx.getText());
 				} catch (IllegalArgumentException e2) {
 					x = 0;
 					System.out.println("Unable to map Variable to " + ctx.getText() + ". \n"+ e2.getMessage() + "\n\n");
-				}
+				}*/
 			}
 			
 //			System.out.println(x);
@@ -96,12 +105,16 @@ public class MyVisitor extends DemoBaseVisitor<String> {
 			case "*": return rechnen(ctx.getChild(0)) * rechnen(ctx.getChild(2));
 			case "+": return rechnen(ctx.getChild(0)) + rechnen(ctx.getChild(2));
 			case "-": return rechnen(ctx.getChild(0)) - rechnen(ctx.getChild(2));
+			case "^":
+			case "**": return Math.pow(rechnen(ctx.getChild(0)), rechnen(ctx.getChild(2)));
+			case "e": return rechnen(ctx.getChild(0)) * Math.pow(10, rechnen(ctx.getChild(2)));
 			/*case ";": solution = rechnen(ctx.getChild(2));
 //					solutionList.add(rechnen(ctx.getChild(0)));
 					return 0;*/
 			case "=": 
 				x = rechnen(ctx.getChild(2));
-				this.varList.add(new Variable(ctx.getChild(0).getText(), x));
+				this.varMap.put(ctx.getChild(0).getText(), (new Variable(ctx.getChild(0).getText(), x)));
+				//this.varList.add(new Variable(ctx.getChild(0).getText(), x));
 				return x;
 			default: //Bracketed expression
 				if(ctx.getChild(0).getText().equals("(")) {
@@ -129,14 +142,20 @@ public class MyVisitor extends DemoBaseVisitor<String> {
 	 * @throws IllegalArgumentException the searched Variable does not exist
 	 */
 	public Variable getVariable(String varName) throws IllegalArgumentException {
-		Variable v = varList.stream()
+		/*Variable v = varList.stream()
 				  .filter(w -> varName.equals(w.getName()))
 				  .findAny()
 				  .orElse(null);
 		if(v == null) {
 			throw new IllegalArgumentException("Error 404: Variable not Found");
+		}*/
+		
+		if(!this.varMap.containsKey(varName)) {
+			throw new IllegalArgumentException("Error 404: Variable not Found");
+		} else {
+			return this.varMap.get(varName);
 		}
-		return v;
+//		return v;
 	}
 	
 	/**
@@ -149,7 +168,8 @@ public class MyVisitor extends DemoBaseVisitor<String> {
 			v = getVariable(varName);
 			v.setValue(varValue);
 		} catch (IllegalArgumentException e) {
-			this.varList.add(new Variable(varName, varValue));
+			this.varMap.put(varName, new Variable(varName, varValue));
+			//this.varList.add(new Variable(varName, varValue));
 		}
 	}
 	
