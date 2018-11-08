@@ -30,31 +30,37 @@ public class WRBScript implements Script {
 
 	@Override
 	public double parse(InputStream defStream) throws IOException {
-		// TODO Auto-generated method stub
-		return 0;
+		CharStream input = new ANTLRInputStream(defStream);
+		DemoLexer lexer = new DemoLexer(input);
+		CommonTokenStream tokens = new CommonTokenStream(lexer);
+		DemoParser parser = new DemoParser(tokens);
+		
+		ParseTree tree = parser.root();
+		visitor.visit(tree);
+		return visitor.getErgebnis();
 	}
 
 	@Override
 	public Set<String> getFunctionNames() {
-		// TODO Auto-generated method stub
-		return null;
+		return visitor.getFuncMap().keySet();
 	}
 
 	@Override
 	public Set<String> getVariableNames() {
-		return null;
+		return visitor.getVarMap().keySet();
 	}
 
 	@Override
 	public void setFunction(String name, Function fct) {
-		// TODO Auto-generated method stub
-		
+		visitor.getFuncMap().put(name, fct);
 	}
 
 	@Override
-	public Function getFunction(String name) {
-		// TODO Auto-generated method stub
-		return null;
+	public Function getFunction(String name) throws IllegalArgumentException{
+		if(!visitor.getFuncMap().containsKey(name)) {
+			throw new IllegalArgumentException("Error 404: Function '" + name + "' not found.");
+		}
+		return visitor.getFuncMap().get(name);
 	}
 
 	@Override
