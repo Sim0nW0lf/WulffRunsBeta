@@ -3,8 +3,7 @@ grammar Demo;
 
 WHITESPACE: [ \t\n\r]+->skip;	
 VARIABLE: LETTER+ NUMBER*;	
-NUMBER: ('-' | '+')? UNSIGNED_NUMBER;
-UNSIGNED_NUMBER: [0-9]+ (DOT UNSIGNED_NUMBER)?;
+NUMBER: [0-9]+ (DOT NUMBER*)?;
 LETTER: ('a-z' | 'A-z')+;
 DOT: [.];
 
@@ -23,13 +22,13 @@ functionCall: LETTER '(' varList ')' '=' expression;
 
 expression: '(' expression ')'
 		  | expression 'e' expression
-		  | expression ('^' | '**') expression
+		  | expression ('^'<assoc=right> | '**'<assoc=right>) expression
 		  | expression '/' expression
 		  | expression '*' expression
-		  | expression ('%' | 'mod') expression
+		  | expression ('%'<assoc=right> | 'mod'<assoc=right>) expression
 		  | expression '+' expression
 		  | expression '-' expression
 		  | functionCall
-		  | NUMBER
+		  | ('-' | '+')?NUMBER
 		  | VARIABLE
 		  ;

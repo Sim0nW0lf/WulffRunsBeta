@@ -36,11 +36,11 @@
         <artifactId>antlr4-maven-plugin</artifactId>
         <version>4.7.1</version>
         <configuration>
-        	<libDirectory>${basedir}/src/main/antlr4/de/lab4inf/wrb</libDirectory>
+        	<sourceDirectory>${basedir}/src/main/antlr4/de/lab4inf/wrb/</sourceDirectory>
         	<!-- <libDirectory>${basedir}/src/main/antlr4/</libDirectory>-->
         	<listener>true</listener>
         	<visitor>true</visitor>
-        	<outputDirectory>target/generated-sources/antlr4/de/lab4inf/wrb</outputDirectory>
+        	<outputDirectory>target/generated-sources/antlr4/</outputDirectory>
         </configuration>
         
         <executions>
