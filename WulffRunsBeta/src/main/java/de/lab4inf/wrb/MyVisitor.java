@@ -78,6 +78,7 @@ public class MyVisitor extends DemoBaseVisitor<String> {
 	double rechnen(ParseTree ctx) {
 		double x = 0;
 		switch(ctx.getChildCount()) {
+		case 0: 
 		case 1: //either a wrapper or simple Number/Variable
 			if(ctx.getChild(0).getChildCount() > 0) {
 				return rechnen(ctx.getChild(0));
@@ -101,6 +102,13 @@ public class MyVisitor extends DemoBaseVisitor<String> {
 			
 //			System.out.println(x);
 			return x;
+		case 2: 
+			if(ctx.getChild(0).getText().equals("-") || ctx.getChild(0).getText().equals("+")) {
+				return rechnen(ctx.getChild(1)) * -1;
+			} else {
+				System.out.println("WHAT THE FUCK DID YOU FEED ME YOU STUPID HUMAN");
+			}
+			return 0;
 		case 3: //simple mathematical Equation or Declaration
 			switch(ctx.getChild(1).getText()){
 			case "/": return rechnen(ctx.getChild(0)) / rechnen(ctx.getChild(2));
@@ -129,7 +137,7 @@ public class MyVisitor extends DemoBaseVisitor<String> {
 		case 6: //Function
 			break;
 		default: 
-			System.out.println("Unknown Tree case. \n");
+			System.out.println("Unknown Tree case: "+ ctx.getChildCount() + " \n");
 			return -1;
 		}
 		return -10;
