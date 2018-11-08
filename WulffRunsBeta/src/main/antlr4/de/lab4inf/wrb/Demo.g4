@@ -1,11 +1,12 @@
 grammar Demo;
 
 
-WHITESPACE: [ \t\n\r]+->skip;		
+WHITESPACE: [ \t\n\r]+->skip;	
+VARIABLE: LETTER+ NUMBER*;	
 NUMBER: [0-9]+ (DOT NUMBER)?;
 LETTER: ('a-z' | 'A-z')+;
 DOT: [.];
-VARIABLE: LETTER+ NUMBER*;
+
 
 prog: root;
 
