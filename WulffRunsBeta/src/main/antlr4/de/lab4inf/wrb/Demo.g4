@@ -3,7 +3,8 @@ grammar Demo;
 
 WHITESPACE: [ \t\n\r]+->skip;	
 VARIABLE: LETTER+ NUMBER*;	
-NUMBER: [0-9]+ (DOT NUMBER)?;
+NUMBER: ('-' | '+')? UNSIGNED_NUMBER;
+UNSIGNED_NUMBER: [0-9]+ (DOT UNSIGNED_NUMBER)?;
 LETTER: ('a-z' | 'A-z')+;
 DOT: [.];
 
@@ -29,6 +30,6 @@ expression: '(' expression ')'
 		  | expression '+' expression
 		  | expression '-' expression
 		  | functionCall
-		  | ('+' | '-')? NUMBER
+		  | NUMBER
 		  | VARIABLE
 		  ;
