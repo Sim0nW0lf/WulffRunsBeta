@@ -2,28 +2,32 @@ grammar Demo;
 
 
 WHITESPACE: [ \t\n\r]+->skip;		
-NUMBER: '-'? [0-9]+ (DOT NUMBER)?;
+NUMBER: [0-9]+ (DOT NUMBER)?;
 LETTER: ('a-z' | 'A-z')+;
 DOT: [.];
 VARIABLE: LETTER+ NUMBER*;
-POW: '^' | '**';
 
 prog: root;
 
-root: expression (';' expression)* ';'?;
+root: statement (';' statement)* ';'?;
+
+statement: (assignment | expression | functionDefinition);
 
 assignment : VARIABLE '=' expression;
 
-function: LETTER '(' VARIABLE ')' '=' expression;
+varList: VARIABLE (',' VARIABLE);
+functionDefinition: LETTER '(' varList ')' '=' expression;
+functionCall: LETTER '(' varList ')' '=' expression;
 
 expression: '(' expression ')'
+		  | expression 'e' expression
+		  | expression ('^' | '**') expression
 		  | expression '/' expression
 		  | expression '*' expression
+		  | expression ('%' | 'mod') expression
 		  | expression '+' expression
 		  | expression '-' expression
-		  | expression 'e' expression
-		  | expression POW expression
-		  | expression '%' expression
-		  |	NUMBER
+		  | functionCall
+		  | ('+' | '-')? NUMBER
 		  | VARIABLE
 		  ;

@@ -35,7 +35,7 @@ public class MyVisitor extends DemoBaseVisitor<String> {
 	
 	//double solution;
 	LinkedList<Double> solutionList = new LinkedList<Double>();
-	LinkedList<Variable> varList = new LinkedList<Variable>();
+//	LinkedList<Variable> varList = new LinkedList<Variable>();
 	HashMap<String, Variable> varMap = new HashMap<String, Variable>();
 	
 	/**
@@ -50,7 +50,8 @@ public class MyVisitor extends DemoBaseVisitor<String> {
 	 */
 	@Override public String visitRoot(DemoParser.RootContext ctx){
 		this.solutionList.clear();
-		this.varList.clear();
+//		this.varList.clear();
+		this.varMap.clear();
 		
 		if(ctx.getParent() == null)
 		for(int i = 0; i < ctx.getChildCount(); i++) {
@@ -77,17 +78,18 @@ public class MyVisitor extends DemoBaseVisitor<String> {
 	double rechnen(ParseTree ctx) {
 		double x = 0;
 		switch(ctx.getChildCount()) {
-		case 1: //simple Number or Variable
+		case 1: //either a wrapper or simple Number/Variable
+			if(ctx.getChild(0).getChildCount() > 0) {
+				return rechnen(ctx.getChild(0));
+			}
 			try {
 				x = Double.parseDouble(ctx.getText());
 			} catch (Exception e) {
-				Variable v = null;
 				if(this.varMap.containsKey(ctx.getText())) {
-					v = this.varMap.get(ctx.getText()); 
-					x = v.getValue();
+					x = this.varMap.get(ctx.getText()).getValue(); 
 				} else {
 					x = 0;
-					System.out.println("Unable to map Variable to " + ctx.getText() + ". \n");
+					System.out.println("Unknown Variable: " + ctx.getText() + ". \n");
 				}
 				/*try {
 					v = getVariable(ctx.getText());
@@ -111,6 +113,8 @@ public class MyVisitor extends DemoBaseVisitor<String> {
 			/*case ";": solution = rechnen(ctx.getChild(2));
 //					solutionList.add(rechnen(ctx.getChild(0)));
 					return 0;*/
+			case "%": 
+			case "mod": return rechnen(ctx.getChild(0)) % rechnen(ctx.getChild(2));
 			case "=": 
 				x = rechnen(ctx.getChild(2));
 				this.varMap.put(ctx.getChild(0).getText(), (new Variable(ctx.getChild(0).getText(), x)));
@@ -151,7 +155,7 @@ public class MyVisitor extends DemoBaseVisitor<String> {
 		}*/
 		
 		if(!this.varMap.containsKey(varName)) {
-			throw new IllegalArgumentException("Error 404: Variable not Found");
+			throw new IllegalArgumentException("Error 404: Variable "+varName+" not Found");
 		} else {
 			return this.varMap.get(varName);
 		}
