@@ -23,13 +23,12 @@ functionCall: VARIABLE '(' expressionList ')';
 
 expression: '-'? '(' expression ')'
 		  | expression 'e' expression
-		  | <assoc=right> expression ('**' | '^') expression
-		  | expression ('*' | '/') expression
-		  | <assoc=right> expression '%' expression
-		  | <assoc=right> expression 'mod' expression
-		  | expression ('+' | '-') expression
-		  | ('sin' | 'cos' | 'tan') '(' expression ')'
-		  | ('min' | 'max') '(' expressionList ')'
+		  |<assoc=right> expression ('^' | '**') expression 
+		  | expression '/' expression
+		  | expression '*' expression
+		  |<assoc=right> expression ('%' | 'mod') expression
+		  | expression '-' expression
+		  | expression '+' expression
 		  | functionCall
 		  | ('-' | '+')? NUMBER
 		  | ('-' | '+')? VARIABLE

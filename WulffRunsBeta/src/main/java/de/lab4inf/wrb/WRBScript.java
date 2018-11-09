@@ -18,9 +18,18 @@ public class WRBScript implements Script {
 
 	@Override
 	public double parse(String definition) throws IllegalArgumentException{
+		CharStream input = new ANTLRInputStream(definition);
+		return parse(input);
+	}
+
+	@Override
+	public double parse(InputStream defStream) throws IOException {
+		CharStream input = new ANTLRInputStream(defStream);
+		return parse(input);
+	}
+	
+	public double parse(CharStream input) {
 		try {
-			CharStream input = new ANTLRInputStream(definition);
-		
 			DemoLexer lexer = new DemoLexer(input);
 			lexer.removeErrorListeners();
 			lexer.addErrorListener(ThrowingErrorListener.INSTANCE);
@@ -31,21 +40,9 @@ public class WRBScript implements Script {
 			visitor.visit(tree);
 			return visitor.getErgebnis();
 		} catch (Exception e) {
-			System.out.println("This sh*t is not parsable. ");
-			throw new IllegalArgumentException("GTFO");
+//			System.out.println("Not parsable. ");
+			throw new IllegalArgumentException("Not Parsable");
 		}
-	}
-
-	@Override
-	public double parse(InputStream defStream) throws IOException {
-		CharStream input = new ANTLRInputStream(defStream);
-		DemoLexer lexer = new DemoLexer(input);
-		CommonTokenStream tokens = new CommonTokenStream(lexer);
-		DemoParser parser = new DemoParser(tokens);
-
-		ParseTree tree = parser.root();
-		visitor.visit(tree);
-		return visitor.getErgebnis();
 	}
 
 	@Override
