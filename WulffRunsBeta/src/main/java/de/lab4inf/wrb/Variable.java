@@ -12,6 +12,7 @@ public class Variable {
 	public Variable(String varName, double varValue) {
 		this.varName = varName;
 		this.varValue = varValue;
+		this.varValueSavepoint = varValue;
 	}
 	
 	/**

@@ -7,6 +7,7 @@ import java.util.LinkedList;
 import java.util.stream.Stream;
 
 import org.antlr.v4.parse.ANTLRParser;
+import org.antlr.v4.runtime.misc.NotNull;
 //import org.antlr.v4.runtime.ParserRuleContext;
 import org.antlr.v4.runtime.tree.ParseTree;
 
@@ -59,6 +60,7 @@ public class MyVisitor extends DemoBaseVisitor<String> {
 		// this.solutionList.clear();
 		// this.varList.clear();
 		// this.varMap.clear();
+		String s = visitChildren(ctx);
 
 		if (ctx.getParent() == null)
 			for (int i = 0; i < ctx.getChildCount(); i++) {
@@ -71,16 +73,14 @@ public class MyVisitor extends DemoBaseVisitor<String> {
 		// if(solution == 0)
 		// solution = finalSolution;
 		// System.out.println(solution);
-		//
 
-		return null;
+		return s;
 	}
 
 	/**
 	 * Recursive Function that does the bulk of the math work
 	 * 
-	 * @param ctx
-	 *            current element of Tree
+	 * @param ctx current element of Tree
 	 * @return solution to current Element
 	 */
 	double rechnen(ParseTree ctx) {
@@ -93,8 +93,7 @@ public class MyVisitor extends DemoBaseVisitor<String> {
 				if (this.varMap.containsKey(ctx.getText())) {
 					x = this.varMap.get(ctx.getText()).getValue();
 				} else {
-					x = 0;
-					System.out.println("Unknown Variable: " + ctx.getText() + ". \n");
+					throw new IllegalArgumentException("Unknown Variable: " + ctx.getText() + ". \n");
 				}
 				/*
 				 * try { v = getVariable(ctx.getText()); } catch (IllegalArgumentException e2) {
@@ -187,10 +186,10 @@ public class MyVisitor extends DemoBaseVisitor<String> {
 					return Math.cosh(rechnen(ctx.getChild(2)));
 				case "tanh":
 					return Math.tanh(rechnen(ctx.getChild(2)));
+				case "log": //this shouldn't be here, but at ln. well, whatever the profs want i guess
 				case "log10":
 					return Math.log10(rechnen(ctx.getChild(2)));
 				case "ln":
-				case "log":
 					return Math.log(rechnen(ctx.getChild(2)));
 				case "lb":
 				case "ld":
@@ -231,32 +230,39 @@ public class MyVisitor extends DemoBaseVisitor<String> {
 				case "-":
 					return rechnen(ctx.getChild(2)) * -1;
 				}
-				System.out.println("Unknown Function called: " + ctx.getText());
-				return 0;
+				
+				throw new IllegalArgumentException("Unknown Function called: " + ctx.getText());
 			}
 		case 6: // Function declaration or 2-arguments call
 				// Check if this is a definition
-			if (ctx.getChild(4).getText().equals("=")) {
-//				if (!this.funcMap.containsKey(ctx.getChild(0).getText())) {
-					MyFunction f = new MyFunction(ctx, this);
-					this.funcMap.put(ctx.getChild(0).getText(), f);
-//				}
+//			if (ctx.getChild(4).getText().equals("=")) {
+////				if (!this.funcMap.containsKey(ctx.getChild(0).getText())) {
+//				MyFunction f = new MyFunction(ctx, this);
+//				this.funcMap.put(ctx.getChild(0).getText(), f);
+////				}
 				return 0;
-			}
+//			}
 
 		default:
-			System.out.println("\n Unknown Tree case: " + ctx.getChildCount() + ": " + ctx.getText() + " \n");
-			return -1;
+			throw new IllegalArgumentException("\n Unknown Tree case: " + ctx.getChildCount() + ": " + ctx.getText() + " \n");
 		}
 		return -10;
 	}
+	
+	public String visitFunctionDefinition(DemoParser.FunctionDefinitionContext ctx) {
+		MyFunction f = new MyFunction(ctx, this);
+		this.funcMap.put(ctx.getChild(0).getText(), f);
+		return visitChildren(ctx);
+	};
+	
+	public String visitAssignment(DemoParser.AssignmentContext ctx) {
+		return visitChildren(ctx);
+	}
 
 	/**
-	 * @param varName
-	 *            Name of the Variable to search
+	 * @param varName Name of the Variable to search
 	 * @return the Variable with matching name
-	 * @throws IllegalArgumentException
-	 *             the searched Variable does not exist
+	 * @throws IllegalArgumentException the searched Variable does not exist
 	 */
 	public Variable getVariable(String varName) throws IllegalArgumentException {
 		/*
@@ -274,10 +280,8 @@ public class MyVisitor extends DemoBaseVisitor<String> {
 	}
 
 	/**
-	 * @param varName
-	 *            the Name of the Variable
-	 * @param varValue
-	 *            the Value of the Variable
+	 * @param varName  the Name of the Variable
+	 * @param varValue the Value of the Variable
 	 */
 	public void setVariable(String varName, double varValue) {
 		Variable v;
@@ -298,8 +302,7 @@ public class MyVisitor extends DemoBaseVisitor<String> {
 	}
 
 	/**
-	 * @param varMap
-	 *            a new map of Variables and their Names
+	 * @param varMap a new map of Variables and their Names
 	 */
 	public void setVarMap(HashMap<String, Variable> varMap) {
 		this.varMap = varMap;
@@ -313,8 +316,7 @@ public class MyVisitor extends DemoBaseVisitor<String> {
 	}
 
 	/**
-	 * @param funcMap
-	 *            a new map of Functions and their Names
+	 * @param funcMap a new map of Functions and their Names
 	 */
 	public void setFuncMap(HashMap<String, Function> funcMap) {
 		this.funcMap = funcMap;

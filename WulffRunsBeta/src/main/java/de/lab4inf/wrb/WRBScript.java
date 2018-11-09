@@ -28,16 +28,21 @@ public class WRBScript implements Script {
 		return parse(input);
 	}
 	
-	public double parse(CharStream input) {
+	public double parse(CharStream input) throws IllegalArgumentException {
 		try {
 			DemoLexer lexer = new DemoLexer(input);
 			lexer.removeErrorListeners();
 			lexer.addErrorListener(ThrowingErrorListener.INSTANCE);
+			
 			CommonTokenStream tokens = new CommonTokenStream(lexer);
+			
 			DemoParser parser = new DemoParser(tokens);
+			parser.removeErrorListeners();
+			parser.addErrorListener(ThrowingErrorListener.INSTANCE);
 			
 			ParseTree tree = parser.root();
 			visitor.visit(tree);
+			
 			return visitor.getErgebnis();
 		} catch (Exception e) {
 //			System.out.println("Not parsable. ");
@@ -87,5 +92,32 @@ public class WRBScript implements Script {
 		// varValue.add(varName.indexOf(name), value);
 		// }
 	}
+	
+	/**
+     * @param that another script with variables and functions to add
+     * @return the new build script.
+     */
+	@Override
+    public Script concat(Script that) {
+		Script ret = new WRBScript();
+		
+		for (String varName : this.getVariableNames()) {
+            double var = this.getVariable(varName);
+            ret.setVariable(varName, var);
+        }
+        this.getFunctionNames().forEach((fctName) -> {
+        	ret.setFunction(fctName, this.getFunction(fctName)); //this may be problematic, since it just gets a pointer
+        });
+		
+        for (String varName : that.getVariableNames()) {
+            double var = that.getVariable(varName);
+            ret.setVariable(varName, var);
+        }
+        that.getFunctionNames().forEach((fctName) -> {
+        	ret.setFunction(fctName, that.getFunction(fctName)); //this may be problematic, since it just gets a pointer
+        });
+        
+        return ret;
+    }
 
 }
