@@ -35,7 +35,7 @@ public class WRBScript implements Script {
 			lexer.addErrorListener(ThrowingErrorListener.INSTANCE);
 			CommonTokenStream tokens = new CommonTokenStream(lexer);
 			DemoParser parser = new DemoParser(tokens);
-		
+			
 			ParseTree tree = parser.root();
 			visitor.visit(tree);
 			return visitor.getErgebnis();

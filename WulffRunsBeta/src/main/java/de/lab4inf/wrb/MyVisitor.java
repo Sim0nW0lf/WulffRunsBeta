@@ -56,7 +56,7 @@ public class MyVisitor extends DemoBaseVisitor<String> {
 	 */
 	@Override
 	public String visitRoot(DemoParser.RootContext ctx) {
-		this.solutionList.clear();
+		// this.solutionList.clear();
 		// this.varList.clear();
 		// this.varMap.clear();
 
@@ -220,7 +220,7 @@ public class MyVisitor extends DemoBaseVisitor<String> {
 						}
 					}
 					return max;
-				case "pow": 
+				case "pow":
 					double pow = rechnen(ctx.getChild(2).getChild(0));
 					for (int i = 1; i < ctx.getChild(2).getChildCount(); i++) {
 						if (!ctx.getChild(2).getChild(i).getText().equals(",")) {
@@ -228,7 +228,7 @@ public class MyVisitor extends DemoBaseVisitor<String> {
 						}
 					}
 					return pow;
-				case "-": 
+				case "-":
 					return rechnen(ctx.getChild(2)) * -1;
 				}
 				System.out.println("Unknown Function called: " + ctx.getText());
@@ -237,8 +237,10 @@ public class MyVisitor extends DemoBaseVisitor<String> {
 		case 6: // Function declaration or 2-arguments call
 				// Check if this is a definition
 			if (ctx.getChild(4).getText().equals("=")) {
-				MyFunction f = new MyFunction(ctx, this);
-				this.funcMap.put(ctx.getChild(0).getText(), f);
+//				if (!this.funcMap.containsKey(ctx.getChild(0).getText())) {
+					MyFunction f = new MyFunction(ctx, this);
+					this.funcMap.put(ctx.getChild(0).getText(), f);
+//				}
 				return 0;
 			}
 
