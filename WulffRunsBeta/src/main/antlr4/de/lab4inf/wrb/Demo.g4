@@ -4,7 +4,7 @@ grammar Demo;
 WHITESPACE: [ \t\n\r]+->skip;	
 VARIABLE: LETTER+ NUMBER* VARIABLE*;	
 NUMBER: ([0-9]+ (DOT [0-9]+)?) | (DOT [0-9]+);
-LETTER: ([a-z] | [A-z])+;
+LETTER: ([a-z] | [A-Z])+;
 DOT: [.];
 
 
@@ -21,7 +21,7 @@ varList: VARIABLE (',' VARIABLE)*;
 functionDefinition: VARIABLE '(' varList ')' '=' expression;
 functionCall: VARIABLE '(' expressionList ')';
 
-expression: '(' expression ')'
+expression: '-'? '(' expression ')'
 		  | expression 'e' expression
 		  | expression '^'<assoc=right> expression 
 		  | expression '**'<assoc=right> expression
@@ -35,5 +35,5 @@ expression: '(' expression ')'
 		  | ('min' | 'max') '(' expressionList ')'
 		  | functionCall
 		  | ('-' | '+')? NUMBER
-		  | VARIABLE
+		  | ('-' | '+')? VARIABLE
 		  ;

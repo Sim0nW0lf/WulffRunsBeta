@@ -228,6 +228,8 @@ public class MyVisitor extends DemoBaseVisitor<String> {
 						}
 					}
 					return pow;
+				case "-": 
+					return rechnen(ctx.getChild(2)) * -1;
 				}
 				System.out.println("Unknown Function called: " + ctx.getText());
 				return 0;

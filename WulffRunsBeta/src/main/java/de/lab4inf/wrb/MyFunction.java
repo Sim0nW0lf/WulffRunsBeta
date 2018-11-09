@@ -1,53 +1,65 @@
 package de.lab4inf.wrb;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 
 import org.antlr.v4.runtime.tree.ParseTree;
 
 public class MyFunction implements Function {
-	
+
 	protected String name;
 	protected ParseTree root;
 	protected int argc;
 	protected ArrayList<String> argList = new ArrayList<String>();
-	protected MyVisitor myVisitor;
 	protected MyVisitor parent;
+	protected HashMap<String, Variable> varListTemp = new HashMap<String, Variable>();
 
 	/**
-	 * @param root ParseTree node of the function declaration. 
-	 * @param parent the MyVisitor that generated this Function. Used for copying functions on calling eval.
+	 * @param root
+	 *            ParseTree node of the function declaration.
+	 * @param parent
+	 *            the MyVisitor that generated this Function. Used for copying
+	 *            functions on calling eval.
 	 */
 	public MyFunction(ParseTree root, MyVisitor parent) {
 		this.root = root;
 		this.name = root.getChild(0).getText();
-		for(String s : root.getChild(2).getText().split(",")) {
+		for (String s : root.getChild(2).getText().split(",")) {
 			this.argList.add(s);
 		}
 		this.argc = this.argList.size();
-		this.myVisitor = new MyVisitor();
 		this.parent = parent;
 	}
-	
+
 	@Override
 	public double eval(double... args) {
-		//Check if this can even work at all
-		if(args.length != this.argc) {
+		// Check if this can even work at all
+		if (args.length != this.argc) {
 			return 0;
 		}
-//		System.out.println("Initiating Function: " + this.root.getChild(5).getText() + "\n");
-		//Get current Variables thanks to the power of Pointers
-		this.myVisitor.setVarMap(this.parent.getVarMap());
-		this.myVisitor.setFuncMap(this.parent.getFuncMap());
-		//add all the given values to current variable set
+		// System.out.println("Initiating Function: " + this.root.getChild(5).getText()
+		// + "\n");
+		// add all the given values to current variable set after savepointing them
 		int i = 0;
-		for(double arg : args) {
-			this.myVisitor.setVariable(this.argList.get(i), arg);
-//			System.out.println("Adding Variable: " + this.argList.get(i) + "\n");
+		for (double arg : args) {
+			try {
+				this.parent.getVariable(this.argList.get(i)).setSave();
+			} catch (IllegalArgumentException e) {
+				
+			}
+			this.parent.setVariable(this.argList.get(i), arg);
+			// System.out.println("Adding Variable: " + this.argList.get(i) + "\n");
 			i++;
 		}
-		//Math the shit out of it all
-		double sol = myVisitor.rechnen(this.root.getChild(5));
-//		System.out.println("Got: " + sol + "\n");
+		// Math the shit out of it all
+		double sol = this.parent.rechnen(this.root.getChild(5));
+		// System.out.println("Got: " + sol + "\n");
+		// Restore used Variables to previous value
+		i = 0;
+		for (double arg : args) {
+			this.parent.getVariable(this.argList.get(i)).loadSave();
+			i++;
+		}
 		return sol;
 	}
 
@@ -80,7 +92,8 @@ public class MyFunction implements Function {
 	}
 
 	/**
-	 * @param parent adopt this Function to a different Visitor. 
+	 * @param parent
+	 *            adopt this Function to a different Visitor.
 	 */
 	public void setParent(MyVisitor parent) {
 		this.parent = parent;

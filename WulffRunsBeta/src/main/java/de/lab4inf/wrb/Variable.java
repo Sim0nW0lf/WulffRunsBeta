@@ -3,6 +3,7 @@ package de.lab4inf.wrb;
 public class Variable {
 	private String varName;
 	private double varValue;
+	private double varValueSavepoint;
 
 	/**
 	 * @param varName Name of the Variable
@@ -32,5 +33,13 @@ public class Variable {
 	 */
 	public void setValue(double varValue) {
 		this.varValue = varValue;
+	}
+	
+	public void setSave() {
+		this.varValueSavepoint = varValue;
+	}
+	
+	public void loadSave() {
+		this.varValue = this.varValueSavepoint;
 	}
 }
