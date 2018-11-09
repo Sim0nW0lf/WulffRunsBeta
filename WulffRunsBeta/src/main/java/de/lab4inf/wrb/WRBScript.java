@@ -22,13 +22,18 @@ public class WRBScript implements Script {
 			CharStream input = new ANTLRInputStream(definition);
 		
 			DemoLexer lexer = new DemoLexer(input);
+			lexer.removeErrorListeners();
+			lexer.addErrorListener(ThrowingErrorListener.INSTANCE);
 			CommonTokenStream tokens = new CommonTokenStream(lexer);
 			DemoParser parser = new DemoParser(tokens);
+			parser.removeErrorListeners();
+			parser.addErrorListener(ThrowingErrorListener.INSTANCE);
 		
 			ParseTree tree = parser.root();
 			visitor.visit(tree);
 			return visitor.getErgebnis();
 		} catch (Exception e) {
+			System.out.println("This sh*t is not parsable. ");
 			throw new IllegalArgumentException("GTFO");
 		}
 	}
