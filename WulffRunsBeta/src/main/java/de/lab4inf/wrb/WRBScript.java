@@ -17,7 +17,7 @@ public class WRBScript implements Script {
 	MyVisitor visitor = new MyVisitor();
 
 	@Override
-	public double parse(String definition) {
+	public double parse(String definition) throws IllegalArgumentException {
 		CharStream input = new ANTLRInputStream(definition);
 		DemoLexer lexer = new DemoLexer(input);
 		CommonTokenStream tokens = new CommonTokenStream(lexer);
