@@ -11,21 +11,45 @@ import org.antlr.v4.runtime.CommonTokenStream;
 import org.antlr.v4.runtime.tree.ParseTree;
 
 public class WRBScript implements Script {
-	
-//	LinkedList<String> varName = new LinkedList<String>();
-//	LinkedList<Double> varValue = new LinkedList<Double>();
-	MyVisitor visitor = new MyVisitor();
 
+	// LinkedList<String> varName = new LinkedList<String>();
+	// LinkedList<Double> varValue = new LinkedList<Double>();
+	MyVisitor visitor = new MyVisitor();
 	@Override
 	public double parse(String definition) throws IllegalArgumentException {
 		CharStream input = new ANTLRInputStream(definition);
 		DemoLexer lexer = new DemoLexer(input);
 		CommonTokenStream tokens = new CommonTokenStream(lexer);
 		DemoParser parser = new DemoParser(tokens);
+	public double parse(String definition) throws IllegalArgumentException{
+		try {
+			CharStream input = new ANTLRInputStream(definition);
 		
-		ParseTree tree = parser.root();
-		visitor.visit(tree);
-		return visitor.getErgebnis();
+			DemoLexer lexer = new DemoLexer(input);
+			CommonTokenStream tokens = new CommonTokenStream(lexer);
+			DemoParser parser = new DemoParser(tokens);
+	public double parse(String definition) throws IllegalArgumentException{
+		try {
+			CharStream input = new ANTLRInputStream(definition);
+		
+			ParseTree tree = parser.root();
+			visitor.visit(tree);
+			return visitor.getErgebnis();
+		} catch (Exception e) {
+			throw new IllegalArgumentException("GTFO");
+		}
+	}
+		
+			DemoLexer lexer = new DemoLexer(input);
+			CommonTokenStream tokens = new CommonTokenStream(lexer);
+			DemoParser parser = new DemoParser(tokens);
+		
+			ParseTree tree = parser.root();
+			visitor.visit(tree);
+			return visitor.getErgebnis();
+		} catch (Exception e) {
+			throw new IllegalArgumentException("GTFO");
+		}
 	}
 
 	@Override
@@ -56,8 +80,8 @@ public class WRBScript implements Script {
 	}
 
 	@Override
-	public Function getFunction(String name) throws IllegalArgumentException{
-		if(!visitor.getFuncMap().containsKey(name)) {
+	public Function getFunction(String name) throws IllegalArgumentException {
+		if (!visitor.getFuncMap().containsKey(name)) {
 			throw new IllegalArgumentException("Error 404: Function '" + name + "' not found.");
 		}
 		return visitor.getFuncMap().get(name);
@@ -66,21 +90,21 @@ public class WRBScript implements Script {
 	@Override
 	public double getVariable(String name) throws IllegalArgumentException {
 		return visitor.getVariable(name).getValue();
-//			int index = varName.indexOf(name);
-//			if (index != -1)
-//				return varValue.get(index);
-//			throw new IllegalArgumentException("Variable " + name + " not found");
+		// int index = varName.indexOf(name);
+		// if (index != -1)
+		// return varValue.get(index);
+		// throw new IllegalArgumentException("Variable " + name + " not found");
 	}
 
 	@Override
 	public void setVariable(String name, double value) {
 		visitor.setVariable(name, value);
-//		if(!varName.contains(name)) {
-//			varName.add(name);
-//			varValue.add(value);
-//		}else {
-//			varValue.add(varName.indexOf(name), value);
-//		}
+		// if(!varName.contains(name)) {
+		// varName.add(name);
+		// varValue.add(value);
+		// }else {
+		// varValue.add(varName.indexOf(name), value);
+		// }
 	}
 
 }
