@@ -14,30 +14,30 @@ import de.lab4inf.wrb.DemoBaseVisitor;
 //import de.lab4inf.wrb.DemoParser.ExpressionContext;
 
 public class MyVisitor extends DemoBaseVisitor<String> {
-//	@Override
-//	public String visitExpression(ExpressionContext ctx) {
-//		visitChildren(ctx);
-////		if(ctx.getChildCount() == 1) {
-////			System.out.println(ctx.getChild(0));
-////		}else {
-////			System.out.println(ctx.getChild(2));
-////			System.out.println("addition");
-////		}
-////		return null;
-////		int ersteVariable = 0, zweiteVariable = 0;
-////		if(ctx.getChildCount() == 1) {
-////			ersteVariable = Integer.parseInt(ctx.getChild(0).getText());
-////		}else {
-////			zweiteVariable = Integer.parseInt(ctx.getChild(2).getText());
-////		}
-////		int a = ersteVariable+zweiteVariable;
-////		System.out.println(a);
-//		return null;
-//	}
+	// @Override
+	// public String visitExpression(ExpressionContext ctx) {
+	// visitChildren(ctx);
+	//// if(ctx.getChildCount() == 1) {
+	//// System.out.println(ctx.getChild(0));
+	//// }else {
+	//// System.out.println(ctx.getChild(2));
+	//// System.out.println("addition");
+	//// }
+	//// return null;
+	//// int ersteVariable = 0, zweiteVariable = 0;
+	//// if(ctx.getChildCount() == 1) {
+	//// ersteVariable = Integer.parseInt(ctx.getChild(0).getText());
+	//// }else {
+	//// zweiteVariable = Integer.parseInt(ctx.getChild(2).getText());
+	//// }
+	//// int a = ersteVariable+zweiteVariable;
+	//// System.out.println(a);
+	// return null;
+	// }
 
 	// double solution;
 	LinkedList<Double> solutionList = new LinkedList<Double>();
-//	LinkedList<Variable> varList = new LinkedList<Variable>();
+	// LinkedList<Variable> varList = new LinkedList<Variable>();
 	HashMap<String, Variable> varMap = new HashMap<String, Variable>();
 	HashMap<String, Function> funcMap = new HashMap<String, Function>();
 
@@ -57,8 +57,8 @@ public class MyVisitor extends DemoBaseVisitor<String> {
 	@Override
 	public String visitRoot(DemoParser.RootContext ctx) {
 		this.solutionList.clear();
-//		this.varList.clear();
-//		this.varMap.clear();
+		// this.varList.clear();
+		// this.varMap.clear();
 
 		if (ctx.getParent() == null)
 			for (int i = 0; i < ctx.getChildCount(); i++) {
@@ -66,12 +66,12 @@ public class MyVisitor extends DemoBaseVisitor<String> {
 					this.solutionList.add(rechnen(ctx.getChild(i)));
 				}
 			}
-//		solution = 0;
-//		double finalSolution = rechnen(ctx);
-//		if(solution == 0)
-//			solution = finalSolution;
-//		System.out.println(solution);
-//		
+		// solution = 0;
+		// double finalSolution = rechnen(ctx);
+		// if(solution == 0)
+		// solution = finalSolution;
+		// System.out.println(solution);
+		//
 
 		return null;
 	}
@@ -79,7 +79,8 @@ public class MyVisitor extends DemoBaseVisitor<String> {
 	/**
 	 * Recursive Function that does the bulk of the math work
 	 * 
-	 * @param ctx current element of Tree
+	 * @param ctx
+	 *            current element of Tree
 	 * @return solution to current Element
 	 */
 	double rechnen(ParseTree ctx) {
@@ -102,14 +103,14 @@ public class MyVisitor extends DemoBaseVisitor<String> {
 				 */
 			}
 
-//			System.out.println(x);
+			// System.out.println(x);
 			return x;
 		case 1: // a wrapper
-//			if(ctx.getChild(0).getChildCount() > 0) {
+			// if(ctx.getChild(0).getChildCount() > 0) {
 			return rechnen(ctx.getChild(0));
-//			}
-//			System.out.println(x);
-//			return x;
+		// }
+		// System.out.println(x);
+		// return x;
 		case 2: // signed numbers
 			if (ctx.getChild(0).getText().equals("-")) {
 				return rechnen(ctx.getChild(1)) * -1;
@@ -167,50 +168,66 @@ public class MyVisitor extends DemoBaseVisitor<String> {
 				}
 
 				// TODO: find a way to fu*** wrap the whole Math class like this sh*t
-				if (ctx.getChild(0).getText().equals("sin")) {
+				switch (ctx.getChild(0).getText()) {
+				case "sin":
 					return Math.sin(rechnen(ctx.getChild(2)));
-				} else if (ctx.getChild(0).getText().equals("cos")) {
+				case "cos":
 					return Math.cos(rechnen(ctx.getChild(2)));
-				} else if (ctx.getChild(0).getText().equals("tan")) {
+				case "tan":
 					return Math.tan(rechnen(ctx.getChild(2)));
-				} else if (ctx.getChild(0).getText().equals("asin")) {
+				case "asin":
 					return Math.asin(rechnen(ctx.getChild(2)));
-				} else if (ctx.getChild(0).getText().equals("acos")) {
+				case "acos":
 					return Math.acos(rechnen(ctx.getChild(2)));
-				} else if (ctx.getChild(0).getText().equals("atan")) {
+				case "atan":
 					return Math.atan(rechnen(ctx.getChild(2)));
-				} else if (ctx.getChild(0).getText().equals("sinh")) {
+				case "sinh":
 					return Math.sinh(rechnen(ctx.getChild(2)));
-				} else if (ctx.getChild(0).getText().equals("cosh")) {
+				case "cosh":
 					return Math.cosh(rechnen(ctx.getChild(2)));
-				} else if (ctx.getChild(0).getText().equals("tanh")) {
+				case "tanh":
 					return Math.tanh(rechnen(ctx.getChild(2)));
-				} else if (ctx.getChild(0).getText().equals("log10")) {
+				case "log10":
 					return Math.log10(rechnen(ctx.getChild(2)));
-				} else if (ctx.getChild(0).getText().equals("ln") || ctx.getChild(0).getText().equals("log")) {
+				case "ln":
+				case "log":
 					return Math.log(rechnen(ctx.getChild(2)));
-				} else if (ctx.getChild(0).getText().equals("abs")) {
+				case "lb":
+				case "ld":
+				case "log2":
+					return Math.log(rechnen(ctx.getChild(2))) / Math.log(2);
+				case "logE":
+					return Math.log(rechnen(ctx.getChild(2))) / Math.log(Math.E);
+				case "abs":
 					return Math.abs(rechnen(ctx.getChild(2)));
-				} else if (ctx.getChild(0).getText().equals("exp")) {
+				case "exp":
 					return Math.exp(rechnen(ctx.getChild(2)));
-				} else if (ctx.getChild(0).getText().equals("sqrt")) {
+				case "sqrt":
 					return Math.sqrt(rechnen(ctx.getChild(2)));
-				} else if (ctx.getChild(0).getText().equals("min")) {
+				case "min":
 					double min = rechnen(ctx.getChild(2).getChild(0));
-					for(int i = 1; i < ctx.getChild(2).getChildCount();i++) {
-						if(!ctx.getChild(2).getChild(i).getText().equals(",")) {
+					for (int i = 1; i < ctx.getChild(2).getChildCount(); i++) {
+						if (!ctx.getChild(2).getChild(i).getText().equals(",")) {
 							min = Math.min(min, rechnen(ctx.getChild(2).getChild(i)));
 						}
 					}
 					return min;
-				} else if (ctx.getChild(0).getText().equals("max")) {
+				case "max":
 					double max = rechnen(ctx.getChild(2).getChild(0));
-					for(int i = 1; i < ctx.getChild(2).getChildCount();i++) {
-						if(!ctx.getChild(2).getChild(i).getText().equals(",")) {
+					for (int i = 1; i < ctx.getChild(2).getChildCount(); i++) {
+						if (!ctx.getChild(2).getChild(i).getText().equals(",")) {
 							max = Math.max(max, rechnen(ctx.getChild(2).getChild(i)));
 						}
 					}
 					return max;
+				case "pow": 
+					double pow = rechnen(ctx.getChild(2).getChild(0));
+					for (int i = 1; i < ctx.getChild(2).getChildCount(); i++) {
+						if (!ctx.getChild(2).getChild(i).getText().equals(",")) {
+							pow = Math.pow(pow, rechnen(ctx.getChild(2).getChild(i)));
+						}
+					}
+					return pow;
 				}
 				System.out.println("Unknown Function called: " + ctx.getText());
 				return 0;
@@ -231,9 +248,11 @@ public class MyVisitor extends DemoBaseVisitor<String> {
 	}
 
 	/**
-	 * @param varName Name of the Variable to search
+	 * @param varName
+	 *            Name of the Variable to search
 	 * @return the Variable with matching name
-	 * @throws IllegalArgumentException the searched Variable does not exist
+	 * @throws IllegalArgumentException
+	 *             the searched Variable does not exist
 	 */
 	public Variable getVariable(String varName) throws IllegalArgumentException {
 		/*
@@ -247,12 +266,14 @@ public class MyVisitor extends DemoBaseVisitor<String> {
 		} else {
 			return this.varMap.get(varName);
 		}
-//		return v;
+		// return v;
 	}
 
 	/**
-	 * @param varName  the Name of the Variable
-	 * @param varValue the Value of the Variable
+	 * @param varName
+	 *            the Name of the Variable
+	 * @param varValue
+	 *            the Value of the Variable
 	 */
 	public void setVariable(String varName, double varValue) {
 		Variable v;
@@ -273,7 +294,8 @@ public class MyVisitor extends DemoBaseVisitor<String> {
 	}
 
 	/**
-	 * @param varMap a new map of Variables and their Names
+	 * @param varMap
+	 *            a new map of Variables and their Names
 	 */
 	public void setVarMap(HashMap<String, Variable> varMap) {
 		this.varMap = varMap;
@@ -287,7 +309,8 @@ public class MyVisitor extends DemoBaseVisitor<String> {
 	}
 
 	/**
-	 * @param funcMap a new map of Functions and their Names
+	 * @param funcMap
+	 *            a new map of Functions and their Names
 	 */
 	public void setFuncMap(HashMap<String, Function> funcMap) {
 		this.funcMap = funcMap;

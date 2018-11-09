@@ -3,7 +3,7 @@ grammar Demo;
 
 WHITESPACE: [ \t\n\r]+->skip;	
 VARIABLE: LETTER+ NUMBER* VARIABLE*;	
-NUMBER: [0-9]+ (DOT NUMBER*)?;
+NUMBER: ([0-9]+ (DOT [0-9]+)?) | (DOT [0-9]+);
 LETTER: ([a-z] | [A-z])+;
 DOT: [.];
 
