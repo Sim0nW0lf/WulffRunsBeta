@@ -26,8 +26,6 @@ public class WRBScript implements Script {
 			lexer.addErrorListener(ThrowingErrorListener.INSTANCE);
 			CommonTokenStream tokens = new CommonTokenStream(lexer);
 			DemoParser parser = new DemoParser(tokens);
-			parser.removeErrorListeners();
-			parser.addErrorListener(ThrowingErrorListener.INSTANCE);
 		
 			ParseTree tree = parser.root();
 			visitor.visit(tree);
