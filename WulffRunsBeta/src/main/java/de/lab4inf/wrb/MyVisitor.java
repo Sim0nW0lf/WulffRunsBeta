@@ -11,6 +11,7 @@ import org.antlr.v4.parse.ANTLRParser;
 import org.antlr.v4.runtime.misc.NotNull;
 //import org.antlr.v4.runtime.ParserRuleContext;
 import org.antlr.v4.runtime.tree.ParseTree;
+import org.antlr.v4.runtime.tree.TerminalNode;
 
 
 import de.lab4inf.wrb.DemoBaseVisitor;
