@@ -1,6 +1,7 @@
 package de.lab4inf.wrb;
 
 import java.util.HashMap;
+import java.util.Iterator;
 //import java.util.ArrayList;
 import java.util.LinkedList;
 //import java.util.Map;
@@ -79,8 +80,9 @@ public class MyVisitor extends DemoBaseVisitor<Double> {
 	}
 
 	public Double visitStatement(DemoParser.StatementContext ctx) {
-		this.solutionList.add(rechnen(ctx));
-		return visitChildren(ctx);
+		Double d = visitChildren(ctx);
+		this.solutionList.add(d);
+		return d;
 	}
 
 	/**
@@ -259,11 +261,134 @@ public class MyVisitor extends DemoBaseVisitor<Double> {
 	public Double visitFunctionDefinition(DemoParser.FunctionDefinitionContext ctx) {
 		MyFunction f = new MyFunction(ctx, this);
 		this.funcMap.put(ctx.getChild(0).getText(), f);
-		return visitChildren(ctx);
+		return null;
 	};
 
 	public Double visitAssignment(DemoParser.AssignmentContext ctx) {
-		return visitChildren(ctx);
+		Double d = visitChildren(ctx.expression());
+		this.varMap.put(ctx.VARIABLE().getText(), new Variable(ctx.VARIABLE().getText(), d));
+		return d;
+	}
+
+	public Double visitDivision(@NotNull DemoParser.DivisionContext ctx) {
+		return visitChildren(ctx.links) / visitChildren(ctx.rechts);
+	}
+
+	public Double visitMultiplikation(@NotNull DemoParser.MultiplikationContext ctx) {
+		return visitChildren(ctx.links) * visitChildren(ctx.rechts);
+	}
+
+	public Double visitSubtraktion(@NotNull DemoParser.SubtraktionContext ctx) {
+		return visitChildren(ctx.links) - visitChildren(ctx.rechts);
+	}
+
+	public Double visitAddition(@NotNull DemoParser.AdditionContext ctx) {
+		return visitChildren(ctx.links) + visitChildren(ctx.rechts);
+	}
+
+	public Double visitNumber(@NotNull DemoParser.NumberContext ctx) {
+		Double d = Double.parseDouble(ctx.NUMBER().getText()); 
+		return ctx.sign.getType() == DemoParser.SUB ? d * -1 : d;
+	}
+
+	public Double visitModulo(@NotNull DemoParser.ModuloContext ctx) {
+		return visitChildren(ctx.links) % visitChildren(ctx.rechts);
+	}
+
+	public Double visitPower(@NotNull DemoParser.PowerContext ctx) {
+		return Math.pow(visitChildren(ctx.links), visitChildren(ctx.rechts));
+	}
+
+	public Double visitTiny(@NotNull DemoParser.TinyContext ctx) {
+		return visitChildren(ctx.links) * Math.pow(10, visitChildren(ctx.rechts));
+	}
+
+	public Double visitBracket(@NotNull DemoParser.BracketContext ctx) {
+		return visitChildren(ctx.expression());
+	}
+
+	public Double visitVariable(@NotNull DemoParser.VariableContext ctx) {
+		if (this.varMap.containsKey(ctx.getText())) {
+			return this.varMap.get(ctx.getText()).getValue();
+		} else {
+			throw new IllegalArgumentException("Unknown Variable: " + ctx.getText() + ". \n");
+		}
+	}
+
+	public Double visitFunctionCall(@NotNull DemoParser.FunctionCallContext ctx) {
+		LinkedList<Double> args = new LinkedList<Double>();
+		// Extract all those juicy arguments
+		for (DemoParser.ExpressionContext c : ctx.expression()) {
+			args.add(visitChildren(c));
+		}
+
+		if (this.funcMap.containsKey(ctx.name.getText())) {
+			// Change the cool Double to the sh*tty c-remnant double
+			Double[] t = args.toArray(new Double[args.size()]);
+			return this.funcMap.get(ctx.getChild(0).getText())
+					.eval(Stream.of(t).mapToDouble(Double::doubleValue).toArray());
+		}
+
+		Iterator<Double> it = args.iterator();
+
+		// Predefined Math functions. Because java
+		switch (ctx.name.getText()) {
+		case "sin":
+			return Math.sin(args.getFirst());
+		case "cos":
+			return Math.cos(args.getFirst());
+		case "tan":
+			return Math.tan(args.getFirst());
+		case "asin":
+			return Math.asin(args.getFirst());
+		case "acos":
+			return Math.acos(args.getFirst());
+		case "atan":
+			return Math.atan(args.getFirst());
+		case "sinh":
+			return Math.sinh(args.getFirst());
+		case "cosh":
+			return Math.cosh(args.getFirst());
+		case "tanh":
+			return Math.tanh(args.getFirst());
+		case "log": // this shouldn't be here, but at ln. well, whatever the profs want i guess
+		case "log10":
+			return Math.log10(args.getFirst());
+		case "ln":
+			return Math.log(args.getFirst());
+		case "lb":
+		case "ld":
+		case "log2":
+			return Math.log(args.getFirst()) / Math.log(2);
+		case "logE":
+			return Math.log(args.getFirst()) / Math.log(Math.E);
+		case "abs":
+			return Math.abs(args.getFirst());
+		case "exp":
+			return Math.exp(args.getFirst());
+		case "sqrt":
+			return Math.sqrt(args.getFirst());
+		case "min":
+			double min = args.getFirst();
+			while (it.hasNext()) {
+				min = Math.min(min, it.next());
+			}
+			return min;
+		case "max":
+			double max = args.getFirst();
+			while (it.hasNext()) {
+				max = Math.min(max, it.next());
+			}
+			return max;
+		case "pow":
+			double pow = args.getFirst();
+			while (it.hasNext()) {
+				pow = Math.pow(pow, it.next());
+			}
+			return pow;
+		}
+
+		throw new IllegalArgumentException("Unknown Function called: " + ctx.getText());
 	}
 
 	/**

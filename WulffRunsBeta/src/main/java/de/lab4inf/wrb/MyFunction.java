@@ -54,7 +54,7 @@ public class MyFunction implements Function {
 		}
 
 		// Math the shit out of it all
-		double sol = this.parent.rechnen(this.root.getChild(5));
+		double sol = this.parent.visitChildren(root.expression());
 		// System.out.println("Got: " + sol + "\n");
 
 		// Restore used Variables to previous value
