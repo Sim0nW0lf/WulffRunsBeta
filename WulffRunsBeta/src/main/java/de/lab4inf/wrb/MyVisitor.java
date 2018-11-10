@@ -7,10 +7,10 @@ import java.util.LinkedList;
 //import java.util.Map;
 import java.util.stream.Stream;
 
-import org.antlr.v4.parse.ANTLRParser;
-import org.antlr.v4.runtime.misc.NotNull;
+//import org.antlr.v4.parse.ANTLRParser;
+//import org.antlr.v4.runtime.misc.NotNull;
 //import org.antlr.v4.runtime.ParserRuleContext;
-import org.antlr.v4.runtime.tree.ParseTree;
+//import org.antlr.v4.runtime.tree.ParseTree;
 
 
 import de.lab4inf.wrb.DemoBaseVisitor;
@@ -274,27 +274,27 @@ public class MyVisitor extends DemoBaseVisitor<Double> {
 	}
 
 	@Override
-	public Double visitDivision(@NotNull DemoParser.DivisionContext ctx) {
+	public Double visitDivision(DemoParser.DivisionContext ctx) {
 		return visit(ctx.links) / visit(ctx.rechts);
 	}
 
 	@Override
-	public Double visitMultiplikation(@NotNull DemoParser.MultiplikationContext ctx) {
+	public Double visitMultiplikation(DemoParser.MultiplikationContext ctx) {
 		return visit(ctx.links) * visit(ctx.rechts);
 	}
 
 	@Override
-	public Double visitSubtraktion(@NotNull DemoParser.SubtraktionContext ctx) {
+	public Double visitSubtraktion(DemoParser.SubtraktionContext ctx) {
 		return visit(ctx.links) - visit(ctx.rechts);
 	}
 
 	@Override
-	public Double visitAddition(@NotNull DemoParser.AdditionContext ctx) {
+	public Double visitAddition(DemoParser.AdditionContext ctx) {
 		return visit(ctx.links) + visit(ctx.rechts);
 	}
 
 	@Override
-	public Double visitNumber(@NotNull DemoParser.NumberContext ctx) {
+	public Double visitNumber(DemoParser.NumberContext ctx) {
 		Double d = Double.parseDouble(ctx.NUMBER().getText()); 
 		if (ctx.getChildCount() > 1 && ctx.sign.getType() == DemoParser.SUB) {
 			d *= -1;
@@ -303,22 +303,22 @@ public class MyVisitor extends DemoBaseVisitor<Double> {
 	}
 
 	@Override
-	public Double visitModulo(@NotNull DemoParser.ModuloContext ctx) {
+	public Double visitModulo(DemoParser.ModuloContext ctx) {
 		return visit(ctx.links) % visit(ctx.rechts);
 	}
 
 	@Override
-	public Double visitPower(@NotNull DemoParser.PowerContext ctx) {
+	public Double visitPower(DemoParser.PowerContext ctx) {
 		return Math.pow(visit(ctx.links), visit(ctx.rechts));
 	}
 
 	@Override
-	public Double visitTiny(@NotNull DemoParser.TinyContext ctx) {
+	public Double visitTiny(DemoParser.TinyContext ctx) {
 		return visit(ctx.links) * Math.pow(10, visit(ctx.rechts));
 	}
 
 	@Override
-	public Double visitBracket(@NotNull DemoParser.BracketContext ctx) {
+	public Double visitBracket(DemoParser.BracketContext ctx) {
 		if (ctx.getChildCount() > 3 && ctx.sign.getType() == DemoParser.SUB) {
 			return visit(ctx.expression()) * -1;
 		}
@@ -326,7 +326,7 @@ public class MyVisitor extends DemoBaseVisitor<Double> {
 	}
 
 	@Override
-	public Double visitVariable(@NotNull DemoParser.VariableContext ctx) {
+	public Double visitVariable(DemoParser.VariableContext ctx) {
 		if (this.varMap.containsKey(ctx.getText())) {
 			return this.varMap.get(ctx.getText()).getValue();
 		} else {
@@ -335,7 +335,7 @@ public class MyVisitor extends DemoBaseVisitor<Double> {
 	}
 
 	@Override
-	public Double visitFunctionCall(@NotNull DemoParser.FunctionCallContext ctx) {
+	public Double visitFunctionCall(DemoParser.FunctionCallContext ctx) {
 		LinkedList<Double> args = new LinkedList<Double>();
 		// Extract all those juicy arguments
 		for (DemoParser.ExpressionContext c : ctx.expression()) {

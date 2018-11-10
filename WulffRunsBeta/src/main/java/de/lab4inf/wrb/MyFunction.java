@@ -3,8 +3,8 @@ package de.lab4inf.wrb;
 import java.util.ArrayList;
 import java.util.HashMap;
 
-import org.antlr.v4.runtime.Token;
-import org.antlr.v4.runtime.misc.Interval;
+//import org.antlr.v4.runtime.Token;
+//import org.antlr.v4.runtime.misc.Interval;
 import org.antlr.v4.runtime.tree.ParseTree;
 import org.antlr.v4.runtime.tree.TerminalNode;
 
