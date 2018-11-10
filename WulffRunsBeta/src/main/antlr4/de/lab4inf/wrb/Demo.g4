@@ -52,7 +52,7 @@ assignment : VARIABLE ASSIGN expression;
 functionDefinition: name=VARIABLE LBRACKET (VARIABLE (SEPERATOR VARIABLE)*) RBRACKET ASSIGN expression;	
 functionCall: name=VARIABLE LBRACKET (expression (SEPERATOR expression)*) RBRACKET;					
 
-expression: SUB? LBRACKET expression RBRACKET								#Bracket
+expression: sign = SUB? LBRACKET expression RBRACKET						#Bracket
 		  | links = expression E rechts = expression						#Tiny
 		  |<assoc=right> links =  expression POW rechts = expression 		#Power
 		  | links = expression DIV rechts = expression						#Division
