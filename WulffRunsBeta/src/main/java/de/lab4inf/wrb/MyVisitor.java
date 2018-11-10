@@ -11,6 +11,7 @@ import org.antlr.v4.parse.ANTLRParser;
 import org.antlr.v4.runtime.misc.NotNull;
 //import org.antlr.v4.runtime.ParserRuleContext;
 import org.antlr.v4.runtime.tree.ParseTree;
+import org.antlr.v4.runtime.tree.TerminalNode;
 
 import de.lab4inf.wrb.DemoBaseVisitor;
 //import de.lab4inf.wrb.DemoParser.ExpressionContext;
@@ -258,58 +259,70 @@ public class MyVisitor extends DemoBaseVisitor<Double> {
 		return -10;
 	}
 
+	@Override
 	public Double visitFunctionDefinition(DemoParser.FunctionDefinitionContext ctx) {
 		MyFunction f = new MyFunction(ctx, this);
-		this.funcMap.put(ctx.getChild(0).getText(), f);
+		this.funcMap.put(ctx.name.getText(), f);
 		return 0.0;
-	};
+	}
 
+	@Override
 	public Double visitAssignment(DemoParser.AssignmentContext ctx) {
-		Double d = visitChildren(ctx.expression());
+		Double d = visit(ctx.expression());
 		this.varMap.put(ctx.VARIABLE().getText(), new Variable(ctx.VARIABLE().getText(), d));
 		return d;
 	}
 
+	@Override
 	public Double visitDivision(@NotNull DemoParser.DivisionContext ctx) {
-		return visitChildren(ctx.links) / visitChildren(ctx.rechts);
+		return visit(ctx.links) / visit(ctx.rechts);
 	}
 
+	@Override
 	public Double visitMultiplikation(@NotNull DemoParser.MultiplikationContext ctx) {
-		return visitChildren(ctx.links) * visitChildren(ctx.rechts);
+		return visit(ctx.links) * visit(ctx.rechts);
 	}
 
+	@Override
 	public Double visitSubtraktion(@NotNull DemoParser.SubtraktionContext ctx) {
-		return visitChildren(ctx.links) - visitChildren(ctx.rechts);
+		return visit(ctx.links) - visit(ctx.rechts);
 	}
 
+	@Override
 	public Double visitAddition(@NotNull DemoParser.AdditionContext ctx) {
-		return visitChildren(ctx.links) + visitChildren(ctx.rechts);
+		return visit(ctx.links) + visit(ctx.rechts);
 	}
 
+	@Override
 	public Double visitNumber(@NotNull DemoParser.NumberContext ctx) {
 		Double d = Double.parseDouble(ctx.NUMBER().getText()); 
-		if(ctx.getChildCount() > 1 && ctx.sign.getType() == DemoParser.SUB) {
+		if (ctx.getChildCount() > 1 && ctx.sign.getType() == DemoParser.SUB) {
 			d *= -1;
 		}
-		return  d;
+		return d;
 	}
 
+	@Override
 	public Double visitModulo(@NotNull DemoParser.ModuloContext ctx) {
-		return visitChildren(ctx.links) % visitChildren(ctx.rechts);
+		return visit(ctx.links) % visit(ctx.rechts);
 	}
 
+	@Override
 	public Double visitPower(@NotNull DemoParser.PowerContext ctx) {
-		return Math.pow(visitChildren(ctx.links), visitChildren(ctx.rechts));
+		return Math.pow(visit(ctx.links), visit(ctx.rechts));
 	}
 
+	@Override
 	public Double visitTiny(@NotNull DemoParser.TinyContext ctx) {
-		return visitChildren(ctx.links) * Math.pow(10, visitChildren(ctx.rechts));
+		return visit(ctx.links) * Math.pow(10, visit(ctx.rechts));
 	}
 
+	@Override
 	public Double visitBracket(@NotNull DemoParser.BracketContext ctx) {
-		return visitChildren(ctx.expression());
+		return visit(ctx.expression());
 	}
 
+	@Override
 	public Double visitVariable(@NotNull DemoParser.VariableContext ctx) {
 		if (this.varMap.containsKey(ctx.getText())) {
 			return this.varMap.get(ctx.getText()).getValue();
@@ -318,18 +331,18 @@ public class MyVisitor extends DemoBaseVisitor<Double> {
 		}
 	}
 
+	@Override
 	public Double visitFunctionCall(@NotNull DemoParser.FunctionCallContext ctx) {
 		LinkedList<Double> args = new LinkedList<Double>();
 		// Extract all those juicy arguments
 		for (DemoParser.ExpressionContext c : ctx.expression()) {
-			args.add(visitChildren(c));
+			args.add(visit(c));
 		}
 
 		if (this.funcMap.containsKey(ctx.name.getText())) {
 			// Change the cool Double to the sh*tty c-remnant double
 			Double[] t = args.toArray(new Double[args.size()]);
-			return this.funcMap.get(ctx.name.getText())
-					.eval(Stream.of(t).mapToDouble(Double::doubleValue).toArray());
+			return this.funcMap.get(ctx.name.getText()).eval(Stream.of(t).mapToDouble(Double::doubleValue).toArray());
 		}
 
 		Iterator<Double> it = args.iterator();
@@ -393,15 +406,30 @@ public class MyVisitor extends DemoBaseVisitor<Double> {
 
 		throw new IllegalArgumentException("Unknown Function called: " + ctx.getText());
 	}
-	
+
 	@Override
 	protected Double aggregateResult(Double aggregate, Double nextResult) {
-		if(aggregate == null) {
+		if (aggregate == null) {
 			return nextResult;
 		} else if (nextResult == null) {
 			return aggregate;
 		}
 		return aggregate + nextResult;
+	}
+	
+	public Double visitTerminal(TerminalNode node) {
+		Double x = 0.0;
+		System.out.println(node.getText());
+//		try {
+//			x = Double.parseDouble(node.getText());
+//		} catch (Exception e) {
+//			if (this.varMap.containsKey(node.getText())) {
+//				x = this.varMap.get(node.getText()).getValue();
+//			} else {
+//				throw new IllegalArgumentException("Unknown Variable: " + node.getText() + ". \n");
+//			}
+//		}
+		return x;
 	}
 
 	/**
