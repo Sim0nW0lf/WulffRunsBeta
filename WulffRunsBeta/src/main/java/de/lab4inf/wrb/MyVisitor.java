@@ -167,7 +167,7 @@ public class MyVisitor extends DemoBaseVisitor<Double> {
 					// Extract all those juicy arguments
 					for (int i = 0; i < ctx.getChild(2).getChildCount(); i++) {
 						if (!ctx.getChild(2).getChild(i).getText().equals(",")) {
-							args.add(rechnen(ctx.getChild(2). org.antlr.v4.runtime.tree.TerminalNode;getChild(i)));
+							args.add(rechnen(ctx.getChild(2).getChild(i)));
 						}
 					}
 					Double[] t = args.toArray(new Double[args.size()]);
@@ -415,21 +415,6 @@ public class MyVisitor extends DemoBaseVisitor<Double> {
 			return aggregate;
 		}
 		return aggregate + nextResult;
-	}
-	
-	public Double visitTerminal(TerminalNode node) {
-		Double x = 0.0;
-		System.out.println(node.getText());
-//		try {
-//			x = Double.parseDouble(node.getText());
-//		} catch (Exception e) {
-//			if (this.varMap.containsKey(node.getText())) {
-//				x = this.varMap.get(node.getText()).getValue();
-//			} else {
-//				throw new IllegalArgumentException("Unknown Variable: " + node.getText() + ". \n");
-//			}
-//		}
-		return x;
 	}
 
 	/**
