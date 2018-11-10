@@ -62,12 +62,12 @@ public class MyVisitor extends DemoBaseVisitor<String> {
 		// this.varMap.clear();
 		String s = visitChildren(ctx);
 
-		if (ctx.getParent() == null)
-			for (int i = 0; i < ctx.getChildCount(); i++) {
-				if (!ctx.getChild(i).getText().equals(";")) {
-					this.solutionList.add(rechnen(ctx.getChild(i)));
-				}
-			}
+//		if (ctx.getParent() == null)
+//			for (int i = 0; i < ctx.getChildCount(); i++) {
+//				if (!ctx.getChild(i).getText().equals(";")) {
+//					this.solutionList.add(rechnen(ctx.getChild(i)));
+//				}
+//			}
 		// solution = 0;
 		// double finalSolution = rechnen(ctx);
 		// if(solution == 0)
@@ -75,9 +75,14 @@ public class MyVisitor extends DemoBaseVisitor<String> {
 		// System.out.println(solution);
 		
 //		System.out.println(getErgebnis());
-
 		return s;
 	}
+	
+	public String visitStatement(DemoParser.StatementContext ctx) {
+		this.solutionList.add(rechnen(ctx));
+		return visitChildren(ctx);
+	}
+	
 
 	/**
 	 * Recursive Function that does the bulk of the math work
