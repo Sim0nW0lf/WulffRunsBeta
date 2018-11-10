@@ -1,5 +1,29 @@
 grammar Demo;
 
+@DemoParser::members {
+  @Override
+  public void reportError(RecognitionException e) {
+    throw new IllegalArgumentException("I quit!\n" + e.getMessage()); 
+  }
+  @Override
+  public void notifyErrorListeners(Token offendingToken, String msg, RecognitionException ex)
+  {
+    throw new IllegalArgumentException(msg); 
+  }
+}
+
+@DemoLexer::members {
+  @Override
+  public void reportError(RecognitionException e) {
+    throw new IllegalArgumentException("I quit!\n" + e.getMessage()); 
+  }
+  @Override
+  public void recover(RecognitionException ex) 
+  {
+    throw new IllegalArgumentException(ex.getMessage()); 
+  }
+}
+
 WHITESPACE: [ \t\n\r]+->skip;	
 
 E: 'e';

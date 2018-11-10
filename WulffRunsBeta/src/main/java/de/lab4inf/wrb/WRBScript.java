@@ -12,8 +12,8 @@ import org.antlr.v4.runtime.tree.ParseTree;
 
 public class WRBScript implements Script {
 
-//	 LinkedList<String> varName = new LinkedList<String>();
-//	 LinkedList<Double> varValue = new LinkedList<Double>();
+	// LinkedList<String> varName = new LinkedList<String>();
+	// LinkedList<Double> varValue = new LinkedList<Double>();
 	MyVisitor visitor = new MyVisitor();
 
 	@Override
@@ -31,14 +31,14 @@ public class WRBScript implements Script {
 	public double parse(CharStream input) throws IllegalArgumentException {
 		try {
 			DemoLexer lexer = new DemoLexer(input);
-			lexer.removeErrorListeners();
-			lexer.addErrorListener(ThrowingErrorListener.INSTANCE);
+//			lexer.removeErrorListeners();
+//			lexer.addErrorListener(ThrowingErrorListener.INSTANCE);
 			
 			CommonTokenStream tokens = new CommonTokenStream(lexer);
 			
 			DemoParser parser = new DemoParser(tokens);
-			parser.removeErrorListeners();
-			parser.addErrorListener(ThrowingErrorListener.INSTANCE);
+//			parser.removeErrorListeners();
+//			parser.addErrorListener(ThrowingErrorListener.INSTANCE);
 			
 			ParseTree tree = parser.root();
 			visitor.visit(tree);
