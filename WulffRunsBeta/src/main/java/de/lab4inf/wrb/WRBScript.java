@@ -31,14 +31,14 @@ public class WRBScript implements Script {
 	public double parse(CharStream input) throws IllegalArgumentException {
 		try {
 			DemoLexer lexer = new DemoLexer(input);
-//			lexer.removeErrorListeners();
-//			lexer.addErrorListener(ThrowingErrorListener.INSTANCE);
+			lexer.removeErrorListeners();
+			lexer.addErrorListener(ThrowingErrorListener.INSTANCE);
 			
 			CommonTokenStream tokens = new CommonTokenStream(lexer);
 			
 			DemoParser parser = new DemoParser(tokens);
-//			parser.removeErrorListeners();
-//			parser.addErrorListener(ThrowingErrorListener.INSTANCE);
+			parser.removeErrorListeners();
+			parser.addErrorListener(ThrowingErrorListener.INSTANCE);
 			
 			ParseTree tree = parser.root();
 			visitor.visit(tree);
@@ -46,7 +46,7 @@ public class WRBScript implements Script {
 			return visitor.getErgebnis();
 		} catch (Exception e) {
 //			System.out.println("Not parsable. ");
-			throw new IllegalArgumentException("Not Parsable");
+			throw new IllegalArgumentException("Not Parsable:" + e);
 		}
 	}
 

@@ -73,6 +73,8 @@ public class MyVisitor extends DemoBaseVisitor<String> {
 		// if(solution == 0)
 		// solution = finalSolution;
 		// System.out.println(solution);
+		
+//		System.out.println(getErgebnis());
 
 		return s;
 	}
