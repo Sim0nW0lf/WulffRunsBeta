@@ -319,6 +319,9 @@ public class MyVisitor extends DemoBaseVisitor<Double> {
 
 	@Override
 	public Double visitBracket(@NotNull DemoParser.BracketContext ctx) {
+		if (ctx.getChildCount() > 3 && ctx.sign.getType() == DemoParser.SUB) {
+			return visit(ctx.expression()) * -1;
+		}
 		return visit(ctx.expression());
 	}
 
