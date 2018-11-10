@@ -24,10 +24,13 @@ public class MyFunction implements Function {
 	 */
 	public MyFunction(DemoParser.FunctionDefinitionContext root, MyVisitor parent) {
 		this.root = root;
-		this.name = root.getChild(0).getText();
-		for (String s : root.getChild(2).getText().split(",")) {
-			this.argList.add(s);
+		this.name = root.name.getText();
+		for (TerminalNode c : root.VARIABLE()) {
+			this.argList.add(c.getText());
 		}
+//		for (String s : root.getChild(2).getText().split(",")) {
+//			this.argList.add(s);
+//		}
 		this.argc = this.argList.size();
 		this.parent = parent;
 	}
@@ -54,7 +57,7 @@ public class MyFunction implements Function {
 		}
 
 		// Math the shit out of it all
-		double sol = this.parent.visitChildren(root.expression());
+		double sol = this.parent.visit(root.expression()).doubleValue();
 		// System.out.println("Got: " + sol + "\n");
 
 		// Restore used Variables to previous value

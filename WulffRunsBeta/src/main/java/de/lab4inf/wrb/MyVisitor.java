@@ -333,6 +333,7 @@ public class MyVisitor extends DemoBaseVisitor<Double> {
 
 	@Override
 	public Double visitFunctionCall(@NotNull DemoParser.FunctionCallContext ctx) {
+		System.out.println(ctx.getText());
 		LinkedList<Double> args = new LinkedList<Double>();
 		// Extract all those juicy arguments
 		for (DemoParser.ExpressionContext c : ctx.expression()) {
@@ -393,7 +394,7 @@ public class MyVisitor extends DemoBaseVisitor<Double> {
 		case "max":
 			double max = args.getFirst();
 			while (it.hasNext()) {
-				max = Math.min(max, it.next());
+				max = Math.max(max, it.next());
 			}
 			return max;
 		case "pow":
@@ -415,21 +416,6 @@ public class MyVisitor extends DemoBaseVisitor<Double> {
 			return aggregate;
 		}
 		return aggregate + nextResult;
-	}
-	
-	public Double visitTerminal(TerminalNode node) {
-		Double x = 0.0;
-		System.out.println(node.getText());
-//		try {
-//			x = Double.parseDouble(node.getText());
-//		} catch (Exception e) {
-//			if (this.varMap.containsKey(node.getText())) {
-//				x = this.varMap.get(node.getText()).getValue();
-//			} else {
-//				throw new IllegalArgumentException("Unknown Variable: " + node.getText() + ". \n");
-//			}
-//		}
-		return x;
 	}
 
 	/**
