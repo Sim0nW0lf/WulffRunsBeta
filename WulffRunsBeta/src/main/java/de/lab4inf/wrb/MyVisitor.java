@@ -14,7 +14,7 @@ import org.antlr.v4.runtime.tree.ParseTree;
 import de.lab4inf.wrb.DemoBaseVisitor;
 //import de.lab4inf.wrb.DemoParser.ExpressionContext;
 
-public class MyVisitor extends DemoBaseVisitor<String> {
+public class MyVisitor extends DemoBaseVisitor<Double> {
 	// @Override
 	// public String visitExpression(ExpressionContext ctx) {
 	// visitChildren(ctx);
@@ -56,11 +56,11 @@ public class MyVisitor extends DemoBaseVisitor<String> {
 	 * RootContext)
 	 */
 	@Override
-	public String visitRoot(DemoParser.RootContext ctx) {
+	public Double visitRoot(DemoParser.RootContext ctx) {
 		// this.solutionList.clear();
 		// this.varList.clear();
 		// this.varMap.clear();
-		String s = visitChildren(ctx);
+		Double s = visitChildren(ctx);
 
 //		if (ctx.getParent() == null)
 //			for (int i = 0; i < ctx.getChildCount(); i++) {
@@ -73,16 +73,15 @@ public class MyVisitor extends DemoBaseVisitor<String> {
 		// if(solution == 0)
 		// solution = finalSolution;
 		// System.out.println(solution);
-		
+
 //		System.out.println(getErgebnis());
 		return s;
 	}
-	
-	public String visitStatement(DemoParser.StatementContext ctx) {
+
+	public Double visitStatement(DemoParser.StatementContext ctx) {
 		this.solutionList.add(rechnen(ctx));
 		return visitChildren(ctx);
 	}
-	
 
 	/**
 	 * Recursive Function that does the bulk of the math work
@@ -193,7 +192,7 @@ public class MyVisitor extends DemoBaseVisitor<String> {
 					return Math.cosh(rechnen(ctx.getChild(2)));
 				case "tanh":
 					return Math.tanh(rechnen(ctx.getChild(2)));
-				case "log": //this shouldn't be here, but at ln. well, whatever the profs want i guess
+				case "log": // this shouldn't be here, but at ln. well, whatever the profs want i guess
 				case "log10":
 					return Math.log10(rechnen(ctx.getChild(2)));
 				case "ln":
@@ -237,7 +236,7 @@ public class MyVisitor extends DemoBaseVisitor<String> {
 				case "-":
 					return rechnen(ctx.getChild(2)) * -1;
 				}
-				
+
 				throw new IllegalArgumentException("Unknown Function called: " + ctx.getText());
 			}
 		case 6: // Function declaration or 2-arguments call
@@ -247,22 +246,23 @@ public class MyVisitor extends DemoBaseVisitor<String> {
 //				MyFunction f = new MyFunction(ctx, this);
 //				this.funcMap.put(ctx.getChild(0).getText(), f);
 ////				}
-				return 0;
+			return 0;
 //			}
 
 		default:
-			throw new IllegalArgumentException("\n Unknown Tree case: " + ctx.getChildCount() + ": " + ctx.getText() + " \n");
+			throw new IllegalArgumentException(
+					"\n Unknown Tree case: " + ctx.getChildCount() + ": " + ctx.getText() + " \n");
 		}
 		return -10;
 	}
-	
-	public String visitFunctionDefinition(DemoParser.FunctionDefinitionContext ctx) {
+
+	public Double visitFunctionDefinition(DemoParser.FunctionDefinitionContext ctx) {
 		MyFunction f = new MyFunction(ctx, this);
 		this.funcMap.put(ctx.getChild(0).getText(), f);
 		return visitChildren(ctx);
 	};
-	
-	public String visitAssignment(DemoParser.AssignmentContext ctx) {
+
+	public Double visitAssignment(DemoParser.AssignmentContext ctx) {
 		return visitChildren(ctx);
 	}
 

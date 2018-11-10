@@ -54,13 +54,15 @@ varList: VARIABLE (SEPERATOR VARIABLE)*;
 functionDefinition: VARIABLE LBRACKET varList RBRACKET ASSIGN expression;
 functionCall: VARIABLE LBRACKET expressionList RBRACKET;
 
-expression: SUB? LBRACKET expression RBRACKET
-		  | expression E expression
-		  |<assoc=right> expression (POW) expression 
-		  | expression (DIV | MUL) expression
-		  |<assoc=right> expression (MOD) expression
-		  | expression (SUB | ADD) expression
-		  | functionCall
-		  | (SUB | ADD)? NUMBER
-		  | (SUB | ADD)? VARIABLE
+expression: SUB? LBRACKET expression RBRACKET			#Bracket
+		  | expression E expression						#Tiny
+		  |<assoc=right> expression (POW) expression 	#Power
+		  | expression MUL expression					#Multiplikation
+		  | expression DIV expression					#Division
+		  |<assoc=right> expression (MOD) expression	#Modulo
+		  | expression SUB expression					#Subtraktion
+		  | expression ADD expression					#Addition
+		  | functionCall								#Function
+		  | (SUB | ADD)? NUMBER							#Number
+		  | (SUB | ADD)? VARIABLE						#Variable
 		  ;
