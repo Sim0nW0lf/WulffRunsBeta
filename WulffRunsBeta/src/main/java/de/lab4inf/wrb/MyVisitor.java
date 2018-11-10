@@ -11,7 +11,6 @@ import org.antlr.v4.parse.ANTLRParser;
 import org.antlr.v4.runtime.misc.NotNull;
 //import org.antlr.v4.runtime.ParserRuleContext;
 import org.antlr.v4.runtime.tree.ParseTree;
-import org.antlr.v4.runtime.tree.TerminalNode;
 
 
 import de.lab4inf.wrb.DemoBaseVisitor;
@@ -168,7 +167,7 @@ public class MyVisitor extends DemoBaseVisitor<Double> {
 					// Extract all those juicy arguments
 					for (int i = 0; i < ctx.getChild(2).getChildCount(); i++) {
 						if (!ctx.getChild(2).getChild(i).getText().equals(",")) {
-							args.add(rechnen(ctx.getChild(2).getChild(i)));
+							args.add(rechnen(ctx.getChild(2). org.antlr.v4.runtime.tree.TerminalNode;getChild(i)));
 						}
 					}
 					Double[] t = args.toArray(new Double[args.size()]);
