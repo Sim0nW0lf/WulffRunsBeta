@@ -31,7 +31,6 @@ public class MyFunction implements Function {
 			}
 			
 		}
-		System.out.println("-----\n");
 //		for (String s : root.getChild(2).getText().split(",")) {
 //			this.argList.add(s);
 //		}

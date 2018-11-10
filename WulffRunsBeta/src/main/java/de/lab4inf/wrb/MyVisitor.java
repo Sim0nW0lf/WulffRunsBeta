@@ -388,19 +388,19 @@ public class MyVisitor extends DemoBaseVisitor<Double> {
 		case "sqrt":
 			return Math.sqrt(args.getFirst());
 		case "min":
-			double min = args.getFirst();
+			double min = it.next();
 			while (it.hasNext()) {
 				min = Math.min(min, it.next());
 			}
 			return min;
 		case "max":
-			double max = args.getFirst();
+			double max = it.next();
 			while (it.hasNext()) {
 				max = Math.max(max, it.next());
 			}
 			return max;
 		case "pow":
-			double pow = args.getFirst();
+			double pow = it.next();
 			while (it.hasNext()) {
 				pow = Math.pow(pow, it.next());
 			}
