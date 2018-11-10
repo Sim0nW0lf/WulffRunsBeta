@@ -43,9 +43,7 @@ MOD: 'mod' | '%';
 TERMINATOR: ';';
 SEPERATOR: ',';
 
-prog: root;
-
-root: statement (TERMINATOR statement)* TERMINATOR ?;
+root: statement (TERMINATOR statement)* TERMINATOR ? EOF;
 
 statement: (assignment | expression | functionDefinition);
 
