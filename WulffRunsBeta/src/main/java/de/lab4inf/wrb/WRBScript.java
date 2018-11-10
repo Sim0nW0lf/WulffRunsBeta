@@ -12,8 +12,8 @@ import org.antlr.v4.runtime.tree.ParseTree;
 
 public class WRBScript implements Script {
 
-	// LinkedList<String> varName = new LinkedList<String>();
-	// LinkedList<Double> varValue = new LinkedList<Double>();
+//	 LinkedList<String> varName = new LinkedList<String>();
+//	 LinkedList<Double> varValue = new LinkedList<Double>();
 	MyVisitor visitor = new MyVisitor();
 
 	@Override

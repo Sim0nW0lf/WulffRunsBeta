@@ -1,34 +1,44 @@
 grammar Demo;
 
-
 WHITESPACE: [ \t\n\r]+->skip;	
 
+E: 'e';
 VARIABLE: LETTER+ NUMBER* VARIABLE*;	
 NUMBER: ([0-9]+ (DOT [0-9]+)?) | (DOT [0-9]+);
 LETTER: ([a-z] | [A-Z])+;
 DOT: [.];
-
+ADD: '+';
+SUB: '-';
+MUL: '*';
+DIV: '/';
+POW: '^' | '**';
+LBRACKET: '(';
+RBRACKET: ')';
+ASSIGN: '=';
+MOD: 'mod' | '%';
+TERMINATOR: ';';
+SEPERATOR: ',';
 
 prog: root;
 
-root: statement (';' statement)* ';'?;
+root: statement (TERMINATOR statement)* TERMINATOR ?;
 
 statement: (assignment | expression | functionDefinition);
 
-assignment : VARIABLE '=' expression;
+assignment : VARIABLE ASSIGN expression;
 
-expressionList: expression (',' expression)*;
-varList: VARIABLE (',' VARIABLE)*;
-functionDefinition: VARIABLE '(' varList ')' '=' expression;
-functionCall: VARIABLE '(' expressionList ')';
+expressionList: expression (SEPERATOR expression)*;
+varList: VARIABLE (SEPERATOR VARIABLE)*;
+functionDefinition: VARIABLE LBRACKET varList RBRACKET ASSIGN expression;
+functionCall: VARIABLE LBRACKET expressionList RBRACKET;
 
-expression: '-'? '(' expression ')'
-		  | expression 'e' expression
-		  |<assoc=right> expression ('^' | '**') expression 
-		  | expression ('/' | '*') expression
-		  |<assoc=right> expression ('%' | 'mod') expression
-		  | expression ('-' | '+') expression
+expression: SUB? LBRACKET expression RBRACKET
+		  | expression E expression
+		  |<assoc=right> expression (POW) expression 
+		  | expression (DIV | MUL) expression
+		  |<assoc=right> expression (MOD) expression
+		  | expression (SUB | ADD) expression
 		  | functionCall
-		  | ('-' | '+')? NUMBER
-		  | ('-' | '+')? VARIABLE
+		  | (SUB | ADD)? NUMBER
+		  | (SUB | ADD)? VARIABLE
 		  ;
