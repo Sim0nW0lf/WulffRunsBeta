@@ -49,20 +49,18 @@ statement: (assignment | expression | functionDefinition);
 
 assignment : VARIABLE ASSIGN expression;
 
-expressionList: expression (SEPERATOR expression)*;
-varList: VARIABLE (SEPERATOR VARIABLE)*;
-functionDefinition: VARIABLE LBRACKET varList RBRACKET ASSIGN expression;
-functionCall: VARIABLE LBRACKET expressionList RBRACKET;
+functionDefinition: name=VARIABLE LBRACKET (VARIABLE (SEPERATOR VARIABLE)*) RBRACKET ASSIGN expression;	
+functionCall: name=VARIABLE LBRACKET (expression (SEPERATOR expression)*) RBRACKET;					
 
-expression: SUB? LBRACKET expression RBRACKET			#Bracket
-		  | expression E expression						#Tiny
-		  |<assoc=right> expression (POW) expression 	#Power
-		  | expression MUL expression					#Multiplikation
-		  | expression DIV expression					#Division
-		  |<assoc=right> expression (MOD) expression	#Modulo
-		  | expression SUB expression					#Subtraktion
-		  | expression ADD expression					#Addition
-		  | functionCall								#Function
-		  | (SUB | ADD)? NUMBER							#Number
-		  | (SUB | ADD)? VARIABLE						#Variable
+expression: SUB? LBRACKET expression RBRACKET								#Bracket
+		  | links = expression E rechts = expression						#Tiny
+		  |<assoc=right> links =  expression POW rechts = expression 		#Power
+		  | links = expression DIV rechts = expression						#Division
+		  | links = expression MUL rechts = expression						#Multiplikation
+		  |<assoc=right> links = expression MOD rechts = expression			#Modulo
+		  | links = expression SUB rechts = expression						#Subtraktion
+		  | links = expression ADD rechts = expression						#Addition
+		  | functionCall													#FunctionCaller
+		  | sign = (SUB | ADD)? NUMBER										#Number
+		  | sign = (SUB | ADD)? VARIABLE									#Variable
 		  ;
