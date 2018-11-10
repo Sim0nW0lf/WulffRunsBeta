@@ -46,7 +46,7 @@ public class WRBScript implements Script {
 			return visitor.getErgebnis();
 		} catch (Exception e) {
 //			System.out.println("Not parsable. ");
-			throw new IllegalArgumentException("Not Parsable:" + e);
+			throw new IllegalArgumentException("Not Parsable:" + e.getMessage());
 		}
 	}
 

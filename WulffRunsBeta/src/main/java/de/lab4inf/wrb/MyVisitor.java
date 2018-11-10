@@ -261,7 +261,7 @@ public class MyVisitor extends DemoBaseVisitor<Double> {
 	public Double visitFunctionDefinition(DemoParser.FunctionDefinitionContext ctx) {
 		MyFunction f = new MyFunction(ctx, this);
 		this.funcMap.put(ctx.getChild(0).getText(), f);
-		return null;
+		return 0.0;
 	};
 
 	public Double visitAssignment(DemoParser.AssignmentContext ctx) {
@@ -288,7 +288,10 @@ public class MyVisitor extends DemoBaseVisitor<Double> {
 
 	public Double visitNumber(@NotNull DemoParser.NumberContext ctx) {
 		Double d = Double.parseDouble(ctx.NUMBER().getText()); 
-		return ctx.sign.getType() == DemoParser.SUB ? d * -1 : d;
+		if(ctx.getChildCount() > 1 && ctx.sign.getType() == DemoParser.SUB) {
+			d *= -1;
+		}
+		return  d;
 	}
 
 	public Double visitModulo(@NotNull DemoParser.ModuloContext ctx) {
@@ -325,7 +328,7 @@ public class MyVisitor extends DemoBaseVisitor<Double> {
 		if (this.funcMap.containsKey(ctx.name.getText())) {
 			// Change the cool Double to the sh*tty c-remnant double
 			Double[] t = args.toArray(new Double[args.size()]);
-			return this.funcMap.get(ctx.getChild(0).getText())
+			return this.funcMap.get(ctx.name.getText())
 					.eval(Stream.of(t).mapToDouble(Double::doubleValue).toArray());
 		}
 
@@ -389,6 +392,16 @@ public class MyVisitor extends DemoBaseVisitor<Double> {
 		}
 
 		throw new IllegalArgumentException("Unknown Function called: " + ctx.getText());
+	}
+	
+	@Override
+	protected Double aggregateResult(Double aggregate, Double nextResult) {
+		if(aggregate == null) {
+			return nextResult;
+		} else if (nextResult == null) {
+			return aggregate;
+		}
+		return aggregate + nextResult;
 	}
 
 	/**
