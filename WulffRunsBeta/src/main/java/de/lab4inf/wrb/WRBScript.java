@@ -10,7 +10,7 @@ import org.antlr.v4.runtime.CharStream;
 import org.antlr.v4.runtime.CommonTokenStream;
 import org.antlr.v4.runtime.tree.ParseTree;
 
-public class WRBScript implements Script {
+public class WRBScript implements Script { 
 
 	// LinkedList<String> varName = new LinkedList<String>();
 	// LinkedList<Double> varValue = new LinkedList<Double>();
@@ -46,7 +46,7 @@ public class WRBScript implements Script {
 			return visitor.getErgebnis();
 		} catch (Exception e) {
 //			System.out.println("Not parsable. ");
-			throw new IllegalArgumentException("Not Parsable:" + e);
+			throw new IllegalArgumentException("Not Parsable");
 		}
 	}
 
