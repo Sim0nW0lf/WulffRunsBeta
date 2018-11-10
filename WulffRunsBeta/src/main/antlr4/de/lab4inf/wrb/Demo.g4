@@ -57,7 +57,7 @@ expression: SUB? LBRACKET expression RBRACKET								#Bracket
 		  |<assoc=right> links =  expression POW rechts = expression 		#Power
 		  | links = expression DIV rechts = expression						#Division
 		  | links = expression MUL rechts = expression						#Multiplikation
-		  |<assoc=right> links = expression MOD rechts = expression			#Modulo
+		  |<assoc=right> links = expression MOD rechts = expression		#Modulo
 		  | links = expression SUB rechts = expression						#Subtraktion
 		  | links = expression ADD rechts = expression						#Addition
 		  | functionCall													#FunctionCaller
