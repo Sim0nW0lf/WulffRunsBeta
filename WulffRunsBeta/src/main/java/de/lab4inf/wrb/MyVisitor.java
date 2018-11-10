@@ -333,7 +333,6 @@ public class MyVisitor extends DemoBaseVisitor<Double> {
 
 	@Override
 	public Double visitFunctionCall(@NotNull DemoParser.FunctionCallContext ctx) {
-		System.out.println(ctx.getText());
 		LinkedList<Double> args = new LinkedList<Double>();
 		// Extract all those juicy arguments
 		for (DemoParser.ExpressionContext c : ctx.expression()) {

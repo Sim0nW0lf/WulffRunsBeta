@@ -26,8 +26,12 @@ public class MyFunction implements Function {
 		this.root = root;
 		this.name = root.name.getText();
 		for (TerminalNode c : root.VARIABLE()) {
-			this.argList.add(c.getText());
+			if(!c.getText().equals(root.name.getText())) {
+				this.argList.add(c.getText());
+			}
+			
 		}
+		System.out.println("-----\n");
 //		for (String s : root.getChild(2).getText().split(",")) {
 //			this.argList.add(s);
 //		}
@@ -37,11 +41,12 @@ public class MyFunction implements Function {
 
 	@Override
 	public double eval(double... args) {
+//		System.out.println("Amount of Arguments: " + args.length + "/" + argc);
 		// Check if this can even work at all
 		if (args.length != this.argc) {
 			return 0;
 		}
-		//System.out.println("Initiating Function: " + this.root.getChild(5).getText() + "\n");
+//		System.out.println("Initiating Function: " + this.root.getChild(5).getText() + "\n");
 
 		// add all the given values to current variable set after savepointing them
 		int i = 0;
@@ -52,13 +57,13 @@ public class MyFunction implements Function {
 
 			}
 			this.parent.setVariable(this.argList.get(i), arg);
-			// System.out.println("Adding Variable: " + this.argList.get(i) + "\n");
+//			System.out.println("Adding Variable: " + this.argList.get(i) + "\n");
 			i++;
 		}
 
 		// Math the shit out of it all
 		double sol = this.parent.visit(root.expression()).doubleValue();
-		// System.out.println("Got: " + sol + "\n");
+//		System.out.println("Got: " + sol + "\n");
 
 		// Restore used Variables to previous value
 		i = 0;
