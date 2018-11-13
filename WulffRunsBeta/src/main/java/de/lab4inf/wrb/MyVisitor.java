@@ -182,6 +182,8 @@ public class MyVisitor extends DemoBaseVisitor<Double> {
 //				case "cos":
 //					return Math.cos(rechnen(ctx.getChild(2)));
 //				case "tan":
+	// Predefined Math functions. Because java
+//	switch (ctx.name.getText()) {
 //					return Math.tan(rechnen(ctx.getChild(2)));
 //				case "asin":
 //					return Math.asin(rechnen(ctx.getChild(2)));
@@ -343,7 +345,7 @@ public class MyVisitor extends DemoBaseVisitor<Double> {
 		}
 
 		if (this.funcMap.containsKey(ctx.name.getText())) {
-			// Change the cool Double to the sh*tty c-remnant double
+			// Change the cool Double to the shitty c-remnant double
 			Double[] t = args.toArray(new Double[args.size()]);
 			return this.funcMap.get(ctx.name.getText()).eval(Stream.of(t).mapToDouble(Double::doubleValue).toArray());
 		}
@@ -463,31 +465,9 @@ public class MyVisitor extends DemoBaseVisitor<Double> {
 	}
 
 	/**
-	 * @param varMap a new map of Variables and their Names
-	 */
-	public void setVarMap(HashMap<String, Variable> varMap) {
-		this.varMap = varMap;
-	}
-
-	/**
 	 * @return current Mapping of Functions and their Names
 	 */
 	public HashMap<String, Function> getFuncMap() {
 		return funcMap;
 	}
-
-	/**
-	 * @param funcMap a new map of Functions and their Names
-	 */
-	public void setFuncMap(HashMap<String, Function> funcMap) {
-		this.funcMap = funcMap;
-	}
-
-	/**
-	 * @return the current Listing of all solutions for this tree
-	 */
-	public LinkedList<Double> getSolutionList() {
-		return solutionList;
-	}
-
 }
