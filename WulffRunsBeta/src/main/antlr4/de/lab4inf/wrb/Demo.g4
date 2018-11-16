@@ -12,23 +12,30 @@ SUB: '-';
 MUL: '*';
 DIV: '/';
 POW: '^' | '**';
-LBRACKET: '(';
-RBRACKET: ')';
+L_BRACKET: '(';
+R_BRACKET: ')';
+L_CBRACKET: '{';
+R_CBRACKET: '}';
 ASSIGN: '=';
 MOD: 'mod' | '%';
 TERMINATOR: ';';
 SEPERATOR: ',';
+MATRIX_PREFIX: 'm:';
 
 root: statement (TERMINATOR statement)* TERMINATOR ? EOF;
 
-statement: (assignment | expression | functionDefinition);
+statement: (assignment | expression | functionDefinition | matrixExpression);
+
+matrixDefinition: VARIABLE ASSIGN L_CBRACKET matrixRow (TERMINATOR matrixRow)* R_BRACKET;
+matrixRow: expression (SEPERATOR expression)*;
+matrixCall: MATRIX_PREFIX VARIABLE;
 
 assignment : VARIABLE ASSIGN expression;
 
-functionDefinition: name=VARIABLE LBRACKET (VARIABLE (SEPERATOR VARIABLE)*) RBRACKET ASSIGN expression;	
-functionCall: name=VARIABLE LBRACKET (expression (SEPERATOR expression)*) RBRACKET;					
+functionDefinition: name=VARIABLE L_BRACKET (VARIABLE (SEPERATOR VARIABLE)*) R_BRACKET ASSIGN expression;	
+functionCall: name=VARIABLE L_BRACKET (expression (SEPERATOR expression)*) R_BRACKET;					
 
-expression: sign = SUB? LBRACKET expression RBRACKET						#Bracket
+expression: sign = SUB? L_BRACKET expression R_BRACKET						#Bracket
 		  | links = expression E rechts = expression						#Tiny
 		  |<assoc=right> links =  expression POW rechts = expression 		#Power
 		  | links = expression DIV rechts = expression						#Division
@@ -40,3 +47,6 @@ expression: sign = SUB? LBRACKET expression RBRACKET						#Bracket
 		  | sign = (SUB | ADD)? NUMBER										#Number
 		  | sign = (SUB | ADD)? VARIABLE									#Variable
 		  ;
+
+matrixExpression: links = matrixCall MUL rechts = matrixCall					#MatrixMultiplikation
+				;
