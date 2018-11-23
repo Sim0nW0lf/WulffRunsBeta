@@ -24,16 +24,17 @@ MATRIX_PREFIX: 'm:';
 
 root: statement (TERMINATOR statement)* TERMINATOR ? EOF;
 
-statement: (assignment | expression | functionDefinition | matrixExpression);
+statement: (assignment | expression | functionDefinition | matrixExpression | matrixDefinition);
 
-matrixDefinition: VARIABLE ASSIGN L_CBRACKET matrixRow (TERMINATOR matrixRow)* R_BRACKET;
+matrixDefinition: VARIABLE ASSIGN L_CBRACKET (matrixRow TERMINATOR)* R_CBRACKET;
 matrixRow: expression (SEPERATOR expression)*;
+// TODO: Matrix schöner multiplizieren durch überprüfung um was für eine Variable es sich handelt?
 matrixCall: MATRIX_PREFIX VARIABLE;
 
 assignment : VARIABLE ASSIGN expression;
 
 functionDefinition: name=VARIABLE L_BRACKET (VARIABLE (SEPERATOR VARIABLE)*) R_BRACKET ASSIGN expression;	
-functionCall: name=VARIABLE L_BRACKET (expression (SEPERATOR expression)*) R_BRACKET;					
+functionCall: name=VARIABLE L_BRACKET (expression (SEPERATOR expression)*) R_BRACKET;			
 
 expression: sign = SUB? L_BRACKET expression R_BRACKET						#Bracket
 		  | links = expression E rechts = expression						#Tiny
@@ -48,5 +49,5 @@ expression: sign = SUB? L_BRACKET expression R_BRACKET						#Bracket
 		  | sign = (SUB | ADD)? VARIABLE									#Variable
 		  ;
 
-matrixExpression: links = matrixCall MUL rechts = matrixCall					#MatrixMultiplikation
+matrixExpression: links = matrixCall MUL rechts = matrixCall				#MatrixMultiplikation
 				;
