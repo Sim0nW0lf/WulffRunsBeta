@@ -24,9 +24,8 @@ public class MyMatrix implements Runnable {
 		}
 	}
 	
-	public MyMatrix rechnen(Double[][] otherMatrix, int xStart, int yStart, int xEnd, int yEnd) {
-		//TODO: shit
-		return null;
+	public MyMatrix rechnen(Double[][] matrixA, Double[][] matrixB, int xStart, int yStart, int xEnd, int yEnd) {
+		
 	}
 	
 	public MyVisitor getParent() {
