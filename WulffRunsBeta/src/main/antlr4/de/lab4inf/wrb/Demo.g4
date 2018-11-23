@@ -1,5 +1,6 @@
 grammar Demo;
 
+
 WHITESPACE: [ \t\n\r]+->skip;	
 
 E: 'e';
