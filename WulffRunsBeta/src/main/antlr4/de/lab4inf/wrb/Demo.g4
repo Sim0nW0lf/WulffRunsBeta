@@ -26,7 +26,7 @@ root: statement (TERMINATOR statement)* TERMINATOR ? EOF;
 
 statement: (assignment | expression | functionDefinition | matrixExpression | matrixDefinition);
 
-matrixDefinition: VARIABLE ASSIGN L_CBRACKET (matrixRow TERMINATOR)* R_CBRACKET;
+matrixDefinition: name=VARIABLE ASSIGN L_CBRACKET (matrixRow TERMINATOR)* R_CBRACKET;
 matrixRow: expression (SEPERATOR expression)*;
 // TODO: Matrix schöner multiplizieren durch überprüfung um was für eine Variable es sich handelt?
 matrixCall: MATRIX_PREFIX VARIABLE;

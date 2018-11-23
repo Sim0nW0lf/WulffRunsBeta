@@ -43,6 +43,7 @@ public class MyVisitor extends DemoBaseVisitor<Double> {
 	// LinkedList<Variable> varList = new LinkedList<Variable>();
 	HashMap<String, Variable> varMap = new HashMap<String, Variable>();
 	HashMap<String, Function> funcMap = new HashMap<String, Function>();
+	HashMap<String, MyMatrix> matrixMap = new HashMap<String, MyMatrix>();
 
 	/**
 	 * @return the last Entry to solutionList, the most recent solved equation.
@@ -413,6 +414,32 @@ public class MyVisitor extends DemoBaseVisitor<Double> {
 	}
 	
 	
+	public Double visitMatrixDefinition(DemoParser.MatrixDefinitionContext ctx) {
+		MyMatrix m = new MyMatrix(this, ctx, ctx.matrixRow().size(), ctx.matrixRow(0).expression().size());
+		this.matrixMap.put(ctx.name.getText(), m);
+		
+		MatrixVisitor mV = new MatrixVisitor();
+		
+		int[] i = {0, 0};
+		for(DemoParser.MatrixRowContext c : ctx.matrixRow()) {
+			for(DemoParser.ExpressionContext d : c.expression()) {
+				if(mV.visitExpression(d)) {
+					m.getVarFields().add(i);
+				} else {
+					try {
+						m.getDmatrix()[i[0]][i[1]] = visit(d);
+					} catch (Exception e) {
+						throw new IllegalArgumentException("Bad Matrix definition");
+					}
+				}
+				i[1]++;
+			}
+			i[0]++;
+		}
+		
+		
+		return 0.0;
+	}
 
 	@Override
 	protected Double aggregateResult(Double aggregate, Double nextResult) {
