@@ -24,6 +24,7 @@ public class MyVisitor extends DemoBaseVisitor<Double> {
 	HashMap<String, Variable> varMap = new HashMap<String, Variable>();
 	HashMap<String, Function> funcMap = new HashMap<String, Function>();
 	HashMap<String, MyMatrix> matrixMap = new HashMap<String, MyMatrix>();
+	HashMap<String, Double[][]> matrixSolutionsMap = new HashMap<String, Double[][]>();
 
 	/**
 	 * @return the last Entry to solutionList, the most recent solved equation.
@@ -217,7 +218,6 @@ public class MyVisitor extends DemoBaseVisitor<Double> {
 
 		throw new IllegalArgumentException("Unknown Function called: " + ctx.getText());
 	}
-	
 	
 	public Double visitMatrixDefinition(DemoParser.MatrixDefinitionContext ctx) {
 		MyMatrix m = new MyMatrix(this, ctx, ctx.matrixRow().size(), ctx.matrixRow(0).expression().size());
