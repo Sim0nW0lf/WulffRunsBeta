@@ -24,10 +24,8 @@ public class MyMatrix implements Runnable {
 		}
 	}
 	
-<<<<<<< HEAD
 	public MyMatrix rechnen(Double[][] matrixA, Double[][] matrixB, int xStart, int yStart, int xEnd, int yEnd) {
 		
-=======
 	public Double[][] addition(Double[][] otherMatrix) {
 		//check if sizes fit
 		if(otherMatrix.length != this.dmatrix.length || otherMatrix[0].length != this.dmatrix[0].length) {
@@ -69,7 +67,6 @@ public class MyMatrix implements Runnable {
 		}
 		
 		return res;
->>>>>>> branch 'master' of https://github.com/iPwnWolf/WulffRunsBeta.git
 	}
 	
 	public MyVisitor getParent() {
