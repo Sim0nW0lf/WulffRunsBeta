@@ -23,8 +23,6 @@ public class MyMatrix implements Runnable {
 			this.dmatrix[i[0]][i[1]] = this.parent.visit(this.matrix[i[0]][i[1]]);
 		}
 	}
-	
-	public MyMatrix rechnen(Double[][] matrixA, Double[][] matrixB, int xStart, int yStart, int xEnd, int yEnd) {
 		
 	public Double[][] addition(Double[][] otherMatrix) {
 		//check if sizes fit
