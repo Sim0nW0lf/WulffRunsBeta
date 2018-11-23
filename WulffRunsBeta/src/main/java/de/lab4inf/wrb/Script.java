@@ -58,6 +58,9 @@ public interface Script {
      * @throws IOException in case of a stream I/O error
      */
     double parse(InputStream defStream) throws IOException;
+    
+    
+    Double[][] parseMatrix(String definition) throws IOException;
 
     /**
      * Get all script known function names.
