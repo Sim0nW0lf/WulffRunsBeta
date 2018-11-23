@@ -463,11 +463,11 @@ public abstract class AbstractScriptTest {
         assertEquals((2./3.)/5., script.parse(task), EPS);
     }
 
-    //    @Test
-    //    public final void testLongMixed() throws Exception {
-    //        String task = "2.0 * 3 * 4.0 - 5 + 6.0 / 3 ";
-    //        assertEquals(21, script.parse(task), EPS);
-    //    }
+        @Test
+        public final void testLongMixed() throws Exception {
+            String task = "2.0 * 3 * 4.0 - 5 + 6.0 / 3 ";
+            assertEquals(21, script.parse(task), EPS);
+        }
 
     @Test
     public void testParseBracket() throws Exception {
@@ -481,14 +481,14 @@ public abstract class AbstractScriptTest {
         assertEquals(1.0, script.parse(task), EPS);
     }
 
-    //    @Test
-    //    public final void testAssignMultiLineEval() throws Exception {
-    //        String task = "x = 4; y=x*x; z=x-y";
-    //        assertEquals( -12, script.parse(task), EPS);
-    //        assertEquals(4, script.getVariable("x"), EPS);
-    //        assertEquals(16, script.getVariable("y"), EPS);
-    //        assertEquals( -12, script.getVariable("z"), EPS);
-    //    }
+        @Test
+        public final void testAssignMultiLineEval() throws Exception {
+            String task = "x = 4; y=x*x; z=x-y";
+            assertEquals( -12, script.parse(task), EPS);
+            assertEquals(4, script.getVariable("x"), EPS);
+            assertEquals(16, script.getVariable("y"), EPS);
+            assertEquals( -12, script.getVariable("z"), EPS);
+        }
 
     @Test
     public final void testParseMultBrackets() throws Exception {

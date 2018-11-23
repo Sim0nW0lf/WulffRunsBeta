@@ -43,6 +43,7 @@ public class MyVisitor extends DemoBaseVisitor<Double> {
 	// LinkedList<Variable> varList = new LinkedList<Variable>();
 	HashMap<String, Variable> varMap = new HashMap<String, Variable>();
 	HashMap<String, Function> funcMap = new HashMap<String, Function>();
+	HashMap<String, MyMatrix> matrixMap = new HashMap<String, MyMatrix>();
 
 	/**
 	 * @return the last Entry to solutionList, the most recent solved equation.
@@ -182,6 +183,8 @@ public class MyVisitor extends DemoBaseVisitor<Double> {
 //				case "cos":
 //					return Math.cos(rechnen(ctx.getChild(2)));
 //				case "tan":
+	// Predefined Math functions. Because java
+//	switch (ctx.name.getText()) {
 //					return Math.tan(rechnen(ctx.getChild(2)));
 //				case "asin":
 //					return Math.asin(rechnen(ctx.getChild(2)));
@@ -343,7 +346,7 @@ public class MyVisitor extends DemoBaseVisitor<Double> {
 		}
 
 		if (this.funcMap.containsKey(ctx.name.getText())) {
-			// Change the cool Double to the sh*tty c-remnant double
+			// Change the cool Double to the shitty c-remnant double
 			Double[] t = args.toArray(new Double[args.size()]);
 			return this.funcMap.get(ctx.name.getText()).eval(Stream.of(t).mapToDouble(Double::doubleValue).toArray());
 		}
@@ -409,6 +412,34 @@ public class MyVisitor extends DemoBaseVisitor<Double> {
 
 		throw new IllegalArgumentException("Unknown Function called: " + ctx.getText());
 	}
+	
+	
+	public Double visitMatrixDefinition(DemoParser.MatrixDefinitionContext ctx) {
+		MyMatrix m = new MyMatrix(this, ctx, ctx.matrixRow().size(), ctx.matrixRow(0).expression().size());
+		this.matrixMap.put(ctx.name.getText(), m);
+		
+		MatrixVisitor mV = new MatrixVisitor();
+		
+		int[] i = {0, 0};
+		for(DemoParser.MatrixRowContext c : ctx.matrixRow()) {
+			for(DemoParser.ExpressionContext d : c.expression()) {
+				if(mV.visitExpression(d)) {
+					m.getVarFields().add(i);
+				} else {
+					try {
+						m.getDmatrix()[i[0]][i[1]] = visit(d);
+					} catch (Exception e) {
+						throw new IllegalArgumentException("Bad Matrix definition");
+					}
+				}
+				i[1]++;
+			}
+			i[0]++;
+		}
+		
+		
+		return 0.0;
+	}
 
 	@Override
 	protected Double aggregateResult(Double aggregate, Double nextResult) {
@@ -463,31 +494,9 @@ public class MyVisitor extends DemoBaseVisitor<Double> {
 	}
 
 	/**
-	 * @param varMap a new map of Variables and their Names
-	 */
-	public void setVarMap(HashMap<String, Variable> varMap) {
-		this.varMap = varMap;
-	}
-
-	/**
 	 * @return current Mapping of Functions and their Names
 	 */
 	public HashMap<String, Function> getFuncMap() {
 		return funcMap;
 	}
-
-	/**
-	 * @param funcMap a new map of Functions and their Names
-	 */
-	public void setFuncMap(HashMap<String, Function> funcMap) {
-		this.funcMap = funcMap;
-	}
-
-	/**
-	 * @return the current Listing of all solutions for this tree
-	 */
-	public LinkedList<Double> getSolutionList() {
-		return solutionList;
-	}
-
 }

@@ -1,28 +1,5 @@
 grammar Demo;
 
-//@DemoParser::members {
-//  @Override
-//  public void reportError(RecognitionException e) {
-//    throw new IllegalArgumentException("I quit!\n" + e.getMessage()); 
-//  }
-//  @Override
-//  public void notifyErrorListeners(Token offendingToken, String msg, RecognitionException ex)
-//  {
-//    throw new IllegalArgumentException(msg); 
-//  }
-//}
-//
-//@DemoLexer::members {
-//  @Override
-//  public void reportError(RecognitionException e) {
-//    throw new IllegalArgumentException("I quit!\n" + e.getMessage()); 
-//  }
-//  @Override
-//  public void recover(RecognitionException ex) 
-//  {
-//    throw new IllegalArgumentException(ex.getMessage()); 
-//  }
-//}
 
 WHITESPACE: [ \t\n\r]+->skip;	
 
@@ -36,23 +13,31 @@ SUB: '-';
 MUL: '*';
 DIV: '/';
 POW: '^' | '**';
-LBRACKET: '(';
-RBRACKET: ')';
+L_BRACKET: '(';
+R_BRACKET: ')';
+L_CBRACKET: '{';
+R_CBRACKET: '}';
 ASSIGN: '=';
 MOD: 'mod' | '%';
 TERMINATOR: ';';
 SEPERATOR: ',';
+MATRIX_PREFIX: 'm:';
 
 root: statement (TERMINATOR statement)* TERMINATOR ? EOF;
 
-statement: (assignment | expression | functionDefinition);
+statement: (assignment | expression | functionDefinition | matrixExpression | matrixDefinition);
+
+matrixDefinition: name=VARIABLE ASSIGN L_CBRACKET (matrixRow TERMINATOR)* R_CBRACKET;
+matrixRow: expression (SEPERATOR expression)*;
+// TODO: Matrix schöner multiplizieren durch überprüfung um was für eine Variable es sich handelt?
+matrixCall: MATRIX_PREFIX VARIABLE;
 
 assignment : VARIABLE ASSIGN expression;
 
-functionDefinition: name=VARIABLE LBRACKET (VARIABLE (SEPERATOR VARIABLE)*) RBRACKET ASSIGN expression;	
-functionCall: name=VARIABLE LBRACKET (expression (SEPERATOR expression)*) RBRACKET;					
+functionDefinition: name=VARIABLE L_BRACKET (VARIABLE (SEPERATOR VARIABLE)*) R_BRACKET ASSIGN expression;	
+functionCall: name=VARIABLE L_BRACKET (expression (SEPERATOR expression)*) R_BRACKET;			
 
-expression: sign = SUB? LBRACKET expression RBRACKET						#Bracket
+expression: sign = SUB? L_BRACKET expression R_BRACKET						#Bracket
 		  | links = expression E rechts = expression						#Tiny
 		  |<assoc=right> links =  expression POW rechts = expression 		#Power
 		  | links = expression DIV rechts = expression						#Division
@@ -64,3 +49,6 @@ expression: sign = SUB? LBRACKET expression RBRACKET						#Bracket
 		  | sign = (SUB | ADD)? NUMBER										#Number
 		  | sign = (SUB | ADD)? VARIABLE									#Variable
 		  ;
+
+matrixExpression: links = matrixCall MUL rechts = matrixCall				#MatrixMultiplikation
+				;
