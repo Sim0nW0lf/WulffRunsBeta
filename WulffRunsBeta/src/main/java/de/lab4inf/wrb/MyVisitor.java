@@ -411,6 +411,8 @@ public class MyVisitor extends DemoBaseVisitor<Double> {
 
 		throw new IllegalArgumentException("Unknown Function called: " + ctx.getText());
 	}
+	
+	
 
 	@Override
 	protected Double aggregateResult(Double aggregate, Double nextResult) {
