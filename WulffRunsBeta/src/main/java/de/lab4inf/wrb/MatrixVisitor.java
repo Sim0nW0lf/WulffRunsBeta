@@ -17,6 +17,14 @@ public class MatrixVisitor extends DemoBaseVisitor<Boolean> {
 	
 	@Override
 	protected Boolean aggregateResult(Boolean aggregate, Boolean nextResult) {
+		if(aggregate == null) {
+			if(nextResult == null) {
+				return false;
+			}
+			return nextResult;
+		} else if(nextResult == null) {
+			return aggregate;
+		}
 		return aggregate || nextResult;
 	} 
 

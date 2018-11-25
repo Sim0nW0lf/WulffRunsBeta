@@ -121,6 +121,14 @@ public class WRBScript implements Script {
 		// }
 	}
 	
+	public MyMatrix getMatrix(String name) throws IllegalArgumentException {
+		return visitor.getMatrix(name);
+	}
+	
+	public Double[][] getMatrixSolution(String name) throws IllegalArgumentException {
+		return visitor.getMatrixSolution(name);
+	}
+	
 	/**
      * @param that another script with variables and functions to add
      * @return the new build script.

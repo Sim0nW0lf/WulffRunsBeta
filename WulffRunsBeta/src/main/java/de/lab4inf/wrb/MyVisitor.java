@@ -248,6 +248,7 @@ public class MyVisitor extends DemoBaseVisitor<Double> {
 				}
 				i[1]++;
 			}
+			i[1] = 0;
 			i[0]++;
 		}
 		
@@ -255,11 +256,13 @@ public class MyVisitor extends DemoBaseVisitor<Double> {
 		return 0.0;
 	}
 	
-	// I am useless sry, dont get this shit :P
 	@Override
 	public Double visitMatrixMultiplikation(DemoParser.MatrixMultiplikationContext ctx) {
-		MyMatrix m; // initialisieren? Hab ich multi falsch aufgerufen? KP
-		solutionMatrix = m.multiplication(matrixMap.get(ctx.links.name.getText()).dmatrix, 0, 0, 2, 2); // just trying out
+		this.matrixSolutionsMap.put(ctx.getText(), 
+				this.matrixMap.get(ctx.rechts.name.getText()).multiplication(
+						this.matrixMap.get(ctx.links.name.getText()).getDmatrix()
+						)
+				);
 		return 0.0;
 	}
 
@@ -305,6 +308,27 @@ public class MyVisitor extends DemoBaseVisitor<Double> {
 		} catch (IllegalArgumentException e) {
 			this.varMap.put(varName, new Variable(varName, varValue));
 			// this.varList.add(new Variable(varName, varValue));
+		}
+	}
+	
+	/**
+	 * @param matName Name of the Matrix to search
+	 * @return the Matrix with matching name
+	 * @throws IllegalArgumentException the searched Matrix does not exist
+	 */
+	public MyMatrix getMatrix(String matName) throws IllegalArgumentException {
+		if (!this.matrixMap.containsKey(matName)) {
+			throw new IllegalArgumentException("Error 404: Matrix '" + matName + "' not found. ");
+		} else {
+			return this.matrixMap.get(matName);
+		}
+	}
+	
+	public Double[][] getMatrixSolution(String matName) throws IllegalArgumentException {
+		if (!this.matrixSolutionsMap.containsKey(matName)) {
+			throw new IllegalArgumentException("Error 404: Solution to '" + matName + "' not found. ");
+		} else {
+			return this.matrixSolutionsMap.get(matName);
 		}
 	}
 

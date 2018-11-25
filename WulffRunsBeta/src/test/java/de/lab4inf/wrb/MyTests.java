@@ -9,10 +9,10 @@ import org.junit.Test;
 
 public class MyTests extends AbstractScriptTest {
 	
-	static public void matrixCompare(Double[][] matrixExpected, Double[][] MatrixActual) {
-        if (Arrays.deepEquals(matrixExpected, MatrixActual) == true) {
+	static public void matrixCompare(Double[][] matrixExpected, Double[][] matrixActual) {
+        if (Arrays.deepEquals(matrixExpected, matrixActual) == true) {
             return;
-        }else {
+        } else {
         	throw new IllegalArgumentException();
         }
     }
@@ -131,9 +131,13 @@ public class MyTests extends AbstractScriptTest {
 	
 	@Test
 	public final void testMatrixMultiplikation() throws Exception {
-		String task = "matrixA = {1,2;3,4;}; matrixB = {4,3;2,1;}; matrixA*matrixB;";
+		String task = "A = {1,2;3,4;}; B = {4,3;2,1;}; m:A*m:B;";
+		script.parse(task);
 		Double[][] matrixExpected = {{8.0, 5.0}, {20.0, 13.0}};
-		matrixCompare(matrixExpected, script.parseMatrix(task));
+		matrixCompare(matrixExpected, script.getMatrixSolution("m:A*m:B"));
+		
+		//wtf is parseMatrix?? why?
+		//matrixCompare(matrixExpected, script.parseMatrix(task));
 	}
 	
 }

@@ -15,6 +15,8 @@ public class MyMatrix {
 
 	public MyMatrix(MyVisitor parent, DemoParser.MatrixDefinitionContext matrix, int width, int height) {
 		this.matrixRoot = matrix;
+		this.height = height;
+		this.width = width;
 		this.dmatrix = new Double[width][height];
 	}
 
@@ -52,7 +54,7 @@ public class MyMatrix {
 			throw new IllegalArgumentException("Incorrect size.");
 		}
 		// Check if the indexes are acceptable
-		if (xStart < width || xEnd > width || yStart < height || yEnd > height) {
+		if (xStart > width || xEnd > width || yStart > height || yEnd > height) {
 			throw new IllegalArgumentException("Indexes out of bounds");
 		}
 		// Make sure our numbers are good
@@ -142,6 +144,31 @@ public class MyMatrix {
 		}
 
 		return ret;
+	}
+	
+	static boolean compare(Double[][] m1, Double[][] m2) {
+		if(m1.length != m2.length || m1[0].length != m2[0].length) {
+			return false;
+		}
+		for(int x = 0; x >= m1.length; x++) {
+			for(int y = 0; y >= m1[0].length; y++) {
+				if(m1[x][y] != m2[x][y]) {
+					return false;
+				}
+			}
+		}
+		return true;
+	}
+	
+	static String print(Double[][] m1) {
+		String s = "";
+		for(int y = 0; y >= m1.length; y++) {
+			for(int x = 0; x >= m1[0].length; x++) {
+				s += m1[x][y] + " ";
+			}
+			s += "\n";
+		}
+		return s;
 	}
 
 	public MyVisitor getParent() {

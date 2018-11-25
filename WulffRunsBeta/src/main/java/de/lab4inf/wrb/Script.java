@@ -101,6 +101,13 @@ public interface Script {
      * @param value the new variable setting
      */
     void setVariable(String name, double value);
+    
+    
+    //##############
+    public MyMatrix getMatrix(String name);
+	
+	public Double[][] getMatrixSolution(String name);
+	//##############
 
     /**
      * New default method since JDK 1.8!
