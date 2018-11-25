@@ -15,6 +15,7 @@ public class MyTests extends AbstractScriptTest {
         if (Arrays.deepEquals(matrixExpected, matrixActual) == true) {
             return;
         } else {
+        	System.out.println("\nExpected: " + MyMatrix.print(matrixExpected) + " but got: " + MyMatrix.print(matrixActual));
         	throw new IllegalArgumentException();
         }
     }
