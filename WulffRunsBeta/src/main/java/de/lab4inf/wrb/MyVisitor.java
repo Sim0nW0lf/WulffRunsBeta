@@ -238,7 +238,7 @@ public class MyVisitor extends DemoBaseVisitor<Double> {
 		for(DemoParser.MatrixRowContext c : ctx.matrixRow()) {
 			for(DemoParser.ExpressionContext d : c.expression()) {
 				if(mV.visitExpression(d)) {
-					m.getVarFields().add(i);
+					m.addVarField(i[0], i[1], d); //getVarFields().add(i);
 				} else {
 					try {
 						m.getDmatrix()[i[0]][i[1]] = visit(d);

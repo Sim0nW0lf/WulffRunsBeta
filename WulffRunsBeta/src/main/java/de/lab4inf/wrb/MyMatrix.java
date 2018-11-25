@@ -2,6 +2,8 @@ package de.lab4inf.wrb;
 
 import java.util.ArrayList;
 
+import de.lab4inf.wrb.DemoParser.ExpressionContext;
+
 public class MyMatrix {
 
 	static int threadNumber = 4;
@@ -14,6 +16,7 @@ public class MyMatrix {
 	protected int width;
 
 	public MyMatrix(MyVisitor parent, DemoParser.MatrixDefinitionContext matrix, int width, int height) {
+		this.parent = parent;
 		this.matrixRoot = matrix;
 		this.height = height;
 		this.width = width;
@@ -22,7 +25,8 @@ public class MyMatrix {
 
 	private void refreshNumbers() {
 		for (int[] i : this.varFields) {
-			this.dmatrix[i[0]][i[1]] = this.parent.visit(this.matrix[i[0]][i[1]]);
+			ExpressionContext test = this.matrix[i[0]][i[1]];//matrix[i[0]][i[1]];
+			this.dmatrix[i[0]][i[1]] = this.parent.visit(test); // this.parent.visit(this.matrix[i[0]][i[1]]);
 		}
 	}
 
@@ -210,6 +214,13 @@ public class MyMatrix {
 
 	public void setVarFields(ArrayList<int[]> varFields) {
 		this.varFields = varFields;
+	}
+	
+	public void addVarField(int y, int x, DemoParser.ExpressionContext ctx) {
+		int[] i = {y, x};
+		this.varFields.add(i);
+		this.matrix = new ExpressionContext[this.dmatrix.length][this.dmatrix[0].length];
+		this.matrix[y][x] = ctx;
 	}
 
 	public Double[][] getDmatrix() {
