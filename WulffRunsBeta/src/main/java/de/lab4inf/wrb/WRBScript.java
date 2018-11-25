@@ -28,6 +28,34 @@ public class WRBScript implements Script {
 		return parse(input);
 	}
 	
+	@Override
+    public Double[][] parseMatrix(String definition) throws IOException{
+		CharStream input = new ANTLRInputStream(definition);
+		return parseMatrix(input);
+	}
+	
+	public Double[][] parseMatrix(CharStream input) throws IllegalArgumentException {
+		try {
+			DemoLexer lexer = new DemoLexer(input);
+			lexer.removeErrorListeners();
+			lexer.addErrorListener(ThrowingErrorListener.INSTANCE);
+			
+			CommonTokenStream tokens = new CommonTokenStream(lexer);
+			
+			DemoParser parser = new DemoParser(tokens);
+			parser.removeErrorListeners();
+			parser.addErrorListener(ThrowingErrorListener.INSTANCE);
+			
+			ParseTree tree = parser.root();
+			visitor.visit(tree);
+			
+			return visitor.getMatrixErgebnis();
+		} catch (Exception e) {
+//			System.out.println("Not parsable. ");
+			throw new IllegalArgumentException("Not Parsable:" + e.getMessage());
+		}
+	}
+	
 	public double parse(CharStream input) throws IllegalArgumentException {
 		try {
 			DemoLexer lexer = new DemoLexer(input);

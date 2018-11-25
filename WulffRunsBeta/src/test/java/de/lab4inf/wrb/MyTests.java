@@ -3,11 +3,19 @@ package de.lab4inf.wrb;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 
-import javax.annotation.processing.Processor;
+import java.util.Arrays;
 
 import org.junit.Test;
 
 public class MyTests extends AbstractScriptTest {
+	
+	static public void matrixCompare(Double[][] matrixExpected, Double[][] MatrixActual) {
+        if (Arrays.deepEquals(matrixExpected, MatrixActual) == true) {
+            return;
+        }else {
+        	throw new IllegalArgumentException();
+        }
+    }
 
 	@Override
 	protected Script getScript() {
@@ -47,7 +55,7 @@ public class MyTests extends AbstractScriptTest {
 		final int MAX_PARSE_TIME = 1000;
 		final int MAX_LOOPS = 5000, AVERAGE_LOOP = 20;
 		final double SCALED = -1000 * MAX_LOOPS;
-		double averageSpeedup = 0, speedup, x = 0.1;
+		double averageSpeedup = 0, x = 0.1;
 		long timeParsed, timeCached, averageTimeCached = 0, averageTimeParsed = 0;
 		String task;
 		// sine function Taylor expansion will produce some performance burden.
@@ -105,4 +113,27 @@ public class MyTests extends AbstractScriptTest {
 
 		assertTrue("function syntax tree not cached", averageSpeedup > 3);
 	}
+	
+//	@Test
+//    public final void testSetGetMatrix() throws Exception {
+//        double y, x = rnd();
+//        String key = "XYZ";
+//        script.setVariable(key, x);
+//        y = script.getVariable(key);
+//        assertEquals(x, y, EPS);
+//    }
+//	
+//	@Test
+//	public final void testParseMatrix() throws Exception {
+//		String task = "matrixA = {2,3;4,5;};";
+//		assertEquals(2.0, script.parse(task), EPS);
+//	}
+	
+	@Test
+	public final void testMatrixMultiplikation() throws Exception {
+		String task = "matrixA = {1,2;3,4;}; matrixB = {4,3;2,1;}; matrixA*matrixB;";
+		Double[][] matrixExpected = {{8.0, 5.0}, {20.0, 13.0}};
+		matrixCompare(matrixExpected, script.parseMatrix(task));
+	}
+	
 }

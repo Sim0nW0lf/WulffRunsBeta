@@ -24,13 +24,21 @@ public class MyVisitor extends DemoBaseVisitor<Double> {
 	HashMap<String, Variable> varMap = new HashMap<String, Variable>();
 	HashMap<String, Function> funcMap = new HashMap<String, Function>();
 	HashMap<String, MyMatrix> matrixMap = new HashMap<String, MyMatrix>();
+
 	HashMap<String, Double[][]> matrixSolutionsMap = new HashMap<String, Double[][]>();
+
+	Double[][] solutionMatrix;
+
 
 	/**
 	 * @return the last Entry to solutionList, the most recent solved equation.
 	 */
 	public double getErgebnis() {
 		return solutionList.getLast();
+	}
+	
+	public Double[][] getMatrixErgebnis() {
+		return solutionMatrix;
 	}
 
 	/*
@@ -219,6 +227,7 @@ public class MyVisitor extends DemoBaseVisitor<Double> {
 		throw new IllegalArgumentException("Unknown Function called: " + ctx.getText());
 	}
 	
+	@Override
 	public Double visitMatrixDefinition(DemoParser.MatrixDefinitionContext ctx) {
 		MyMatrix m = new MyMatrix(this, ctx, ctx.matrixRow().size(), ctx.matrixRow(0).expression().size());
 		this.matrixMap.put(ctx.name.getText(), m);
@@ -243,6 +252,14 @@ public class MyVisitor extends DemoBaseVisitor<Double> {
 		}
 		
 		
+		return 0.0;
+	}
+	
+	// I am useless sry, dont get this shit :P
+	@Override
+	public Double visitMatrixMultiplikation(DemoParser.MatrixMultiplikationContext ctx) {
+		MyMatrix m; // initialisieren? Hab ich multi falsch aufgerufen? KP
+		solutionMatrix = m.multiplication(matrixMap.get(ctx.links.name.getText()).dmatrix, 0, 0, 2, 2); // just trying out
 		return 0.0;
 	}
 
