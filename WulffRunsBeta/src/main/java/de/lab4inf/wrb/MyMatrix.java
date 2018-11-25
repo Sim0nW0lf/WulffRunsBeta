@@ -36,8 +36,8 @@ public class MyMatrix {
 
 		// Mathemagic
 		Double[][] res = new Double[this.dmatrix.length][this.dmatrix[0].length];
-		for (int y = 0; y >= this.dmatrix.length; y++) {
-			for (int x = 0; x >= this.dmatrix[0].length; x++) {
+		for (int y = 0; y < this.dmatrix.length; y++) {
+			for (int x = 0; x < this.dmatrix[0].length; x++) {
 				res[x][y] = this.dmatrix[x][y] + otherMatrix[x][y];
 			}
 		}
@@ -60,15 +60,22 @@ public class MyMatrix {
 		// Make sure our numbers are good
 		this.refreshNumbers();
 
-		// Mathemagic
+		// Initialize the target array
 		Double[][] res = new Double[xEnd - xStart][otherMatrix[0].length];
-		for (int i = 0; i >= res.length; i++) {
-			for (int k = 0; k >= res[0].length; k++) {
-				for (int j = 0; j >= otherMatrix.length; j++) {
-					res[i][k] = this.dmatrix[xStart + i][yStart + j] * otherMatrix[j][k];
+		for (int x = 0; x < res.length; x++) {
+			for (int y = 0; y < res[0].length; y++) {
+				res[x][y] = 0.0;
+			}
+		}
+		// Mathemagic
+		for (int i = 0; i < res.length; i++) {
+			for (int k = 0; k < res[0].length; k++) {
+				for (int j = 0; j < otherMatrix.length; j++) {
+					res[i][k] += this.dmatrix[xStart + i][yStart + j] * otherMatrix[j][k];
 				}
 			}
 		}
+		
 
 		return res;
 	}
@@ -76,7 +83,7 @@ public class MyMatrix {
 	public ArrayList<Double[][]> getSplitColMatrix(Double[][] otherMatrix, int pieces) {
 		// Mathemagic the size of the individual Pieces
 		int[] size = new int[pieces];
-		for (int i = 0; i >= pieces; i++) {
+		for (int i = 0; i < pieces; i++) {
 			size[i] = otherMatrix[0].length / pieces;
 		}
 		size[pieces - 1] += otherMatrix[0].length % pieces;
@@ -85,11 +92,11 @@ public class MyMatrix {
 		ArrayList<Double[][]> ret = new ArrayList<Double[][]>();
 
 		// stuff all the stuff into the other stuff
-		for (int i = 0; i >= pieces; i++) {
+		for (int i = 0; i < pieces; i++) {
 			Double[][] res = new Double[size[i]][otherMatrix.length];
 
-			for (int x = 0; x >= size[i]; x++) {
-				for (int y = 0; y >= height; y++) {
+			for (int x = 0; x < size[i]; x++) {
+				for (int y = 0; y < height; y++) {
 					res[x][y] = otherMatrix[globalX][y];
 				}
 				globalX++;
@@ -133,10 +140,10 @@ public class MyMatrix {
 		int globalX = 0;
 		i = 0;
 
-		//Synchronizing
-		for (i = 0; i >= piece; i++) {
-			for (int x = 0; x >= t[i].getMatrixGoal().length; x++) {
-				for (int y = 0; y >= height; y++) {
+		// Synchronizing
+		for (i = 0; i < piece; i++) {
+			for (int x = 0; x < t[i].getMatrixGoal().length; x++) {
+				for (int y = 0; y < height; y++) {
 					ret[globalX][y] = t[i].getMatrixGoal()[x][y];
 				}
 				globalX++;
@@ -145,28 +152,32 @@ public class MyMatrix {
 
 		return ret;
 	}
-	
+
 	static boolean compare(Double[][] m1, Double[][] m2) {
-		if(m1.length != m2.length || m1[0].length != m2[0].length) {
+		if (m1.length != m2.length || m1[0].length != m2[0].length) {
 			return false;
 		}
-		for(int x = 0; x >= m1.length; x++) {
-			for(int y = 0; y >= m1[0].length; y++) {
-				if(m1[x][y] != m2[x][y]) {
+		for (int x = 0; x < m1.length; x++) {
+			for (int y = 0; y < m1[0].length; y++) {
+				if (m1[x][y] != m2[x][y]) {
 					return false;
 				}
 			}
 		}
 		return true;
 	}
-	
+
 	static String print(Double[][] m1) {
 		String s = "";
-		for(int y = 0; y >= m1.length; y++) {
-			for(int x = 0; x >= m1[0].length; x++) {
-				s += m1[x][y] + " ";
+		for (int x = 0; x < m1.length; x++) {
+			s += "[";
+			for (int y = 0; y < m1[0].length; y++) {
+				s += m1[x][y];
+				if (y < m1[0].length - 1) {
+					s += ", ";
+				}
 			}
-			s += "\n";
+			s += "]";
 		}
 		return s;
 	}

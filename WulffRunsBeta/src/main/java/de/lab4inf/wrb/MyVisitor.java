@@ -259,8 +259,8 @@ public class MyVisitor extends DemoBaseVisitor<Double> {
 	@Override
 	public Double visitMatrixMultiplikation(DemoParser.MatrixMultiplikationContext ctx) {
 		this.matrixSolutionsMap.put(ctx.getText(), 
-				this.matrixMap.get(ctx.rechts.name.getText()).multiplication(
-						this.matrixMap.get(ctx.links.name.getText()).getDmatrix()
+				this.matrixMap.get(ctx.links.name.getText()).multiplication(
+						this.matrixMap.get(ctx.rechts.name.getText()).getDmatrix()
 						)
 				);
 		return 0.0;
