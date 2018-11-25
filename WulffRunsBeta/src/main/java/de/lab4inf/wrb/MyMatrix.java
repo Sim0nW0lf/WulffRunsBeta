@@ -60,22 +60,17 @@ public class MyMatrix {
 		// Make sure our numbers are good
 		this.refreshNumbers();
 
-		// initialize res
-		Double[][] res = new Double[xEnd - xStart][otherMatrix[0].length];
-		for (int y = 0; y < xEnd - xStart; y++) {
-			for (int x = 0; x < otherMatrix[0].length; x++) {
-				res[y][x] = 0.0;
-			}
-		}
 		// Mathemagic
+		Double[][] res = new Double[xEnd - xStart][otherMatrix[0].length];
 		for (int i = 0; i < res.length; i++) {
 			for (int j = 0; j < res[0].length; j++) {
+				// initialize res
+				res[i][j] = 0.0;
 				for (int k = 0; k < otherMatrix.length; k++) {
 					res[i][j] += this.dmatrix[xStart + i][yStart + k] * otherMatrix[k][j];
 				}
 			}
 		}
-
 		return res;
 	}
 

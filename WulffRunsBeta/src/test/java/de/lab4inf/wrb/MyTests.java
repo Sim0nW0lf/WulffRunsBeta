@@ -7,6 +7,8 @@ import java.util.Arrays;
 
 import org.junit.Test;
 
+import com.ibm.icu.text.DecimalFormat;
+
 public class MyTests extends AbstractScriptTest {
 	
 	static public void matrixCompare(Double[][] matrixExpected, Double[][] matrixActual) {
@@ -16,38 +18,56 @@ public class MyTests extends AbstractScriptTest {
         	throw new IllegalArgumentException();
         }
     }
+	
+	public final Double myRnd(int range) {
+		DecimalFormat numberFormat = new DecimalFormat("#.000");
+		return Double.parseDouble(numberFormat.format(range * (Math.random()+Math.random()-1)));
+	}
+	
+	public String rndMatrixDefinition(Double[][] matrix, String name, int hight, int width) {
+		return rndMatrixDefinition(matrix, name, hight, width, 10);
+	}
+	
+	public String rndMatrixDefinition(Double[][] matrix, String name, int hight, int width, int range){
+		String matrixDefinition = name + " = {";
+		Double rnd = 0.0;
+	    // write to matrix and create matrixDefinition String
+	    for (int y = 0, x = 0; y < hight; y++) {
+	    	rnd = myRnd(range);
+	    	matrix[y][x] = rnd;
+	    	matrixDefinition = matrixDefinition.concat(Double.toString(rnd));
+	    	for (x = 1; x < width; x++) {
+		    	rnd = myRnd(range);
+		    	matrix[y][x] = rnd;
+		    	matrixDefinition = matrixDefinition.concat(","+ rnd);
+	    	}
+	    	x = 0;
+	    	matrixDefinition = matrixDefinition.concat("; ");
+	    }
+	    matrixDefinition = matrixDefinition.concat("};");
+	    return matrixDefinition;
+	}
+	
+	public Double[][] matrixMultiplication(Double[][] matrixA, Double[][] matrixB){
+		int hightA = matrixA.length, widthB = matrixB[0].length, widthA_hightB = matrixB.length;
+		Double[][] matrixSolution = new Double[hightA][widthB];
+	    for (int i = 0; i < hightA; i++) {
+			for (int j = 0; j < widthB; j++) {
+				// initialize res
+				matrixSolution[i][j] = 0.0;
+				for (int k = 0; k < widthA_hightB; k++) {
+					matrixSolution[i][j] += matrixA[i][k] * matrixB[k][j];
+				}
+			}
+	    }
+	    return matrixSolution;
+	}
 
 	@Override
 	protected Script getScript() {
 		return new WRBScript();
 	}
-
-	@Test
-	public final void testTanh() throws Exception {
-		double x = AbstractScriptTest.rnd();
-		script.setVariable("x", x);
-		String task = "tanh(x)";
-		assertEquals(Math.tanh(x), script.parse(task), EPS);
-	}
-
-	@Test
-	public final void testMod() throws Exception {
-		String task = "12%5";
-		assertEquals(2.0, script.parse(task), EPS);
-	}
-
-	@Test(expected = IllegalArgumentException.class)
-	public final void testVar() throws Exception {
-		String task = "a + 2";
-		assertEquals(2.0, script.parse(task), EPS);
-	}
-
-	public double factorial(double x) {
-		if (x == 1)
-			return 1;
-		return x * factorial(x - 1);
-	}
-
+	
 	@Test
 	public void testOwnTimingCachedFunctions() throws Exception {
 		final String fmt = "\n\n" + "average Parser Timing Test    \n" + "=====================    \n"
@@ -114,20 +134,39 @@ public class MyTests extends AbstractScriptTest {
 		assertTrue("function syntax tree not cached", averageSpeedup > 3);
 	}
 	
-//	@Test
-//    public final void testSetGetMatrix() throws Exception {
-//        double y, x = rnd();
-//        String key = "XYZ";
-//        script.setVariable(key, x);
-//        y = script.getVariable(key);
-//        assertEquals(x, y, EPS);
-//    }
+	
 //	
 //	@Test
 //	public final void testParseMatrix() throws Exception {
 //		String task = "matrixA = {2,3;4,5;};";
 //		assertEquals(2.0, script.parse(task), EPS);
 //	}
+
+	@Test
+	public final void testTanh() throws Exception {
+		double x = AbstractScriptTest.rnd();
+		script.setVariable("x", x);
+		String task = "tanh(x)";
+		assertEquals(Math.tanh(x), script.parse(task), EPS);
+	}
+
+	@Test
+	public final void testMod() throws Exception {
+		String task = "12%5";
+		assertEquals(2.0, script.parse(task), EPS);
+	}
+
+	@Test(expected = IllegalArgumentException.class)
+	public final void testVar() throws Exception {
+		String task = "a + 2";
+		assertEquals(2.0, script.parse(task), EPS);
+	}
+
+	public double factorial(double x) {
+		if (x == 1)
+			return 1;
+		return x * factorial(x - 1);
+	}
 	
 	@Test
 	public final void testMatrixMultiplikation() throws Exception {
@@ -135,9 +174,30 @@ public class MyTests extends AbstractScriptTest {
 		script.parse(task);
 		Double[][] matrixExpected = {{8.0, 5.0}, {20.0, 13.0}};
 		matrixCompare(matrixExpected, script.getMatrixSolution("m:A*m:B"));
+	}
+	
+	@Test
+	public final void testMatrixMultiRandom() throws Exception {
+		int hightA = 2048, widthA_hightB = 1, widthB = 2049, range = 10; // range means myRnd(range) can be -range up to range.
+	    
+		Double[][] matrixA = new Double[hightA][widthA_hightB];
+	    Double[][] matrixB = new Double[widthA_hightB][widthB];
+		String task = rndMatrixDefinition(matrixA, "A", hightA, widthA_hightB, range) +
+					rndMatrixDefinition(matrixB, "B", widthA_hightB, widthB, range) +
+					"m:A*m:B";
 		
-		//wtf is parseMatrix?? why?
-		//matrixCompare(matrixExpected, script.parseMatrix(task));
+	    Double[][] matrixExpected = matrixMultiplication(matrixA, matrixB);
+	    
+		script.parse(task);
+		matrixCompare(matrixExpected, script.getMatrixSolution("m:A*m:B"));
+	}
+		
+	@Test
+	public final void testMatrixMultiWithFunction() throws Exception {
+		String task = "a = 2; f(x) = 2*x; A = {1,2;3,f(a);}; B = {4,3;2,1;}; m:A*m:B;";
+		script.parse(task);
+		Double[][] matrixExpected = {{8.0, 5.0}, {20.0, 13.0}};
+		matrixCompare(matrixExpected, script.getMatrixSolution("m:A*m:B"));
 	}
 	
 }
