@@ -21,9 +21,10 @@ public class MyMatrix {
 		this.height = height;
 		this.width = width;
 		this.dmatrix = new Double[width][height];
+		this.matrix = new ExpressionContext[this.dmatrix.length][this.dmatrix[0].length];
 	}
 
-	private void refreshNumbers() {
+	public void refreshNumbers() {
 		for (int[] i : this.varFields) {
 			ExpressionContext test = this.matrix[i[0]][i[1]];//matrix[i[0]][i[1]];
 			this.dmatrix[i[0]][i[1]] = this.parent.visit(test); // this.parent.visit(this.matrix[i[0]][i[1]]);
@@ -35,8 +36,8 @@ public class MyMatrix {
 		if (otherMatrix.length != this.dmatrix.length || otherMatrix[0].length != this.dmatrix[0].length) {
 			throw new IllegalArgumentException("Size of Matrixes differs.");
 		}
-		// Make sure our numbers are good
-		this.refreshNumbers();
+//		// Make sure our numbers are good
+//		this.refreshNumbers();
 
 		// Mathemagic
 		Double[][] res = new Double[this.dmatrix.length][this.dmatrix[0].length];
@@ -219,7 +220,6 @@ public class MyMatrix {
 	public void addVarField(int y, int x, DemoParser.ExpressionContext ctx) {
 		int[] i = {y, x};
 		this.varFields.add(i);
-		this.matrix = new ExpressionContext[this.dmatrix.length][this.dmatrix[0].length];
 		this.matrix[y][x] = ctx;
 	}
 

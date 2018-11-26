@@ -1257,7 +1257,7 @@ public abstract class AbstractScriptTest {
             // test positive values
             x = random();
             assertEquals(x, it.eval(x), EPS);
-            // test negative values
+            // test negative values  
             x = -x;
             assertEquals(x, it.eval(x), EPS);
         }

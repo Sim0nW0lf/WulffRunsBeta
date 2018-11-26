@@ -193,8 +193,17 @@ public class MyTests extends AbstractScriptTest {
 		matrixCompare(matrixExpected, script.getMatrixSolution("m:A*m:B"));
 	}
 	@Test
+	public final void testMatrixMultiBothContainFunction() throws Exception {
+		String task = "a = 2; f(x) = 2*x; A = {1,2;3,f(a);}; B = {f(a),3;2,1;};  m:A*m:B;";
+		script.parse(task);
+		Double[][] matrixExpected = {{8.0, 5.0}, {20.0, 13.0}};
+		matrixCompare(matrixExpected, script.getMatrixSolution("m:A*m:B"));
+	}
+	@Test
 	public final void testMatrixMultiManyFunctions() throws Exception {
-		String task = "a = 2; f(x) = 2*x; A = {1,2;3,4;}; B = {f(a),3;2,1;};  m:A*m:B;";
+		String task = "A = {1,2;3,f(a);}; B = {f(a),a(f);f(z(a)),1;};"
+					+ "a = 2; f = 3; f(x) = 2*x; a(x) = (2*x)/2; z(x) = x/b; b = 2;"
+					+ "m:A*m:B;";
 		script.parse(task);
 		Double[][] matrixExpected = {{8.0, 5.0}, {20.0, 13.0}};
 		matrixCompare(matrixExpected, script.getMatrixSolution("m:A*m:B"));
