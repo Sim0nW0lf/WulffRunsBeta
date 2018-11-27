@@ -6,7 +6,7 @@ import de.lab4inf.wrb.DemoParser.ExpressionContext;
 
 public class MyMatrix {
 
-	static int threadNumber = 4;
+	static int threadNumber = 32;
 	protected DemoParser.ExpressionContext[][] matrix;
 	protected Double[][] dmatrix;
 	protected ArrayList<int[]> varFields = new ArrayList<int[]>();
@@ -74,6 +74,10 @@ public class MyMatrix {
 		return;
 	}
 	
+//	public MyMatrix multiplication(MyMatrix otherMatrix) {
+//		return multiplication(otherMatrix, 0 , otherMatrix.getWidth());
+//	}
+	
 	public MyMatrix multiplication(MyMatrix otherMatrix) {
 		// Check if columns of first = rows of second
 		if (this.getWidth() != otherMatrix.getHeight()) {
@@ -100,8 +104,8 @@ public class MyMatrix {
 
 	public ArrayList<MyMatrix> getSplitColMatrix(MyMatrix otherMatrix, int pieces) {
 		// Mathemagic the size of the individual Pieces
-		if(otherMatrix.getDmatrix().length < pieces) {
-			pieces = otherMatrix.getDmatrix().length;
+		if(otherMatrix.width < pieces) {
+			pieces = otherMatrix.width;
 		}
 		int[] size = new int[pieces];
 		for (int i = 0; i < pieces; i++) {
@@ -141,9 +145,7 @@ public class MyMatrix {
 
 		// Thread stuffs
 		for (MyMatrix p : pieces) {
-			t[i] = new MatrixWorker();
-			t[i].setMatrixLocal(p);
-			t[i].setMatrixTarget(this);
+			t[i] = new MatrixWorker(p, this);
 			tr[i] = new Thread(t[i]);
 			tr[i].start();
 			// p = multiplication(p);
@@ -164,17 +166,17 @@ public class MyMatrix {
 			}
 		}
 		i = 0;
-		Double[][] ret = new Double[width][height];
+		Double[][] ret = new Double[height][otherMatrix.getWidth()];
 		int globalX = 0;
-		
+
 		// Synchronizing
 		for (i = 0; i < pieces.size(); i++) {
 			for (int x = 0; x < t[i].getMatrixGoal().getWidth(); x++) {
 				for (int y = 0; y < height; y++) {
 					ret[y][globalX] = t[i].getMatrixGoal().getDmatrix()[y][x];
 				}
+				globalX++;
 			}
-			globalX++;
 		}
 
 		return new MyMatrix(ret);

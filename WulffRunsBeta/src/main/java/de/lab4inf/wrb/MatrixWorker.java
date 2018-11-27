@@ -5,6 +5,11 @@ public class MatrixWorker implements Runnable {
 	protected MyMatrix matrixLocal;
 	protected MyMatrix matrixTarget;
 	volatile protected MyMatrix matrixGoal;
+	int colStart, colEnd;
+	public MatrixWorker(MyMatrix local, MyMatrix target) {
+		this.matrixLocal = local;
+		this.matrixTarget = target;
+	}
 	@Override
 	public void run() {
 		this.matrixGoal = this.matrixTarget.multiplication(matrixLocal);

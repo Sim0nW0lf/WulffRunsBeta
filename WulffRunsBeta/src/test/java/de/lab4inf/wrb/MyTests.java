@@ -3,7 +3,9 @@ package de.lab4inf.wrb;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 
+import java.text.DecimalFormatSymbols;
 import java.util.Arrays;
+import java.util.Locale;
 
 import org.junit.Test;
 
@@ -15,14 +17,14 @@ public class MyTests extends AbstractScriptTest {
         if (Arrays.deepEquals(matrixExpected, matrixActual) == true) {
             return;
         } else {
-        	System.out.println("\nExpected: " + MyMatrix.print(matrixExpected) + " but got: " + MyMatrix.print(matrixActual));
-        	throw new IllegalArgumentException();
+        	throw new IllegalArgumentException("\nExpected: " + MyMatrix.print(matrixExpected) + " but got: " + MyMatrix.print(matrixActual));
         }
     }
 	
 	public final Double myRnd(int range) {
 		DecimalFormat numberFormat = new DecimalFormat("#.000");
-		return Double.parseDouble(numberFormat.format(range * (Math.random()+Math.random()-1)));
+		String s = numberFormat.format(range * (Math.random()+Math.random()-1)).replace(',', '.');
+		return Double.parseDouble(s);
 	}
 	
 	public String rndMatrixDefinition(Double[][] matrix, String name, int hight, int width) {
@@ -171,7 +173,7 @@ public class MyTests extends AbstractScriptTest {
 	
 	@Test
 	public final void testMatrixMultiRandom() throws Exception {
-		int hightA = 50, widthA_hightB = 50, widthB = 50, range = 10; // range means myRnd(range) can be -range up to range.
+		int hightA = 50, widthA_hightB = 50, widthB =50, range = 10; // range means myRnd(range) can be -range up to range.
 	    
 		Double[][] matrixA = new Double[hightA][widthA_hightB];
 	    Double[][] matrixB = new Double[widthA_hightB][widthB];
@@ -180,9 +182,85 @@ public class MyTests extends AbstractScriptTest {
 					"m:A*m:B";
 		
 	    Double[][] matrixExpected = matrixMultiplication(matrixA, matrixB);
-	    
 		script.parse(task);
 		matrixCompare(matrixExpected, script.getMatrixSolution("m:A*m:B"));
+	}
+	
+	private long matrixParallel(int n) {
+		int heightA = n-1, widthA_heightB = n, widthB =n+1, range = 10; // range means myRnd(range) can be -range up to range.
+	    
+		Double[][] matrixA = new Double[heightA][widthA_heightB];
+	    Double[][] matrixB = new Double[widthA_heightB][widthB];
+	    
+	    //Init with random sh**
+		for(int x = 0; x < heightA;x++) {
+			for(int y = 0; y < widthA_heightB;y++) {
+				matrixA[x][y] = range * (Math.random()+Math.random()-1);
+			}
+		}
+		for(int x = 0; x < widthA_heightB;x++) {
+			for(int y = 0; y < widthB;y++) {
+				matrixB[x][y] = range * (Math.random()+Math.random()-1);
+			}
+		}
+		
+	    Double[][] matrixExpected = matrixMultiplication(matrixA, matrixB);
+	    MyMatrix m1 = new MyMatrix(matrixA);
+	    MyMatrix m2 = new MyMatrix(matrixB);
+	    long l = System.nanoTime();
+		matrixCompare(matrixExpected, m1.multiplyParrallel(m2).getDmatrix());
+		l -= System.nanoTime();
+		
+		return l * -1;
+	}
+	
+	private MyMatrix matrixGen(int n, int m) {
+		int range = 10; // range means myRnd(range) can be -range up to range.
+		Double[][] matrix = new Double[n][m];
+	    
+	    //Init with random sh**
+		for(int x = 0; x < n;x++) {
+			for(int y = 0; y < m;y++) {
+				matrix[x][y] = range * (Math.random()+Math.random()-1);
+			}
+		}
+		
+		return new MyMatrix(matrix);
+	}
+	
+	@Test
+	public final void testMatrixMultiTiming() throws Exception {
+		int sets[][] = {{1, 64}, {10, 64}, {10, 128}, {5, 256}, {5, 512}, {2, 768}}; //, {2, 1024}, {1, 1536}, {1, 2048}
+		
+		//do sh*
+		long[][] times = new long[sets.length][2];
+		for(int j = 0; j < sets.length; j++) {
+			MyMatrix matrixA = matrixGen(sets[j][1]-1, sets[j][1]);
+			MyMatrix matrixB = matrixGen(sets[j][1], sets[j][1]+1);
+			long tmp;
+			//Serial
+			for(int i = 0; i < sets[j][0]; i++) {
+				tmp = System.nanoTime();
+				matrixA.multiplication(matrixB);
+				times[j][0] += System.nanoTime() - tmp;
+			}
+			times[j][0] /= sets[j][0];
+			
+			//Parallel
+			for(int i = 0; i < sets[j][0]; i++) {
+				tmp = System.nanoTime();
+				matrixA.multiplyParrallel(matrixB);
+				times[j][1] += System.nanoTime() - tmp;
+			}
+			times[j][1] /= sets[j][0];
+		}
+		
+		
+		//Print table
+		System.out.printf("\n repetitions \t | dimension \t | serial \t | parallel \t | speedup \n");
+		for(int j = 0; j < sets.length; j++) {
+			System.out.printf("\t %d \t | \t %d \t | %d \t | %d \t | %.2d \n", sets[j][0], sets[j][1], times[j][0], times[j][1], times[j][0] / times[j][1]);
+		}
 	}
 		
 	@Test
@@ -208,4 +286,6 @@ public class MyTests extends AbstractScriptTest {
 		Double[][] matrixExpected = {{8.0, 5.0}, {20.0, 13.0}};
 		matrixCompare(matrixExpected, script.getMatrixSolution("m:A*m:B"));
 	}
+	
+	
 }
