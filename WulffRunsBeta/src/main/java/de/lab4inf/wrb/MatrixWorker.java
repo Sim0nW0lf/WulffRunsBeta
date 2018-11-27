@@ -2,18 +2,23 @@ package de.lab4inf.wrb;
 
 public class MatrixWorker implements Runnable {
 
-	protected Double[][] matrixLocal;
+	protected MyMatrix matrixLocal;
 	protected MyMatrix matrixTarget;
-	volatile protected Double[][] matrixGoal;
+	volatile protected MyMatrix matrixGoal;
+	int colStart, colEnd;
+	public MatrixWorker(MyMatrix local, MyMatrix target) {
+		this.matrixLocal = local;
+		this.matrixTarget = target;
+	}
 	@Override
 	public void run() {
-		this.matrixGoal = this.matrixTarget.multiplication(matrixLocal, 0, 0, matrixLocal.length, matrixLocal[0].length);
+		this.matrixGoal = this.matrixTarget.multiplication(matrixLocal);
 	}
 	
-	public Double[][] getMatrixLocal() {
+	public MyMatrix getMatrixLocal() {
 		return matrixLocal;
 	}
-	public void setMatrixLocal(Double[][] matrixLocal) {
+	public void setMatrixLocal(MyMatrix matrixLocal) {
 		this.matrixLocal = matrixLocal;
 	}
 	public MyMatrix getMatrixTarget() {
@@ -22,10 +27,10 @@ public class MatrixWorker implements Runnable {
 	public void setMatrixTarget(MyMatrix matrixTarget) {
 		this.matrixTarget = matrixTarget;
 	}
-	public Double[][] getMatrixGoal() {
+	public MyMatrix getMatrixGoal() {
 		return matrixGoal;
 	}
-	public void setMatrixGoal(Double[][] matrixGoal) {
+	public void setMatrixGoal(MyMatrix matrixGoal) {
 		this.matrixGoal = matrixGoal;
 	}
 

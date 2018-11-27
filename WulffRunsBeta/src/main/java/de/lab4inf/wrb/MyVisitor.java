@@ -25,8 +25,6 @@ public class MyVisitor extends DemoBaseVisitor<Double> {
 	HashMap<String, Function> funcMap = new HashMap<String, Function>();
 	HashMap<String, MyMatrix> matrixMap = new HashMap<String, MyMatrix>();
 
-	HashMap<String, Double[][]> matrixSolutionsMap = new HashMap<String, Double[][]>();
-
 	Double[][] solutionMatrix;
 
 
@@ -342,10 +340,10 @@ public class MyVisitor extends DemoBaseVisitor<Double> {
 	}
 	
 	public Double[][] getMatrixSolution(String matName) throws IllegalArgumentException {
-		if (!this.matrixSolutionsMap.containsKey(matName)) {
+		if (!this.matrixMap.containsKey(matName)) {
 			throw new IllegalArgumentException("Error 404: Solution to '" + matName + "' not found. ");
 		} else {
-			return this.matrixSolutionsMap.get(matName);
+			return this.matrixMap.get(matName).getDmatrix();
 		}
 	}
 
