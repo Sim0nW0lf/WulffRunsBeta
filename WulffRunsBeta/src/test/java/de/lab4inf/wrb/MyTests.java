@@ -171,7 +171,7 @@ public class MyTests extends AbstractScriptTest {
 	
 	@Test
 	public final void testMatrixMultiRandom() throws Exception {
-		int hightA = 50, widthA_hightB = 50, widthB = 50, range = 10; // range means myRnd(range) can be -range up to range.
+		int hightA = 10, widthA_hightB = 4, widthB = 4, range = 10; // range means myRnd(range) can be -range up to range.
 	    
 		Double[][] matrixA = new Double[hightA][widthA_hightB];
 	    Double[][] matrixB = new Double[widthA_hightB][widthB];

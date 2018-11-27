@@ -6,7 +6,7 @@ import de.lab4inf.wrb.DemoParser.ExpressionContext;
 
 public class MyMatrix {
 
-	static int threadNumber = 4;
+	static int threadNumber = 8;
 	protected DemoParser.ExpressionContext[][] matrix;
 	protected Double[][] dmatrix;
 	protected ArrayList<int[]> varFields = new ArrayList<int[]>();
@@ -26,8 +26,8 @@ public class MyMatrix {
 
 	public void refreshNumbers() {
 		for (int[] i : this.varFields) {
-			ExpressionContext test = this.matrix[i[0]][i[1]];//matrix[i[0]][i[1]];
-			this.dmatrix[i[0]][i[1]] = this.parent.visit(test); // this.parent.visit(this.matrix[i[0]][i[1]]);
+			ExpressionContext test = this.matrix[i[0]][i[1]];
+			this.dmatrix[i[0]][i[1]] = this.parent.visit(test);
 		}
 	}
 
@@ -36,9 +36,7 @@ public class MyMatrix {
 		if (otherMatrix.length != this.dmatrix.length || otherMatrix[0].length != this.dmatrix[0].length) {
 			throw new IllegalArgumentException("Size of Matrixes differs.");
 		}
-//		// Make sure our numbers are good
-//		this.refreshNumbers();
-
+		
 		// Mathemagic
 		Double[][] res = new Double[this.dmatrix.length][this.dmatrix[0].length];
 		for (int y = 0; y < this.dmatrix.length; y++) {
@@ -51,6 +49,33 @@ public class MyMatrix {
 
 	public Double[][] multiplication(Double[][] otherMatrix) {
 		return multiplication(otherMatrix, 0, 0, width, height);
+	}
+	
+	public void multiplyParallelAndSeriell(MyMatrix otherMatrixObjekt, Double[][] solutionMatrix) {
+		EasyMatrixWorker[] t = new EasyMatrixWorker[solutionMatrix.length];
+		Thread thread[] = new Thread[solutionMatrix.length];
+		
+		int i = 0;
+
+		// Thread stuffs
+		for (i = 0; i < solutionMatrix.length; i++) {
+			t[i] = new EasyMatrixWorker(this, otherMatrixObjekt, solutionMatrix, i);
+			thread[i] = new Thread(t[i]);
+			thread[i].start();
+		}
+		
+		// Wait for all threads to finish
+		i = 0;
+		Boolean dead = false;
+		while (!dead) {
+			if (i >= solutionMatrix.length) {
+				dead = true;
+			} else {
+				if (!thread[i].isAlive()) {
+					i++;
+				}
+			}
+		}
 	}
 
 	public void multiplyParallelAndSeriell(MyMatrix otherMatrixObjekt, Double[][] solutionMatrix, int yStart, int yEnd) {
