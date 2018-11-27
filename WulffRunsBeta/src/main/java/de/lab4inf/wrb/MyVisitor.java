@@ -265,7 +265,7 @@ public class MyVisitor extends DemoBaseVisitor<Double> {
 			this.matrixMap.get(ctx.rechts.name.getText()).refreshNumbers();
 		
 		this.matrixSolutionsMap.put(ctx.getText(), 
-				this.matrixMap.get(ctx.links.name.getText()).multiplication(
+				this.matrixMap.get(ctx.links.name.getText()).multiplyParrallel(
 						this.matrixMap.get(ctx.rechts.name.getText()).getDmatrix()
 						)
 				);
