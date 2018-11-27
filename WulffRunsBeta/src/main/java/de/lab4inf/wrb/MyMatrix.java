@@ -26,7 +26,8 @@ public class MyMatrix {
 
 	public void refreshNumbers() {
 		for (int[] i : this.varFields) {
-			this.dmatrix[i[0]][i[1]] = this.parent.visit(this.matrix[i[0]][i[1]]);
+			ExpressionContext test = this.matrix[i[0]][i[1]];//matrix[i[0]][i[1]];
+			this.dmatrix[i[0]][i[1]] = this.parent.visit(test); // this.parent.visit(this.matrix[i[0]][i[1]]);
 		}
 	}
 
@@ -52,6 +53,25 @@ public class MyMatrix {
 		return multiplication(otherMatrix, 0, 0, width, height);
 	}
 
+	public void multiplyParallelAndSeriell(MyMatrix otherMatrixObjekt, Double[][] solutionMatrix, int yStart, int yEnd) {
+		// Make sure our numbers are good
+		this.refreshNumbers();
+		otherMatrixObjekt.refreshNumbers();
+		
+		Double[][] otherMatrix = otherMatrixObjekt.dmatrix;
+		
+		for (int i = yStart; i < yEnd; i++) {
+			for (int j = 0; j < solutionMatrix[0].length; j++) {
+				// initialize res
+				solutionMatrix[i][j] = 0.0;
+				for (int k = 0; k < otherMatrix.length; k++) {
+					solutionMatrix[i][j] += this.dmatrix[i][k] * otherMatrix[k][j];
+				}
+			}
+		}
+		return;
+	}
+	
 	public Double[][] multiplication(Double[][] otherMatrix, int xStart, int yStart, int xEnd, int yEnd) {
 		// Check if columns of first = rows of second
 		if ((yEnd - yStart) > otherMatrix[0].length) {
@@ -61,6 +81,8 @@ public class MyMatrix {
 		if (xStart > width || xEnd > width || yStart > height || yEnd > height) {
 			throw new IllegalArgumentException("Indexes out of bounds");
 		}
+		// Make sure our numbers are good
+		this.refreshNumbers();
 
 		// Mathemagic
 		Double[][] res = new Double[xEnd - xStart][otherMatrix[0].length];
@@ -79,25 +101,6 @@ public class MyMatrix {
 		}
 		
 		return res;
-	}
-	
-	public void multiplyParallelAndSeriell(MyMatrix otherMatrixObjekt, Double[][] solutionMatrix, int yStart, int yEnd) {
-		// Make sure our numbers are good
-		this.refreshNumbers();
-		otherMatrixObjekt.refreshNumbers();
-		
-		Double[][] otherMatrix = otherMatrixObjekt.dmatrix;
-		
-		for (int i = yStart; i < yEnd; i++) {
-			for (int j = 0; j < solutionMatrix[0].length; j++) {
-				// initialize res
-				solutionMatrix[i][j] = 0.0;
-				for (int k = 0; k < otherMatrix.length; k++) {
-					solutionMatrix[i][j] += this.dmatrix[i][k] * otherMatrix[k][j];
-				}
-			}
-		}
-		return;
 	}
 
 	public ArrayList<Double[][]> getSplitColMatrix(Double[][] otherMatrix, int pieces) {
