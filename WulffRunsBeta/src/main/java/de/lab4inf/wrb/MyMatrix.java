@@ -88,7 +88,7 @@ public class MyMatrix {
 				// initialize res
 				solutionMatrix[i][j] = 0.0;
 				for (int k = 0; k < otherMatrix.length; k++) {
-					solutionMatrix[i][j] += this.dmatrix[i][yStart + k] * otherMatrix[k][j];
+					solutionMatrix[i][j] += this.dmatrix[i][k] * otherMatrix[k][j];
 				}
 			}
 		}

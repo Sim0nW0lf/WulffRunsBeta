@@ -256,33 +256,33 @@ public class MyVisitor extends DemoBaseVisitor<Double> {
 		return 0.0;
 	}
 	
-	@Override
-	public Double visitMatrixMultiplikation(DemoParser.MatrixMultiplikationContext ctx) {
-		// calculate remaining fields if there are any
-		if(this.matrixMap.get(ctx.links.name.getText()).varFields != null)
-			this.matrixMap.get(ctx.links.name.getText()).refreshNumbers();
-		if(this.matrixMap.get(ctx.rechts.name.getText()).varFields != null)
-			this.matrixMap.get(ctx.rechts.name.getText()).refreshNumbers();
-		
-		this.matrixSolutionsMap.put(ctx.getText(), 
-		this.matrixMap.get(ctx.links.name.getText()).multiplication(
-				this.matrixMap.get(ctx.rechts.name.getText()).dmatrix
-				)
-		);
-		return 0.0;
-	}
-	
 //	@Override
 //	public Double visitMatrixMultiplikation(DemoParser.MatrixMultiplikationContext ctx) {
-//		int solutionHight = this.matrixMap.get(ctx.links.name.getText()).dmatrix.length, solutionWidth = this.matrixMap.get(ctx.rechts.name.getText()).dmatrix[0].length;
-//		Double[][] solutionMatrix = new Double[solutionHight][solutionWidth];
-//		for (int i = 0; i < solutionHight; i++) {
-//			this.matrixMap.get(ctx.links.name.getText()).multiplyParallelAndSeriell(this.matrixMap.get(ctx.rechts.name.getText()), solutionMatrix, i, i+1);			
-//		}
+//		// calculate remaining fields if there are any
+//		if(this.matrixMap.get(ctx.links.name.getText()).varFields != null)
+//			this.matrixMap.get(ctx.links.name.getText()).refreshNumbers();
+//		if(this.matrixMap.get(ctx.rechts.name.getText()).varFields != null)
+//			this.matrixMap.get(ctx.rechts.name.getText()).refreshNumbers();
 //		
-//		this.matrixSolutionsMap.put(ctx.getText(), solutionMatrix);
-//	return 0.0;
+//		this.matrixSolutionsMap.put(ctx.getText(), 
+//		this.matrixMap.get(ctx.links.name.getText()).multiplication(
+//				this.matrixMap.get(ctx.rechts.name.getText()).dmatrix
+//				)
+//		);
+//		return 0.0;
 //	}
+	
+	@Override
+	public Double visitMatrixMultiplikation(DemoParser.MatrixMultiplikationContext ctx) {
+		int solutionHight = this.matrixMap.get(ctx.links.name.getText()).dmatrix.length, solutionWidth = this.matrixMap.get(ctx.rechts.name.getText()).dmatrix[0].length;
+		Double[][] solutionMatrix = new Double[solutionHight][solutionWidth];
+		for (int i = 0; i < solutionHight; i++) {
+			this.matrixMap.get(ctx.links.name.getText()).multiplyParallelAndSeriell(this.matrixMap.get(ctx.rechts.name.getText()), solutionMatrix, i, i+1);			
+		}
+		
+		this.matrixSolutionsMap.put(ctx.getText(), solutionMatrix);
+	return 0.0;
+	}
 
 	@Override
 	protected Double aggregateResult(Double aggregate, Double nextResult) {
