@@ -53,9 +53,9 @@ public class MyMatrix {
 		return res;
 	}
 
-	public Double[][] multiplication(Double[][] otherMatrix) {
-		return multiplication(otherMatrix, 0, 0, width, height);
-	}
+//	public Double[][] multiplication(Double[][] otherMatrix) {
+//		return multiplication(otherMatrix, 0, 0, width, height);
+//	}
 	
 	public void multiplyParallelAndSeriell(MyMatrix otherMatrixObjekt, Double[][] solutionMatrix) {
 		EasyMatrixWorker[] t = new EasyMatrixWorker[solutionMatrix.length];

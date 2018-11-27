@@ -262,9 +262,9 @@ public class MyVisitor extends DemoBaseVisitor<Double> {
 //		if(this.matrixMap.get(ctx.rechts.name.getText()).varFields != null)
 //			this.matrixMap.get(ctx.rechts.name.getText()).refreshNumbers();
 //		
-//		this.matrixSolutionsMap.put(ctx.getText(), 
-//				this.matrixMap.get(ctx.links.name.getText()).multiplication(
-//						this.matrixMap.get(ctx.rechts.name.getText()).getDmatrix()
+//		this.matrixMap.put(ctx.getText(), 
+//				this.matrixMap.get(ctx.links.name.getText()).multiplyParrallel(
+//						this.matrixMap.get(ctx.rechts.name.getText())
 //						)
 //				);
 //		return 0.0;
@@ -276,8 +276,8 @@ public class MyVisitor extends DemoBaseVisitor<Double> {
 		Double[][] solutionMatrix = new Double[solutionHeight][solutionWidth];
 		
 		this.matrixMap.get(ctx.links.name.getText()).multiplyParallelAndSeriell(this.matrixMap.get(ctx.rechts.name.getText()), solutionMatrix);
-		
-		this.matrixSolutionsMap.put(ctx.getText(), solutionMatrix);
+		MyMatrix mySolutionMatrix = new MyMatrix(solutionMatrix);
+		this.matrixMap.put(ctx.getText(), mySolutionMatrix);
 	return 0.0;
 	}
 

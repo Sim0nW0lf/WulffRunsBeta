@@ -262,6 +262,44 @@ public class MyTests extends AbstractScriptTest {
 			System.out.printf("\t %d \t | \t %d \t | %d \t | %d \t | %.2d \n", sets[j][0], sets[j][1], times[j][0], times[j][1], times[j][0] / times[j][1]);
 		}
 	}
+	
+//	@Test
+	public final void testMatrixMultiTimingAlternative() throws Exception {
+		int sets[][] = {{1, 64}, {10, 64}, {10, 128}, {5, 256}, {5, 512}, {2, 768}}; //, {2, 1024}, {1, 1536}, {1, 2048}
+		
+		//do sh*
+		long[][] times = new long[sets.length][2];
+		for(int j = 0; j < sets.length; j++) {
+			MyMatrix matrixA = matrixGen(sets[j][1]-1, sets[j][1]);
+			MyMatrix matrixB = matrixGen(sets[j][1], sets[j][1]+1);
+			Double[][] solutionMatrix = new Double[sets[j][1]-1][sets[j][1]+1];
+
+			long tmp;
+			//Serial
+			for(int i = 0; i < sets[j][0]; i++) {
+				tmp = System.nanoTime();
+				matrixA.multiplication(matrixB);
+				times[j][0] += System.nanoTime() - tmp;
+			}
+			times[j][0] /= sets[j][0];
+			
+			//Parallel
+			for(int i = 0; i < sets[j][0]; i++) {
+				tmp = System.nanoTime();
+				matrixA.multiplyParallelAndSeriell(matrixB, solutionMatrix);
+				times[j][1] += System.nanoTime() - tmp;
+			}
+			times[j][1] /= sets[j][0];
+		}
+		
+		
+		//Print table
+		System.out.printf("\n repetitions \t | dimension \t | serial \t | parallel \t | speedup \n");
+		for(int j = 0; j < sets.length; j++) {
+			// Ich bekomme bei dem System out print einen Format Error...
+			System.out.printf("\t %d \t | \t %d \t | %d \t | %d \t | %.2d \n", sets[j][0], sets[j][1], times[j][0], times[j][1], times[j][0] / times[j][1]);
+		}
+	}
 		
 	@Test
 	public final void testMatrixMultiWithFunction() throws Exception {
