@@ -238,7 +238,7 @@ public class MyVisitor extends DemoBaseVisitor<Double> {
 		for(DemoParser.MatrixRowContext c : ctx.matrixRow()) {
 			for(DemoParser.ExpressionContext d : c.expression()) {
 				if(mV.visitExpression(d)) {
-					m.addVarField(i[0], i[1], d); //getVarFields().add(i);
+					m.addVarField(i[0], i[1], d);
 				} else {
 					try {
 						m.getDmatrix()[i[0]][i[1]] = visit(d);
@@ -265,12 +265,24 @@ public class MyVisitor extends DemoBaseVisitor<Double> {
 			this.matrixMap.get(ctx.rechts.name.getText()).refreshNumbers();
 		
 		this.matrixSolutionsMap.put(ctx.getText(), 
-				this.matrixMap.get(ctx.links.name.getText()).multiplication(
-						this.matrixMap.get(ctx.rechts.name.getText()).getDmatrix()
-						)
-				);
+		this.matrixMap.get(ctx.links.name.getText()).multiplication(
+				this.matrixMap.get(ctx.rechts.name.getText()).dmatrix
+				)
+		);
 		return 0.0;
 	}
+	
+//	@Override
+//	public Double visitMatrixMultiplikation(DemoParser.MatrixMultiplikationContext ctx) {
+//		int solutionHight = this.matrixMap.get(ctx.links.name.getText()).dmatrix.length, solutionWidth = this.matrixMap.get(ctx.rechts.name.getText()).dmatrix[0].length;
+//		Double[][] solutionMatrix = new Double[solutionHight][solutionWidth];
+//		for (int i = 0; i < solutionHight; i++) {
+//			this.matrixMap.get(ctx.links.name.getText()).multiplyParallelAndSeriell(this.matrixMap.get(ctx.rechts.name.getText()), solutionMatrix, i, i+1);			
+//		}
+//		
+//		this.matrixSolutionsMap.put(ctx.getText(), solutionMatrix);
+//	return 0.0;
+//	}
 
 	@Override
 	protected Double aggregateResult(Double aggregate, Double nextResult) {
