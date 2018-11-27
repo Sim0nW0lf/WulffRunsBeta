@@ -54,7 +54,7 @@ public class MyMatrix {
 
 	public Double[][] multiplication(Double[][] otherMatrix, int xStart, int yStart, int xEnd, int yEnd) {
 		// Check if columns of first = rows of second
-		if ((yEnd - yStart) != otherMatrix.length) {
+		if ((yEnd - yStart) > otherMatrix[0].length) {
 			throw new IllegalArgumentException("Incorrect size.");
 		}
 		// Check if the indexes are acceptable
@@ -64,15 +64,20 @@ public class MyMatrix {
 
 		// Mathemagic
 		Double[][] res = new Double[xEnd - xStart][otherMatrix[0].length];
+		for (int x = 0; x < res.length; x++) {
+			for (int y = 0; y < res[0].length; y++) {
+				res[x][y] = 0.0;
+			}
+		}
+		
 		for (int i = 0; i < res.length; i++) {
 			for (int j = 0; j < res[0].length; j++) {
-				// initialize res
-				res[i][j] = 0.0;
 				for (int k = 0; k < otherMatrix.length; k++) {
 					res[i][j] += this.dmatrix[xStart + i][yStart + k] * otherMatrix[k][j];
 				}
 			}
 		}
+		
 		return res;
 	}
 	
@@ -97,22 +102,25 @@ public class MyMatrix {
 
 	public ArrayList<Double[][]> getSplitColMatrix(Double[][] otherMatrix, int pieces) {
 		// Mathemagic the size of the individual Pieces
+		if(otherMatrix.length < pieces) {
+			pieces = otherMatrix.length;
+		}
 		int[] size = new int[pieces];
 		for (int i = 0; i < pieces; i++) {
-			size[i] = otherMatrix[0].length / pieces;
+			size[i] = otherMatrix.length / pieces;
 		}
-		size[pieces - 1] += otherMatrix[0].length % pieces;
+		size[pieces - 1] += otherMatrix.length % pieces;
 
 		int globalX = 0;
 		ArrayList<Double[][]> ret = new ArrayList<Double[][]>();
 
 		// stuff all the stuff into the other stuff
 		for (int i = 0; i < pieces; i++) {
-			Double[][] res = new Double[size[i]][otherMatrix.length];
+			Double[][] res = new Double[otherMatrix[0].length][size[i]];
 
 			for (int x = 0; x < size[i]; x++) {
-				for (int y = 0; y < height; y++) {
-					res[x][y] = otherMatrix[globalX][y];
+				for (int y = 0; y < otherMatrix[0].length; y++) {
+					res[y][x] = otherMatrix[y][globalX];
 				}
 				globalX++;
 			}
@@ -121,16 +129,21 @@ public class MyMatrix {
 		}
 		return ret;
 	}
+	
+	public Double[][] multiplyParrallel(Double[][] otherMatrix) {
+		return multiplyParrallel(otherMatrix, MyMatrix.threadNumber);
+	}
 
 	public Double[][] multiplyParrallel(Double[][] otherMatrix, int piece) {
 		ArrayList<Double[][]> pieces = getSplitColMatrix(otherMatrix, piece);
 		MatrixWorker[] t = new MatrixWorker[piece];
 		Thread tr[] = new Thread[piece];
-		Double[][] ret = new Double[width][height];
+		
 		int i = 0;
 
 		// Thread stuffs
 		for (Double[][] p : pieces) {
+			t[i] = new MatrixWorker();
 			t[i].setMatrixLocal(p);
 			t[i].setMatrixTarget(this);
 			tr[i] = new Thread(t[i]);
@@ -144,7 +157,7 @@ public class MyMatrix {
 		i = 0;
 		Boolean dead = false;
 		while (!dead) {
-			if (i >= piece) {
+			if (i >= pieces.size()) {
 				dead = true;
 			} else {
 				if (!tr[i].isAlive()) {
@@ -152,17 +165,18 @@ public class MyMatrix {
 				}
 			}
 		}
-		int globalX = 0;
 		i = 0;
-
+		Double[][] ret = new Double[width][height];
+		int globalX = 0;
+		
 		// Synchronizing
-		for (i = 0; i < piece; i++) {
-			for (int x = 0; x < t[i].getMatrixGoal().length; x++) {
+		for (i = 0; i < pieces.size(); i++) {
+			for (int x = 0; x < t[i].getMatrixGoal()[0].length; x++) {
 				for (int y = 0; y < height; y++) {
-					ret[globalX][y] = t[i].getMatrixGoal()[x][y];
+					ret[y][globalX] = t[i].getMatrixGoal()[y][x];
 				}
-				globalX++;
 			}
+			globalX++;
 		}
 
 		return ret;

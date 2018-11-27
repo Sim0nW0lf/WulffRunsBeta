@@ -4,10 +4,10 @@ public class MatrixWorker implements Runnable {
 
 	protected Double[][] matrixLocal;
 	protected MyMatrix matrixTarget;
-	protected Double[][] matrixGoal;
+	volatile protected Double[][] matrixGoal;
 	@Override
 	public void run() {
-		this.matrixGoal = this.matrixTarget.multiplication(matrixLocal);
+		this.matrixGoal = this.matrixTarget.multiplication(matrixLocal, 0, 0, matrixLocal.length, matrixLocal[0].length);
 	}
 	
 	public Double[][] getMatrixLocal() {
