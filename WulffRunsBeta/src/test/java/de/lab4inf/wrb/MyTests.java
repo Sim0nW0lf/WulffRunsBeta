@@ -233,6 +233,7 @@ public class MyTests extends AbstractScriptTest {
 		int sets[][] = {{1, 64}, {10, 64}, {10, 128}, {5, 256}, {5, 512}, {2, 768}}; //, {2, 1024}, {1, 1536}, {1, 2048}
 		
 		//do sh*
+		System.out.printf("\n repetitions \t | dimension \t | serial \t | parallel \t | speedup \n");
 		long[][] times = new long[sets.length][2];
 		for(int j = 0; j < sets.length; j++) {
 			MyMatrix matrixA = matrixGen(sets[j][1]-1, sets[j][1]);
@@ -253,14 +254,10 @@ public class MyTests extends AbstractScriptTest {
 				times[j][1] += System.nanoTime() - tmp;
 			}
 			times[j][1] /= sets[j][0];
+			double speedUp = times[j][0] / times[j][1];
+			System.out.printf("\t %d \t | \t %d \t | %d \t | %d \t | %.2f \n", sets[j][0], sets[j][1], times[j][0]/100, times[j][1]/100, speedUp);
 		}
 		
-		
-		//Print table
-		System.out.printf("\n repetitions \t | dimension \t | serial \t | parallel \t | speedup \n");
-		for(int j = 0; j < sets.length; j++) {
-			System.out.printf("\t %d \t | \t %d \t | %d \t | %d \t | %.2d \n", sets[j][0], sets[j][1], times[j][0], times[j][1], times[j][0] / times[j][1]);
-		}
 	}
 	
 //	@Test
@@ -268,6 +265,7 @@ public class MyTests extends AbstractScriptTest {
 		int sets[][] = {{1, 64}, {10, 64}, {10, 128}, {5, 256}, {5, 512}, {2, 768}}; //, {2, 1024}, {1, 1536}, {1, 2048}
 		
 		//do sh*
+		System.out.printf("\n repetitions \t | dimension \t | serial \t | parallel \t | speedup \n");
 		long[][] times = new long[sets.length][2];
 		for(int j = 0; j < sets.length; j++) {
 			MyMatrix matrixA = matrixGen(sets[j][1]-1, sets[j][1]);
@@ -290,15 +288,10 @@ public class MyTests extends AbstractScriptTest {
 				times[j][1] += System.nanoTime() - tmp;
 			}
 			times[j][1] /= sets[j][0];
+			double speedUp = times[j][0] / times[j][1];
+			System.out.printf("\t %d \t | \t %d \t | %d \t | %d \t | %.2f \n", sets[j][0], sets[j][1], times[j][0]/100000, times[j][1]/100000, speedUp);
 		}
 		
-		
-		//Print table
-		System.out.printf("\n repetitions \t | dimension \t | serial \t | parallel \t | speedup \n");
-		for(int j = 0; j < sets.length; j++) {
-			// Ich bekomme bei dem System out print einen Format Error...
-			System.out.printf("\t %d \t | \t %d \t | %d \t | %d \t | %.2d \n", sets[j][0], sets[j][1], times[j][0], times[j][1], times[j][0] / times[j][1]);
-		}
 	}
 		
 	@Test
