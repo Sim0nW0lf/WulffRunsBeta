@@ -52,36 +52,59 @@ public class MyMatrix {
 		}
 		return res;
 	}
-
-//	public Double[][] multiplication(Double[][] otherMatrix) {
-//		return multiplication(otherMatrix, 0, 0, width, height);
-//	}
 	
-	public void multiplyParallelAndSeriell(MyMatrix otherMatrixObjekt, Double[][] solutionMatrix) {
-		EasyMatrixWorker[] t = new EasyMatrixWorker[solutionMatrix.length];
-		Thread thread[] = new Thread[solutionMatrix.length];
+	public void matDivideConquerSimon(MyMatrix otherMatrixObjekt, Double[][] solutionMatrix) {
+		int middleY, middleX;
+		Double[][] A1, A2, A3, A4, B1, B2, B3, B4;
+//		this.matrixSplitByIndex(A1, A2, A3, A4, middleY, middleX);
+//		this.matrixSplitByIndex(B1, B2, B3, B4, middleY, middleX);
+	}
+	
+	public void matParallelSimon(MyMatrix otherMatrixObjekt, Double[][] solutionMatrix) throws InterruptedException {
+		int numberOfThreads = 64;
+		int t = 0, rows = 0, rowsAdded = 0, extraRow = 0;
+
+		if(solutionMatrix.length <= numberOfThreads) {
+			numberOfThreads = solutionMatrix.length;
+			rows = 1;
+		}else {
+			rows = solutionMatrix.length/numberOfThreads;
+			rowsAdded = solutionMatrix.length%numberOfThreads;
+			extraRow = 1;
+		}
+			
+		EasyMatrixWorker[] w = new EasyMatrixWorker[numberOfThreads];
+		Thread thread[] = new Thread[numberOfThreads];
 		
-		int i = 0;
 
 		// Thread stuffs
-		for (i = 0; i < solutionMatrix.length; i++) {
-			t[i] = new EasyMatrixWorker(this, otherMatrixObjekt, solutionMatrix, i);
-			thread[i] = new Thread(t[i]);
-			thread[i].start();
-		}
-		
-		// Wait for all threads to finish
-		i = 0;
-		Boolean dead = false;
-		while (!dead) {
-			if (i >= solutionMatrix.length) {
-				dead = true;
-			} else {
-				if (!thread[i].isAlive()) {
-					i++;
-				}
+		for (int i = 0; i < solutionMatrix.length; i=(i+rows+extraRow), t++, rowsAdded--) {
+			if((i+rows) > solutionMatrix.length) {
+				rows = solutionMatrix.length-i;
 			}
+			if(extraRow == 1 && rowsAdded == 0) {
+				extraRow = 0;
+			}
+			w[t] = new EasyMatrixWorker(this, otherMatrixObjekt, solutionMatrix, i, i+rows+extraRow);
+			thread[t] = new Thread(w[t]);
+			thread[t].start();
 		}
+		for (int anzahl = 0; anzahl < t; anzahl++) {
+			thread[anzahl].join();
+		}
+//		
+//		// Wait for all threads to finish
+//		t = 0;
+//		Boolean dead = false;
+//		while (!dead) {
+//			if (t >= numberOfThreads) {
+//				dead = true;
+//			} else {
+//				if (!thread[t].isAlive()) {
+//					t++;
+//				}
+//			}
+//		}
 	}
 
 	public void multiplyParallelAndSeriell(MyMatrix otherMatrixObjekt, Double[][] solutionMatrix, int yStart, int yEnd) {
@@ -90,7 +113,6 @@ public class MyMatrix {
 		otherMatrixObjekt.refreshNumbers();
 		
 		Double[][] otherMatrix = otherMatrixObjekt.dmatrix;
-		
 		for (int i = yStart; i < yEnd; i++) {
 			for (int j = 0; j < solutionMatrix[0].length; j++) {
 				// initialize res
