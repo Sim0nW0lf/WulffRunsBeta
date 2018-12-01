@@ -275,7 +275,7 @@ public class MyVisitor extends DemoBaseVisitor<Double> {
 		int solutionHeight = this.matrixMap.get(ctx.links.name.getText()).dmatrix.length, solutionWidth = this.matrixMap.get(ctx.rechts.name.getText()).dmatrix[0].length;
 		Double[][] solutionMatrix = new Double[solutionHeight][solutionWidth];
 		
-		this.matrixMap.get(ctx.links.name.getText()).multiplyParallelAndSeriell(this.matrixMap.get(ctx.rechts.name.getText()), solutionMatrix);
+		this.matrixMap.get(ctx.links.name.getText()).matParallelSimon(this.matrixMap.get(ctx.rechts.name.getText()), solutionMatrix);
 		MyMatrix mySolutionMatrix = new MyMatrix(solutionMatrix);
 		this.matrixMap.put(ctx.getText(), mySolutionMatrix);
 	return 0.0;

@@ -60,7 +60,7 @@ public class MyMatrix {
 //		this.matrixSplitByIndex(B1, B2, B3, B4, middleY, middleX);
 	}
 	
-	public void matParallelSimon(MyMatrix otherMatrixObjekt, Double[][] solutionMatrix) throws InterruptedException {
+	public void matParallelSimon(MyMatrix otherMatrixObjekt, Double[][] solutionMatrix) {
 		int numberOfThreads = 64;
 		int t = 0, rows = 0, rowsAdded = 0, extraRow = 0;
 
@@ -90,7 +90,12 @@ public class MyMatrix {
 			thread[t].start();
 		}
 		for (int anzahl = 0; anzahl < t; anzahl++) {
-			thread[anzahl].join();
+			try {
+				thread[anzahl].join();
+			} catch (InterruptedException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
 		}
 //		
 //		// Wait for all threads to finish
