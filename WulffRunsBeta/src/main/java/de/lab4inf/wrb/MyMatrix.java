@@ -61,7 +61,7 @@ public class MyMatrix {
 	}
 	
 	public void matParallelSimon(MyMatrix otherMatrixObjekt, Double[][] solutionMatrix) {
-		int numberOfThreads = 64;
+		int numberOfThreads = 8;
 		int t = 0, rows = 0, rowsAdded = 0, extraRow = 0;
 
 		if(solutionMatrix.length <= numberOfThreads) {
@@ -89,27 +89,29 @@ public class MyMatrix {
 			thread[t] = new Thread(w[t]);
 			thread[t].start();
 		}
-		for (int anzahl = 0; anzahl < t; anzahl++) {
-			try {
-				thread[anzahl].join();
-			} catch (InterruptedException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			}
-		}
-//		
-//		// Wait for all threads to finish
-//		t = 0;
-//		Boolean dead = false;
-//		while (!dead) {
-//			if (t >= numberOfThreads) {
-//				dead = true;
-//			} else {
-//				if (!thread[t].isAlive()) {
-//					t++;
-//				}
+		
+		// Wait for all threads to finish BUGED?
+//		for (int anzahl = 0; anzahl < t; anzahl++) {
+//			try {
+//				thread[anzahl].join();
+//			} catch (InterruptedException e) {
+//				// TODO Auto-generated catch block
+//				e.printStackTrace();
 //			}
 //		}
+		
+		// Wait for all threads to finish
+		t = 0;
+		Boolean dead = false;
+		while (!dead) {
+			if (t >= numberOfThreads) {
+				dead = true;
+			} else {
+				if (!thread[t].isAlive()) {
+					t++;
+				}
+			}
+		}
 	}
 
 	public void multiplyParallelAndSeriell(MyMatrix otherMatrixObjekt, Double[][] solutionMatrix, int yStart, int yEnd) {
