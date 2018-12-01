@@ -5,10 +5,10 @@ public class EasyMatrixWorker implements Runnable {
 	int start = 0, ende = 0;
 	protected MyMatrix matrixA;
 	protected MyMatrix matrixB;
-	volatile protected Double[][] solutionMatrix;
+	volatile protected double[][] solutionMatrix;
 	
 	
-	public EasyMatrixWorker(MyMatrix matrixA, MyMatrix matrixB, Double[][] solutionMatrix, int start, int ende) {
+	public EasyMatrixWorker(MyMatrix matrixA, MyMatrix matrixB, double[][] solutionMatrix, int start, int ende) {
 		this.matrixA = matrixA;
 		this.matrixB = matrixB;
 		this.solutionMatrix = solutionMatrix;

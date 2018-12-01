@@ -28,13 +28,8 @@ public class WRBScript implements Script {
 		return parse(input);
 	}
 	
-	@Override
-    public Double[][] parseMatrix(String definition) throws IOException{
-		CharStream input = new ANTLRInputStream(definition);
-		return parseMatrix(input);
-	}
 	
-	public Double[][] parseMatrix(CharStream input) throws IllegalArgumentException {
+	public double[][] parseMatrix(CharStream input) throws IllegalArgumentException {
 		try {
 			DemoLexer lexer = new DemoLexer(input);
 			lexer.removeErrorListeners();
@@ -125,7 +120,7 @@ public class WRBScript implements Script {
 		return visitor.getMatrix(name);
 	}
 	
-	public Double[][] getMatrixSolution(String name) throws IllegalArgumentException {
+	public double[][] getMatrixSolution(String name) throws IllegalArgumentException {
 		return visitor.getMatrixSolution(name);
 	}
 	
