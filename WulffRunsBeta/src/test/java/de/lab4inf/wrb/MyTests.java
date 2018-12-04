@@ -230,8 +230,7 @@ public class MyTests extends AbstractScriptTest {
 	
 	@Test
 	public final void testMatrixMultiTiming() throws Exception {
-//		int sets[][] = {{1, 64}, {10, 64}, {10, 128}, {5, 256}, {5, 512}, {2, 768}}; //, {2, 1024}, {1, 1536}, {1, 2048}
-		int sets[][] = {{1, 2048}}; //{1, 64}, {10, 64}, {10, 128}, {5, 256}, {5, 512}, {2, 768}, {2, 1024}, {1, 1536}, 
+		int sets[][] = {{1, 64}, {10, 64}, {10, 128}, {5, 256}, {5, 512}, {2, 768}, {2, 1024}, {1, 1536}, {1, 2048}}; //
 
 		//do sh*
 		System.out.printf("\n repetitions \t | dimension \t | serial \t | parallel \t | speedup \n");
