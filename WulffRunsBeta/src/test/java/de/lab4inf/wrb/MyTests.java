@@ -13,7 +13,7 @@ import com.ibm.icu.text.DecimalFormat;
 
 public class MyTests extends AbstractScriptTest {
 	
-	static public void matrixCompare(Double[][] matrixExpected, Double[][] matrixActual) {
+	static public void matrixCompare(double[][] matrixExpected, double[][] matrixActual) {
         if (Arrays.deepEquals(matrixExpected, matrixActual) == true) {
             return;
         } else {
@@ -21,17 +21,17 @@ public class MyTests extends AbstractScriptTest {
         }
     }
 	
-	public final Double myRnd(int range) {
+	public final double myRnd(int range) {
 		DecimalFormat numberFormat = new DecimalFormat("#.000");
 		String s = numberFormat.format(range * (Math.random()+Math.random()-1)).replace(',', '.');
 		return Double.parseDouble(s);
 	}
 	
-	public String rndMatrixDefinition(Double[][] matrix, String name, int hight, int width) {
+	public String rndMatrixDefinition(double[][] matrix, String name, int hight, int width) {
 		return rndMatrixDefinition(matrix, name, hight, width, 10);
 	}
 	
-	public String rndMatrixDefinition(Double[][] matrix, String name, int hight, int width, int range){
+	public String rndMatrixDefinition(double[][] matrix, String name, int hight, int width, int range){
 		String matrixDefinition = name + " = {";
 		Double rnd = 0.0;
 	    // write to matrix and create matrixDefinition String
@@ -51,9 +51,9 @@ public class MyTests extends AbstractScriptTest {
 	    return matrixDefinition;
 	}
 	
-	public Double[][] matrixMultiplication(Double[][] matrixA, Double[][] matrixB){
+	public double[][] matrixMultiplication(double[][] matrixA, double[][] matrixB){
 		int hightA = matrixA.length, widthB = matrixB[0].length, widthA_hightB = matrixB.length;
-		Double[][] matrixSolution = new Double[hightA][widthB];
+		double[][] matrixSolution = new double[hightA][widthB];
 	    for (int i = 0; i < hightA; i++) {
 			for (int j = 0; j < widthB; j++) {
 				// initialize res
@@ -167,7 +167,7 @@ public class MyTests extends AbstractScriptTest {
 	public final void testMatrixMultiplikation() throws Exception {
 		String task = "A = {1,2;3,4;}; B = {4,3;2,1;}; m:A*m:B;";
 		script.parse(task);
-		Double[][] matrixExpected = {{8.0, 5.0}, {20.0, 13.0}};
+		double[][] matrixExpected = {{8.0, 5.0}, {20.0, 13.0}};
 		matrixCompare(matrixExpected, script.getMatrixSolution("m:A*m:B"));
 	}
 	
@@ -175,13 +175,13 @@ public class MyTests extends AbstractScriptTest {
 	public final void testMatrixMultiRandom() throws Exception {
 		int hightA = 10, widthA_hightB = 4, widthB = 4, range = 10; // range means myRnd(range) can be -range up to range.
 	    
-		Double[][] matrixA = new Double[hightA][widthA_hightB];
-	    Double[][] matrixB = new Double[widthA_hightB][widthB];
+		double[][] matrixA = new double[hightA][widthA_hightB];
+	    double[][] matrixB = new double[widthA_hightB][widthB];
 		String task = rndMatrixDefinition(matrixA, "A", hightA, widthA_hightB, range) +
 					rndMatrixDefinition(matrixB, "B", widthA_hightB, widthB, range) +
 					"m:A*m:B";
 		
-	    Double[][] matrixExpected = matrixMultiplication(matrixA, matrixB);
+	    double[][] matrixExpected = matrixMultiplication(matrixA, matrixB);
 		script.parse(task);
 		matrixCompare(matrixExpected, script.getMatrixSolution("m:A*m:B"));
 	}
@@ -189,8 +189,8 @@ public class MyTests extends AbstractScriptTest {
 	private long matrixParallel(int n) {
 		int heightA = n-1, widthA_heightB = n, widthB =n+1, range = 10; // range means myRnd(range) can be -range up to range.
 	    
-		Double[][] matrixA = new Double[heightA][widthA_heightB];
-	    Double[][] matrixB = new Double[widthA_heightB][widthB];
+		double[][] matrixA = new double[heightA][widthA_heightB];
+	    double[][] matrixB = new double[widthA_heightB][widthB];
 	    
 	    //Init with random sh**
 		for(int x = 0; x < heightA;x++) {
@@ -204,7 +204,7 @@ public class MyTests extends AbstractScriptTest {
 			}
 		}
 		
-	    Double[][] matrixExpected = matrixMultiplication(matrixA, matrixB);
+	    double[][] matrixExpected = matrixMultiplication(matrixA, matrixB);
 	    MyMatrix m1 = new MyMatrix(matrixA);
 	    MyMatrix m2 = new MyMatrix(matrixB);
 	    long l = System.nanoTime();
@@ -216,7 +216,7 @@ public class MyTests extends AbstractScriptTest {
 	
 	private MyMatrix matrixGen(int n, int m) {
 		int range = 10; // range means myRnd(range) can be -range up to range.
-		Double[][] matrix = new Double[n][m];
+		double[][] matrix = new double[n][m];
 	    
 	    //Init with random sh**
 		for(int x = 0; x < n;x++) {
@@ -270,7 +270,7 @@ public class MyTests extends AbstractScriptTest {
 		for(int j = 0; j < sets.length; j++) {
 			MyMatrix matrixA = matrixGen(sets[j][1]-1, sets[j][1]);
 			MyMatrix matrixB = matrixGen(sets[j][1], sets[j][1]+1);
-			Double[][] solutionMatrix = new Double[sets[j][1]-1][sets[j][1]+1];
+			double[][] solutionMatrix = new double[sets[j][1]-1][sets[j][1]+1];
 
 			long tmp;
 			//Serial
@@ -298,14 +298,14 @@ public class MyTests extends AbstractScriptTest {
 	public final void testMatrixMultiWithFunction() throws Exception {
 		String task = "a = 2; f(x) = 2*x; A = {1,2;3,f(a);}; B = {4,3;2,1;}; m:A*m:B;";
 		script.parse(task);
-		Double[][] matrixExpected = {{8.0, 5.0}, {20.0, 13.0}};
+		double[][] matrixExpected = {{8.0, 5.0}, {20.0, 13.0}};
 		matrixCompare(matrixExpected, script.getMatrixSolution("m:A*m:B"));
 	}
 	@Test
 	public final void testMatrixMultiBothContainFunction() throws Exception {
 		String task = "a = 2; f(x) = 2*x; A = {1,2;3,f(a);}; B = {f(a),3;2,1;};  m:A*m:B;";
 		script.parse(task);
-		Double[][] matrixExpected = {{8.0, 5.0}, {20.0, 13.0}};
+		double[][] matrixExpected = {{8.0, 5.0}, {20.0, 13.0}};
 		matrixCompare(matrixExpected, script.getMatrixSolution("m:A*m:B"));
 	}
 	@Test
@@ -314,7 +314,7 @@ public class MyTests extends AbstractScriptTest {
 					+ "a = 2; f = 3; f(x) = 2*x; a(x) = (2*x)/2; z(x) = x/b; b = 2;"
 					+ "m:A*m:B;";
 		script.parse(task);
-		Double[][] matrixExpected = {{8.0, 5.0}, {20.0, 13.0}};
+		double[][] matrixExpected = {{8.0, 5.0}, {20.0, 13.0}};
 		matrixCompare(matrixExpected, script.getMatrixSolution("m:A*m:B"));
 	}
 	

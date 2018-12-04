@@ -60,7 +60,6 @@ public interface Script {
     double parse(InputStream defStream) throws IOException;
     
     
-    Double[][] parseMatrix(String definition) throws IOException;
 
     /**
      * Get all script known function names.
@@ -106,7 +105,7 @@ public interface Script {
     //##############
     public MyMatrix getMatrix(String name);
 	
-	public Double[][] getMatrixSolution(String name);
+	public double[][] getMatrixSolution(String name);
 	//##############
 
     /**

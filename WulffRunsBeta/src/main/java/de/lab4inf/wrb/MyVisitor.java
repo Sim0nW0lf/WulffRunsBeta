@@ -25,7 +25,7 @@ public class MyVisitor extends DemoBaseVisitor<Double> {
 	HashMap<String, Function> funcMap = new HashMap<String, Function>();
 	HashMap<String, MyMatrix> matrixMap = new HashMap<String, MyMatrix>();
 
-	Double[][] solutionMatrix;
+	double[][] solutionMatrix;
 
 
 	/**
@@ -35,7 +35,7 @@ public class MyVisitor extends DemoBaseVisitor<Double> {
 		return solutionList.getLast();
 	}
 	
-	public Double[][] getMatrixErgebnis() {
+	public double[][] getMatrixErgebnis() {
 		return solutionMatrix;
 	}
 
@@ -273,7 +273,7 @@ public class MyVisitor extends DemoBaseVisitor<Double> {
 	@Override
 	public Double visitMatrixMultiplikation(DemoParser.MatrixMultiplikationContext ctx) {
 		int solutionHeight = this.matrixMap.get(ctx.links.name.getText()).dmatrix.length, solutionWidth = this.matrixMap.get(ctx.rechts.name.getText()).dmatrix[0].length;
-		Double[][] solutionMatrix = new Double[solutionHeight][solutionWidth];
+		double[][] solutionMatrix = new double[solutionHeight][solutionWidth];
 		
 		this.matrixMap.get(ctx.links.name.getText()).matParallelSimon(this.matrixMap.get(ctx.rechts.name.getText()), solutionMatrix);
 		MyMatrix mySolutionMatrix = new MyMatrix(solutionMatrix);
@@ -339,7 +339,7 @@ public class MyVisitor extends DemoBaseVisitor<Double> {
 		}
 	}
 	
-	public Double[][] getMatrixSolution(String matName) throws IllegalArgumentException {
+	public double[][] getMatrixSolution(String matName) throws IllegalArgumentException {
 		if (!this.matrixMap.containsKey(matName)) {
 			throw new IllegalArgumentException("Error 404: Solution to '" + matName + "' not found. ");
 		} else {

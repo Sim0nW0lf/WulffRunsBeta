@@ -8,7 +8,7 @@ public class MyMatrix {
 
 	static int threadNumber = 32;
 	protected DemoParser.ExpressionContext[][] matrix;
-	protected Double[][] dmatrix;
+	protected double[][] dmatrix;
 	protected ArrayList<int[]> varFields = new ArrayList<int[]>();
 	protected DemoParser.MatrixDefinitionContext matrixRoot;
 	protected MyVisitor parent;
@@ -20,11 +20,11 @@ public class MyMatrix {
 		this.matrixRoot = matrix;
 		this.height = height;
 		this.width = width;
-		this.dmatrix = new Double[width][height];
+		this.dmatrix = new double[width][height];
 		this.matrix = new ExpressionContext[this.dmatrix.length][this.dmatrix[0].length];
 	}
 	
-	public MyMatrix(Double[][] matrix) {
+	public MyMatrix(double[][] matrix) {
 		this.dmatrix = matrix;
 		this.height = matrix.length;
 		this.width = matrix[0].length;
@@ -37,14 +37,14 @@ public class MyMatrix {
 		}
 	}
 
-	public Double[][] addition(Double[][] otherMatrix) {
+	public double[][] addition(double[][] otherMatrix) {
 		// check if sizes fit
 		if (otherMatrix.length != this.dmatrix.length || otherMatrix[0].length != this.dmatrix[0].length) {
 			throw new IllegalArgumentException("Size of Matrixes differs.");
 		}
 		
 		// Mathemagic
-		Double[][] res = new Double[this.dmatrix.length][this.dmatrix[0].length];
+		double[][] res = new double[this.dmatrix.length][this.dmatrix[0].length];
 		for (int y = 0; y < this.dmatrix.length; y++) {
 			for (int x = 0; x < this.dmatrix[0].length; x++) {
 				res[x][y] = this.dmatrix[x][y] + otherMatrix[x][y];
@@ -53,15 +53,15 @@ public class MyMatrix {
 		return res;
 	}
 	
-	public void matDivideConquerSimon(MyMatrix otherMatrixObjekt, Double[][] solutionMatrix) {
+	public void matDivideConquerSimon(MyMatrix otherMatrixObjekt, double[][] solutionMatrix) {
 		int middleY, middleX;
-		Double[][] A1, A2, A3, A4, B1, B2, B3, B4;
+		double[][] A1, A2, A3, A4, B1, B2, B3, B4;
 //		this.matrixSplitByIndex(A1, A2, A3, A4, middleY, middleX);
 //		this.matrixSplitByIndex(B1, B2, B3, B4, middleY, middleX);
 	}
 	
-	public void matParallelSimon(MyMatrix otherMatrixObjekt, Double[][] solutionMatrix) {
-		int numberOfThreads = 8;
+	public void matParallelSimon(MyMatrix otherMatrixObjekt, double[][] solutionMatrix) {
+		int numberOfThreads = 64;
 		int t = 0, rows = 0, rowsAdded = 0, extraRow = 0;
 
 		if(solutionMatrix.length <= numberOfThreads) {
@@ -89,37 +89,35 @@ public class MyMatrix {
 			thread[t] = new Thread(w[t]);
 			thread[t].start();
 		}
-		
-		// Wait for all threads to finish BUGED?
-//		for (int anzahl = 0; anzahl < t; anzahl++) {
-//			try {
-//				thread[anzahl].join();
-//			} catch (InterruptedException e) {
-//				// TODO Auto-generated catch block
-//				e.printStackTrace();
-//			}
-//		}
-		
-		// Wait for all threads to finish
-		t = 0;
-		Boolean dead = false;
-		while (!dead) {
-			if (t >= numberOfThreads) {
-				dead = true;
-			} else {
-				if (!thread[t].isAlive()) {
-					t++;
-				}
+		for (int anzahl = 0; anzahl < t; anzahl++) {
+			try {
+				thread[anzahl].join();
+			} catch (InterruptedException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
 			}
 		}
+//		
+//		// Wait for all threads to finish
+//		t = 0;
+//		Boolean dead = false;
+//		while (!dead) {
+//			if (t >= numberOfThreads) {
+//				dead = true;
+//			} else {
+//				if (!thread[t].isAlive()) {
+//					t++;
+//				}
+//			}
+//		}
 	}
 
-	public void multiplyParallelAndSeriell(MyMatrix otherMatrixObjekt, Double[][] solutionMatrix, int yStart, int yEnd) {
+	public void multiplyParallelAndSeriell(MyMatrix otherMatrixObjekt, double[][] solutionMatrix, int yStart, int yEnd) {
 		// Make sure our numbers are good
 		this.refreshNumbers();
 		otherMatrixObjekt.refreshNumbers();
 		
-		Double[][] otherMatrix = otherMatrixObjekt.dmatrix;
+		double[][] otherMatrix = otherMatrixObjekt.dmatrix;
 		for (int i = yStart; i < yEnd; i++) {
 			for (int j = 0; j < solutionMatrix[0].length; j++) {
 				// initialize res
@@ -146,7 +144,7 @@ public class MyMatrix {
 		otherMatrix.refreshNumbers();
 
 		// Mathemagic
-		Double[][] res = new Double[this.getHeight()][otherMatrix.getWidth()];
+		double[][] res = new double[this.getHeight()][otherMatrix.getWidth()];
 		
 		for (int i = 0; i < this.getHeight(); i++) {
 			for (int j = 0; j < otherMatrix.getWidth(); j++) {
@@ -176,7 +174,7 @@ public class MyMatrix {
 
 		// stuff all the stuff into the other stuff
 		for (int i = 0; i < pieces; i++) {
-			Double[][] res = new Double[otherMatrix.getHeight()][size[i]];
+			double[][] res = new double[otherMatrix.getHeight()][size[i]];
 
 			for (int x = 0; x < size[i]; x++) {
 				for (int y = 0; y < otherMatrix.getHeight(); y++) {
@@ -224,7 +222,7 @@ public class MyMatrix {
 			}
 		}
 		i = 0;
-		Double[][] ret = new Double[height][otherMatrix.getWidth()];
+		double[][] ret = new double[height][otherMatrix.getWidth()];
 		int globalX = 0;
 
 		// Synchronizing
@@ -240,7 +238,7 @@ public class MyMatrix {
 		return new MyMatrix(ret);
 	}
 
-	static boolean compare(Double[][] m1, Double[][] m2) {
+	static boolean compare(double[][] m1, double[][] m2) {
 		if (m1.length != m2.length || m1[0].length != m2[0].length) {
 			return false;
 		}
@@ -254,7 +252,7 @@ public class MyMatrix {
 		return true;
 	}
 
-	static String print(Double[][] m1) {
+	static String print(double[][] m1) {
 		String s = "";
 		for (int x = 0; x < m1.length; x++) {
 			s += "[";
@@ -311,7 +309,7 @@ public class MyMatrix {
 		this.matrix[y][x] = ctx;
 	}
 
-	public Double[][] getDmatrix() {
+	public double[][] getDmatrix() {
 		return dmatrix;
 	}
 
