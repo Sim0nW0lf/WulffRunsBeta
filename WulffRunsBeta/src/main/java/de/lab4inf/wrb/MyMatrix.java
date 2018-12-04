@@ -6,7 +6,7 @@ import de.lab4inf.wrb.DemoParser.ExpressionContext;
 
 public class MyMatrix {
 
-	static int threadNumber = 32;
+	static int threadNumber = 2048;
 	protected DemoParser.ExpressionContext[][] matrix;
 	protected double[][] dmatrix;
 	protected ArrayList<int[]> varFields = new ArrayList<int[]>();
@@ -15,12 +15,12 @@ public class MyMatrix {
 	protected int height;
 	protected int width;
 
-	public MyMatrix(MyVisitor parent, DemoParser.MatrixDefinitionContext matrix, int width, int height) {
+	public MyMatrix(MyVisitor parent, DemoParser.MatrixDefinitionContext matrix, int height, int width) {
 		this.parent = parent;
 		this.matrixRoot = matrix;
 		this.height = height;
 		this.width = width;
-		this.dmatrix = new double[width][height];
+		this.dmatrix = new double[height][width];
 		this.matrix = new ExpressionContext[this.dmatrix.length][this.dmatrix[0].length];
 	}
 	
@@ -61,7 +61,7 @@ public class MyMatrix {
 	}
 	
 	public void matParallelSimon(MyMatrix otherMatrixObjekt, double[][] solutionMatrix) {
-		int numberOfThreads = 64;
+		int numberOfThreads = 4;
 		int t = 0, rows = 0, rowsAdded = 0, extraRow = 0;
 
 		if(solutionMatrix.length <= numberOfThreads) {
@@ -134,6 +134,43 @@ public class MyMatrix {
 //		return multiplication(otherMatrix, 0 , otherMatrix.getWidth());
 //	}
 	
+	private double[][] transposeMatrix(MyMatrix otherMatrix) {
+		int width = otherMatrix.getWidth(), height = otherMatrix.getHeight();
+		double[][] transposedMatrix = new double [width][height];
+		for(int y = 0; y < otherMatrix.getHeight(); y++) {
+			for(int x = 0; x < otherMatrix.getWidth(); x++) {
+				transposedMatrix[x][y] = otherMatrix.getDmatrix()[y][x];
+			}
+		}
+		return transposedMatrix;
+	}
+	
+	public MyMatrix matMultiTranspose(MyMatrix otherMatrix) {
+		// Check if columns of first = rows of second
+//		if (this.getHeight() != otherMatrix.getWidth()) {
+//			throw new IllegalArgumentException("Incorrect size.");
+//		}
+		// Make sure our numbers are good
+		this.refreshNumbers();
+		otherMatrix.refreshNumbers();
+		
+		double[][] otherMatrixTrans = transposeMatrix(otherMatrix);
+
+		// Mathemagic
+		double[][] res = new double[this.getHeight()][otherMatrix.getWidth()];
+		
+		for (int i = 0; i < this.getHeight(); i++) {
+			for (int j = 0; j < otherMatrix.getWidth(); j++) {
+				res[i][j] = 0.0;
+				for (int k = 0; k < otherMatrix.getHeight(); k++) {
+					res[i][j] += this.dmatrix[i][k] * otherMatrixTrans[j][k];
+				}
+			}
+		}
+		
+		return new MyMatrix(res);
+	}
+
 	public MyMatrix multiplication(MyMatrix otherMatrix) {
 		// Check if columns of first = rows of second
 		if (this.getWidth() != otherMatrix.getHeight()) {
