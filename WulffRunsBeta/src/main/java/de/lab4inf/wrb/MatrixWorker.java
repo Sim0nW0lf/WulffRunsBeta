@@ -12,7 +12,7 @@ public class MatrixWorker implements Runnable {
 	}
 	@Override
 	public void run() {
-		this.matrixGoal = this.matrixTarget.multiplication(matrixLocal);
+		this.matrixGoal = this.matrixTarget.matMultiTranspose(matrixLocal);
 	}
 	
 	public MyMatrix getMatrixLocal() {

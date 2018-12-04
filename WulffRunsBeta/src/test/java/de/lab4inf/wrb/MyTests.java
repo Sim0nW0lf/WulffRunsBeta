@@ -173,7 +173,7 @@ public class MyTests extends AbstractScriptTest {
 	
 	@Test
 	public final void testMatrixMultiRandom() throws Exception {
-		int hightA = 10, widthA_hightB = 4, widthB = 4, range = 10; // range means myRnd(range) can be -range up to range.
+		int hightA = 3, widthA_hightB = 2, widthB = 1, range = 10; // range means myRnd(range) can be -range up to range.
 	    
 		double[][] matrixA = new double[hightA][widthA_hightB];
 	    double[][] matrixB = new double[widthA_hightB][widthB];
@@ -228,9 +228,48 @@ public class MyTests extends AbstractScriptTest {
 		return new MyMatrix(matrix);
 	}
 	
-//	@Test
+	@Test
 	public final void testMatrixMultiTiming() throws Exception {
-		int sets[][] = {{1, 64}, {10, 64}, {10, 128}, {5, 256}, {5, 512}, {2, 768}}; //, {2, 1024}, {1, 1536}, {1, 2048}
+//		int sets[][] = {{1, 64}, {10, 64}, {10, 128}, {5, 256}, {5, 512}, {2, 768}}; //, {2, 1024}, {1, 1536}, {1, 2048}
+		int sets[][] = {{1, 2048}}; //{1, 64}, {10, 64}, {10, 128}, {5, 256}, {5, 512}, {2, 768}, {2, 1024}, {1, 1536}, 
+
+		//do sh*
+		System.out.printf("\n repetitions \t | dimension \t | serial \t | parallel \t | speedup \n");
+		Long[][] times = new Long[sets.length][2];
+		for(int j = 0; j < sets.length; j++) {
+			MyMatrix matrixA = matrixGen(sets[j][1]-1, sets[j][1]);
+			MyMatrix matrixB = matrixGen(sets[j][1], sets[j][1]+1);
+			long tmp;
+			//Serial
+			times[j][0] = Long.valueOf(0);
+			for(int i = 0; i < sets[j][0]; i++) {
+				tmp = System.nanoTime();
+				matrixA.multiplication(matrixB);
+				times[j][0] += Long.valueOf(System.nanoTime() - tmp);
+			}
+			times[j][0] /= sets[j][0];
+			
+//			for(int i = 0; i < 5; i++) {
+//				matrixA.multiplyParrallel(matrixB);				
+//			}
+			
+			//Parallel
+			times[j][1] = Long.valueOf(0);
+			for(int i = 0; i < sets[j][0]; i++) {
+				tmp = System.nanoTime();
+				matrixA.multiplyParrallel(matrixB);
+				times[j][1] += Long.valueOf(System.nanoTime() - tmp);
+			}
+			times[j][1] /= sets[j][0];
+			double speedUp = times[j][0].doubleValue() / times[j][1].doubleValue();
+			System.out.printf("\t %d \t | \t %d \t | %d \t | %d \t | %.2f \n", sets[j][0], sets[j][1], times[j][0]/100, times[j][1]/100, speedUp);
+		}
+		
+	}
+	
+//	@Test
+	public final void testMatrixMultiTimingSimon() throws Exception {
+		int sets[][] = {{1, 2048}}; //{1, 64}, {10, 64}, {10, 128}, {5, 256}, {5, 512}, {2, 768}, {2, 1024}, {1, 1536}, 
 		
 		//do sh*
 		System.out.printf("\n repetitions \t | dimension \t | serial \t | parallel \t | speedup \n");
@@ -238,8 +277,10 @@ public class MyTests extends AbstractScriptTest {
 		for(int j = 0; j < sets.length; j++) {
 			MyMatrix matrixA = matrixGen(sets[j][1]-1, sets[j][1]);
 			MyMatrix matrixB = matrixGen(sets[j][1], sets[j][1]+1);
+			double[][] solutionMatrix = new double[sets[j][1]-1][sets[j][1]+1];
 			long tmp;
 			//Serial
+			times[j][0] = 0;
 			for(int i = 0; i < sets[j][0]; i++) {
 				tmp = System.nanoTime();
 				matrixA.multiplication(matrixB);
@@ -248,19 +289,19 @@ public class MyTests extends AbstractScriptTest {
 			times[j][0] /= sets[j][0];
 			
 			//Parallel
+			times[j][1] = 0;
 			for(int i = 0; i < sets[j][0]; i++) {
 				tmp = System.nanoTime();
-				matrixA.multiplyParrallel(matrixB);
+				matrixA.matParallelSimon(matrixB, solutionMatrix);
 				times[j][1] += System.nanoTime() - tmp;
 			}
 			times[j][1] /= sets[j][0];
 			double speedUp = times[j][0] / times[j][1];
 			System.out.printf("\t %d \t | \t %d \t | %d \t | %d \t | %.2f \n", sets[j][0], sets[j][1], times[j][0]/100, times[j][1]/100, speedUp);
 		}
-		
 	}
 	
-	@Test
+//	@Test
 	public final void testMatrixMultiTimingAlternative() throws Exception {
 		int sets[][] = {{1, 64}, {10, 64}, {10, 128}, {5, 256}, {5, 512}, {2, 768}}; //, {2, 1024}, {1, 1536}, {1, 2048}
 		
@@ -291,7 +332,6 @@ public class MyTests extends AbstractScriptTest {
 			double speedUp = times[j][0] / times[j][1];
 			System.out.printf("\t %d \t | \t %d \t | %d \t | %d \t | %.2f \n", sets[j][0], sets[j][1], times[j][0]/100000, times[j][1]/100000, speedUp);
 		}
-		
 	}
 		
 	@Test
