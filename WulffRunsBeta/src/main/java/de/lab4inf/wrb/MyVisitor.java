@@ -254,6 +254,8 @@ public class MyVisitor extends DemoBaseVisitor<Double> {
 		return 0.0;
 	}
 	
+	// matParallel
+	////////////////////////////////////////////////////////////////////////////////
 //	@Override
 //	public Double visitMatrixMultiplikation(DemoParser.MatrixMultiplikationContext ctx) {
 //		// calculate remaining fields if there are any
@@ -270,16 +272,59 @@ public class MyVisitor extends DemoBaseVisitor<Double> {
 //		return 0.0;
 //	}
 	
-	@Override
-	public Double visitMatrixMultiplikation(DemoParser.MatrixMultiplikationContext ctx) {
-		int solutionHeight = this.matrixMap.get(ctx.links.name.getText()).dmatrix.length, solutionWidth = this.matrixMap.get(ctx.rechts.name.getText()).dmatrix[0].length;
-		double[][] solutionMatrix = new double[solutionHeight][solutionWidth];
-		
-		this.matrixMap.get(ctx.links.name.getText()).matParallelSimon(this.matrixMap.get(ctx.rechts.name.getText()), solutionMatrix);
-		MyMatrix mySolutionMatrix = new MyMatrix(solutionMatrix);
-		this.matrixMap.put(ctx.getText(), mySolutionMatrix);
-	return 0.0;
-	}
+	// Divide and Conquer
+		////////////////////////////////////////////////////////////////////////////////
+		@Override
+		public Double visitMatrixMultiplikation(DemoParser.MatrixMultiplikationContext ctx) {
+			// calculate remaining fields if there are any
+			if(this.matrixMap.get(ctx.links.name.getText()).varFields != null)
+				this.matrixMap.get(ctx.links.name.getText()).refreshNumbers();
+			if(this.matrixMap.get(ctx.rechts.name.getText()).varFields != null)
+				this.matrixMap.get(ctx.rechts.name.getText()).refreshNumbers();
+			
+			this.matrixMap.put(ctx.getText(), 
+					this.matrixMap.get(ctx.links.name.getText()).matDivideConquer(
+							this.matrixMap.get(ctx.rechts.name.getText())
+							)
+					);
+			return 0.0;
+		}
+	
+	
+//	@Override
+//	public Double visitMatrixMultiplikation(DemoParser.MatrixMultiplikationContext ctx) {
+//		// calculate remaining fields if there are any
+//		this.matrixMap.put(ctx.getText(), 
+//				this.matrixMap.get(ctx.links.name.getText()).matMultiTranspose(
+//						this.matrixMap.get(ctx.rechts.name.getText())
+//						)
+//				);
+//		return 0.0;
+//	}
+	
+	
+	
+//	@Override
+//	public Double visitMatrixMultiplikation(DemoParser.MatrixMultiplikationContext ctx) {
+//		int solutionHeight = this.matrixMap.get(ctx.links.name.getText()).dmatrix.length, solutionWidth = this.matrixMap.get(ctx.rechts.name.getText()).dmatrix[0].length;
+//		double[][] solutionMatrix = new double[solutionHeight][solutionWidth];
+//		
+//		this.matrixMap.get(ctx.links.name.getText()).matParallelSimon(this.matrixMap.get(ctx.rechts.name.getText()), solutionMatrix);
+//		MyMatrix mySolutionMatrix = new MyMatrix(solutionMatrix);
+//		this.matrixMap.put(ctx.getText(), mySolutionMatrix);
+//	return 0.0;
+//	}
+	
+//	@Override
+//	public Double visitMatrixMultiplikation(DemoParser.MatrixMultiplikationContext ctx) {
+//		int solutionHeight = this.matrixMap.get(ctx.links.name.getText()).dmatrix.length, solutionWidth = this.matrixMap.get(ctx.rechts.name.getText()).dmatrix[0].length;
+//		double[][] solutionMatrix = new double[solutionHeight][solutionWidth];
+//		
+//		this.matrixMap.get(ctx.links.name.getText()).matMultiTranspose(this.matrixMap.get(ctx.rechts.name.getText()));
+//		MyMatrix mySolutionMatrix = new MyMatrix(solutionMatrix);
+//		this.matrixMap.put(ctx.getText(), mySolutionMatrix);
+//	return 0.0;
+//	}
 
 	@Override
 	protected Double aggregateResult(Double aggregate, Double nextResult) {

@@ -200,7 +200,7 @@ public class MyTests extends AbstractScriptTest {
 		return new MyMatrix(matrix);
 	}
 	
-	@Test
+//	@Test
 	public final void testMatrixMultiTiming() throws Exception {
 		int sets[][] = {{1, 64}, {10, 64}, {10, 128}, {5, 256}, {5, 512}, {2, 768}, {2, 1024}, {1, 1536}, {1, 2048}}; //
 
@@ -238,7 +238,7 @@ public class MyTests extends AbstractScriptTest {
 		
 	}
 	
-	@Test
+//	@Test
 	public final void testDivideAndConquerTiming() throws Exception {
 		int sets[][] = {{1, 64}, {10, 64}, {10, 128}, {5, 256}, {5, 512}, {2, 768}, {2, 1024}, {1, 1536}, {1, 2048}}; //
 
@@ -266,7 +266,7 @@ public class MyTests extends AbstractScriptTest {
 			times[j][1] = Long.valueOf(0);
 			for(int i = 0; i < sets[j][0]; i++) {
 				tmp = System.nanoTime();
-				matrixA.matDivideConquerSimon(matrixB);
+				matrixA.matDivideConquer(matrixB);
 				times[j][1] += Long.valueOf(System.nanoTime() - tmp);
 			}
 			times[j][1] /= sets[j][0];

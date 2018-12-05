@@ -125,7 +125,7 @@ public class MyMatrix {
 		}
 	}
 	
-	public MyMatrix matDivideConquerSimon(MyMatrix otherMatrixObjekt) {
+	public MyMatrix matDivideConquer(MyMatrix otherMatrixObjekt) {
 		double[][] solutionMatrix = new double[height][otherMatrixObjekt.getWidth()];
 		int middleYA = this.dmatrix.length/2, middleXA = this.dmatrix[0].length/2, middleXB = otherMatrixObjekt.dmatrix[0].length/2;
 		double[][]
@@ -394,84 +394,5 @@ public class MyMatrix {
 
 	public DemoParser.MatrixDefinitionContext getMatrixRoot() {
 		return matrixRoot;
-	}
-
-////////////////////////////////////////////////////////////////////////////////////////
-////////////////////////////////////////////////////////////////////////////////////////
-	
-	public ArrayList<MyMatrix> getSplitColMatrix_new(MyMatrix otherMatrix, int pieces) {
-		// Mathemagic the size of the individual Pieces
-		if(otherMatrix.width < pieces) {
-			pieces = otherMatrix.width;
-		}
-		int[] size = new int[pieces];
-		for (int i = 0; i < pieces; i++) {
-			size[i] = (otherMatrix.getWidth() - (otherMatrix.getWidth() % pieces)) / pieces;
-		}
-		size[pieces - 1] += otherMatrix.getWidth() % pieces;
-
-		int globalX = 0;
-		ArrayList<MyMatrix> ret = new ArrayList<MyMatrix>();
-
-		// stuff all the stuff into the other stuff
-		for (int i = 0; i < pieces; i++) {
-			double[][] res = new double[otherMatrix.getHeight()][size[i]];
-
-			for (int x = 0; x < size[i]; x++) {
-				for (int y = 0; y < otherMatrix.getHeight(); y++) {
-					res[y][x] = otherMatrix.getDmatrix()[y][globalX];
-				}
-				globalX++;
-			}
-
-			ret.add(new MyMatrix(res));
-		}
-		return ret;
-	}
-	
-	public MyMatrix multiplyParrallel_new(MyMatrix otherMatrix) {
-		ArrayList<MyMatrix> pieces = getSplitColMatrix_new(this, height);
-		MatrixWorker_new[] t = new MatrixWorker_new[height];
-		Thread tr[] = new Thread[height];
-		
-		int i = 0;
-
-		// Thread stuffs
-		for (MyMatrix p : pieces) {
-			t[i] = new MatrixWorker_new(p, otherMatrix);
-			tr[i] = new Thread(t[i]);
-			tr[i].start();
-			// p = multiplication(p);
-
-			i++;
-		}
-
-		// Wait for all threads to finish
-		i = 0;
-		Boolean dead = false;
-		while (!dead) {
-			if (i >= pieces.size()) {
-				dead = true;
-			} else {
-				if (!tr[i].isAlive()) {
-					i++;
-				}
-			}
-		}
-		i = 0;
-		double[][] ret = new double[height][otherMatrix.getWidth()];
-		int globalX = 0;
-
-		// Synchronizing
-		for (i = 0; i < pieces.size(); i++) {
-			for (int x = 0; x < t[i].getMatrixGoal().getWidth(); x++) {
-				for (int y = 0; y < height; y++) {
-					ret[y][globalX] = t[i].getMatrixGoal().getDmatrix()[y][x];
-				}
-				globalX++;
-			}
-		}
-
-		return new MyMatrix(ret);
 	}
 }
