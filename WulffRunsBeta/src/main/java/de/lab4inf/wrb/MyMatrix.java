@@ -6,7 +6,7 @@ import de.lab4inf.wrb.DemoParser.ExpressionContext;
 
 public class MyMatrix {
 
-	static int threadNumber = 4;
+	static int threadNumber = 32;
 	protected DemoParser.ExpressionContext[][] matrix;
 	protected double[][] dmatrix;
 	protected ArrayList<int[]> varFields = new ArrayList<int[]>();
@@ -53,11 +53,126 @@ public class MyMatrix {
 		return res;
 	}
 	
-	public void matDivideConquerSimon(MyMatrix otherMatrixObjekt, double[][] solutionMatrix) {
-		int middleY, middleX;
-		double[][] A1, A2, A3, A4, B1, B2, B3, B4;
-//		this.matrixSplitByIndex(A1, A2, A3, A4, middleY, middleX);
-//		this.matrixSplitByIndex(B1, B2, B3, B4, middleY, middleX);
+	private void matrixSplitByIndex(double[][] matrix, double[][] M1,double[][] M2, double[][] M3, double[][] M4, int middleY, int middleX) {
+		for(int y = 0; y < M1.length; y++) {
+			for(int x = 0; x < M1[0].length; x++) {
+				M1[y][x] = matrix[y][x];
+			}
+		}
+		for(int y = 0; y < M2.length; y++) {
+			for(int x = M1[0].length; x < matrix[0].length; x++) {
+				M2[y][x-M1[0].length] = matrix[y][x];
+			}
+		}
+		for(int y = M2.length; y < matrix.length; y++) {
+			for(int x = 0; x < M3[0].length; x++) {
+				M3[y-M2.length][x] = matrix[y][x];
+			}
+		}
+		for(int y = M2.length; y < matrix.length; y++) {
+			for(int x = M3[0].length; x < matrix[0].length; x++) {
+				M4[y-M2.length][x-M3[0].length] = matrix[y][x];
+			}
+		}
+	}
+	
+	public double[][] dAndCMultiTranspose(double[][] matrixA, double[][] matrixB) {
+		// Check if columns of first = rows of second
+//		if (this.getHeight() != otherMatrix.getWidth()) {
+//			throw new IllegalArgumentException("Incorrect size.");
+//		}
+		int bWidth = matrixB[0].length, bHeight = matrixB.length,
+			aWidth = matrixA[0].length, aHeight = matrixA.length;
+		
+		double[][] res = new double[aHeight][bWidth], transMatrixB = transposeMatrix(matrixB);
+
+		// Mathemagic
+		for (int i = 0; i < aHeight; i++) {
+			for (int j = 0; j < bWidth; j++) {
+				res[i][j] = 0.0;
+				for (int k = 0; k < bHeight; k++) {
+					res[i][j] += matrixA[i][k] * transMatrixB[j][k];
+				}
+			}
+		}
+		
+		return res;
+	}
+	
+	public void matrixMerge(double[][] M1, double[][] M2, double[][] M3, double[][] M4, double[][] solutionMatrix){
+		for(int y = 0; y < M1.length; y++) {
+			for(int x = 0; x < M1[0].length; x++) {
+				solutionMatrix[y][x] = M1[y][x];
+			}
+		}
+		for(int y = 0; y < M2.length; y++) {
+			for(int x = M1[0].length; x < solutionMatrix[0].length; x++) {
+				solutionMatrix[y][x] = M2[y][x-M1[0].length];
+			}
+		}
+		for(int y = M1.length; y < solutionMatrix.length; y++) {
+			for(int x = 0; x < M1[0].length; x++) {
+				solutionMatrix[y][x] = M3[y-M1.length][x];
+			}
+		}
+		for(int y = M3.length; y < solutionMatrix.length; y++) {
+			for(int x = M1[0].length; x < solutionMatrix[0].length; x++) {
+				solutionMatrix[y][x] = M4[y-M3.length][x-M1[0].length];
+			}
+		}
+	}
+	
+	public MyMatrix matDivideConquerSimon(MyMatrix otherMatrixObjekt) {
+		double[][] solutionMatrix = new double[height][otherMatrixObjekt.getWidth()];
+		int middleYSol = solutionMatrix.length/2, middleXSol = solutionMatrix[0].length/2,
+			middleYA = this.dmatrix.length/2, middleXA = this.dmatrix[0].length/2,
+			middleYB = otherMatrixObjekt.dmatrix.length/2, middleXB = otherMatrixObjekt.dmatrix[0].length/2;
+		double[][]
+		A1 = new double[middleYA][middleXA],
+		A2 = new double[middleYA][this.dmatrix[0].length-middleXA],
+		A3 = new double[this.dmatrix.length-middleYA][middleXA],
+		A4 = new double[this.dmatrix.length-middleYA][this.dmatrix[0].length-middleXA],
+		B1 = new double[middleXA][middleXB],
+		B2 = new double[this.dmatrix[0].length-middleXA][otherMatrixObjekt.dmatrix[0].length-middleXB],
+		B3 = new double[middleXA][otherMatrixObjekt.dmatrix[0].length-middleXB],
+		B4 = new double[this.dmatrix[0].length-middleXA][otherMatrixObjekt.dmatrix[0].length-middleXB],
+		C1 = new double[middleYA][middleXB],
+		C2 = new double[middleYA][otherMatrixObjekt.dmatrix[0].length-middleXB],
+		C3 = new double[this.dmatrix.length-middleYA][otherMatrixObjekt.dmatrix[0].length-middleXB],
+		C4 = new double[this.dmatrix.length-middleYA][this.dmatrix[0].length-middleXA];
+
+		// Make sure our numbers are good
+		this.refreshNumbers();
+		otherMatrixObjekt.refreshNumbers();
+		
+		matrixSplitByIndex(this.dmatrix, A1, A2, A3, A4, middleYA, middleXA);
+		matrixSplitByIndex(otherMatrixObjekt.dmatrix, B1, B2, B3, B4, middleXA, middleXB);
+		Thread T1, T2, T3, T4;
+		MatDAndCMulti W1 = new MatDAndCMulti(A1, B1, this), W2 = new MatDAndCMulti(A2, B2, this), W3 = new MatDAndCMulti(A3, B3, this), W4 = new MatDAndCMulti(A4, B4, this);
+		
+		T1 = new Thread(W1);
+		T2 = new Thread(W2);
+		T3 = new Thread(W3);
+		T4 = new Thread(W4);
+		T1.start();
+		T2.start();
+		T3.start();
+		T4.start();
+//		 Wait for all threads to finish
+		Boolean dead = false;
+		while (!dead) {
+			if (!T1.isAlive() && !T2.isAlive() && !T3.isAlive() && !T4.isAlive()) {
+				dead = true;
+			}
+		}
+		
+		C1 = W1.getMatrixSolution();
+		C2 = W2.getMatrixSolution();
+		C3 = W3.getMatrixSolution();
+		C4 = W4.getMatrixSolution();
+		
+		matrixMerge(C1, C2, C3, C4, solutionMatrix);
+		return new MyMatrix(solutionMatrix);
 	}
 	
 	public void matParallelSimon(MyMatrix otherMatrixObjekt, double[][] solutionMatrix) {
@@ -134,12 +249,12 @@ public class MyMatrix {
 //		return multiplication(otherMatrix, 0 , otherMatrix.getWidth());
 //	}
 	
-	private double[][] transposeMatrix(MyMatrix otherMatrix) {
-		int width = otherMatrix.getWidth(), height = otherMatrix.getHeight();
+	private double[][] transposeMatrix(double[][] matrix) {
+		int width = matrix[0].length, height = matrix.length;
 		double[][] transposedMatrix = new double [width][height];
-		for(int y = 0; y < otherMatrix.getHeight(); y++) {
-			for(int x = 0; x < otherMatrix.getWidth(); x++) {
-				transposedMatrix[x][y] = otherMatrix.getDmatrix()[y][x];
+		for(int y = 0; y < height; y++) {
+			for(int x = 0; x < width; x++) {
+				transposedMatrix[x][y] = matrix[y][x];
 			}
 		}
 		return transposedMatrix;
@@ -154,7 +269,7 @@ public class MyMatrix {
 		this.refreshNumbers();
 		otherMatrix.refreshNumbers();
 		
-		double[][] otherMatrixTrans = transposeMatrix(otherMatrix);
+		double[][] otherMatrixTrans = transposeMatrix(otherMatrix.dmatrix);
 
 		// Mathemagic
 		double[][] res = new double[this.getHeight()][otherMatrix.getWidth()];
