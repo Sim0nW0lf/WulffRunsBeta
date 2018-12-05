@@ -186,34 +186,6 @@ public class MyTests extends AbstractScriptTest {
 		matrixCompare(matrixExpected, script.getMatrixSolution("m:A*m:B"));
 	}
 	
-	private long matrixParallel(int n) {
-		int heightA = n-1, widthA_heightB = n, widthB =n+1, range = 10; // range means myRnd(range) can be -range up to range.
-	    
-		double[][] matrixA = new double[heightA][widthA_heightB];
-	    double[][] matrixB = new double[widthA_heightB][widthB];
-	    
-	    //Init with random sh**
-		for(int x = 0; x < heightA;x++) {
-			for(int y = 0; y < widthA_heightB;y++) {
-				matrixA[x][y] = range * (Math.random()+Math.random()-1);
-			}
-		}
-		for(int x = 0; x < widthA_heightB;x++) {
-			for(int y = 0; y < widthB;y++) {
-				matrixB[x][y] = range * (Math.random()+Math.random()-1);
-			}
-		}
-		
-	    double[][] matrixExpected = matrixMultiplication(matrixA, matrixB);
-	    MyMatrix m1 = new MyMatrix(matrixA);
-	    MyMatrix m2 = new MyMatrix(matrixB);
-	    long l = System.nanoTime();
-		matrixCompare(matrixExpected, m1.multiplyParrallel(m2).getDmatrix());
-		l -= System.nanoTime();
-		
-		return l * -1;
-	}
-	
 	private MyMatrix matrixGen(int n, int m) {
 		int range = 10; // range means myRnd(range) can be -range up to range.
 		double[][] matrix = new double[n][m];
@@ -232,7 +204,7 @@ public class MyTests extends AbstractScriptTest {
 	public final void testMatrixMultiTiming() throws Exception {
 		int sets[][] = {{1, 64}, {10, 64}, {10, 128}, {5, 256}, {5, 512}, {2, 768}, {2, 1024}, {1, 1536}, {1, 2048}}; //
 
-		//do sh*
+		System.out.printf("matParallel:\n");
 		System.out.printf("\n repetitions \t | dimension \t | serial \t | parallel \t | speedup \n");
 		Long[][] times = new Long[sets.length][2];
 		for(int j = 0; j < sets.length; j++) {
@@ -266,71 +238,42 @@ public class MyTests extends AbstractScriptTest {
 		
 	}
 	
-//	@Test
-	public final void testMatrixMultiTimingSimon() throws Exception {
-		int sets[][] = {{1, 2048}}; //{1, 64}, {10, 64}, {10, 128}, {5, 256}, {5, 512}, {2, 768}, {2, 1024}, {1, 1536}, 
-		
-		//do sh*
+	@Test
+	public final void testDivideAndConquerTiming() throws Exception {
+		int sets[][] = {{1, 64}, {10, 64}, {10, 128}, {5, 256}, {5, 512}, {2, 768}, {2, 1024}, {1, 1536}, {1, 2048}}; //
+
+		System.out.printf("Divide and Conquer:\n");
 		System.out.printf("\n repetitions \t | dimension \t | serial \t | parallel \t | speedup \n");
-		long[][] times = new long[sets.length][2];
+		Long[][] times = new Long[sets.length][2];
 		for(int j = 0; j < sets.length; j++) {
 			MyMatrix matrixA = matrixGen(sets[j][1]-1, sets[j][1]);
 			MyMatrix matrixB = matrixGen(sets[j][1], sets[j][1]+1);
-			double[][] solutionMatrix = new double[sets[j][1]-1][sets[j][1]+1];
 			long tmp;
 			//Serial
-			times[j][0] = 0;
+			times[j][0] = Long.valueOf(0);
 			for(int i = 0; i < sets[j][0]; i++) {
 				tmp = System.nanoTime();
 				matrixA.multiplication(matrixB);
-				times[j][0] += System.nanoTime() - tmp;
+				times[j][0] += Long.valueOf(System.nanoTime() - tmp);
 			}
 			times[j][0] /= sets[j][0];
 			
+//			for(int i = 0; i < 5; i++) {
+//				matrixA.multiplyParrallel(matrixB);				
+//			}
+			
 			//Parallel
-			times[j][1] = 0;
+			times[j][1] = Long.valueOf(0);
 			for(int i = 0; i < sets[j][0]; i++) {
 				tmp = System.nanoTime();
-				matrixA.matParallelSimon(matrixB, solutionMatrix);
-				times[j][1] += System.nanoTime() - tmp;
+				matrixA.matDivideConquerSimon(matrixB);
+				times[j][1] += Long.valueOf(System.nanoTime() - tmp);
 			}
 			times[j][1] /= sets[j][0];
-			double speedUp = times[j][0] / times[j][1];
+			double speedUp = times[j][0].doubleValue() / times[j][1].doubleValue();
 			System.out.printf("\t %d \t | \t %d \t | %d \t | %d \t | %.2f \n", sets[j][0], sets[j][1], times[j][0]/100, times[j][1]/100, speedUp);
 		}
-	}
-	
-//	@Test
-	public final void testMatrixMultiTimingAlternative() throws Exception {
-		int sets[][] = {{1, 64}, {10, 64}, {10, 128}, {5, 256}, {5, 512}, {2, 768}}; //, {2, 1024}, {1, 1536}, {1, 2048}
 		
-		//do sh*
-		System.out.printf("\n repetitions \t | dimension \t | serial \t | parallel \t | speedup \n");
-		long[][] times = new long[sets.length][2];
-		for(int j = 0; j < sets.length; j++) {
-			MyMatrix matrixA = matrixGen(sets[j][1]-1, sets[j][1]);
-			MyMatrix matrixB = matrixGen(sets[j][1], sets[j][1]+1);
-			double[][] solutionMatrix = new double[sets[j][1]-1][sets[j][1]+1];
-
-			long tmp;
-			//Serial
-			for(int i = 0; i < sets[j][0]; i++) {
-				tmp = System.nanoTime();
-				matrixA.multiplication(matrixB);
-				times[j][0] += System.nanoTime() - tmp;
-			}
-			times[j][0] /= sets[j][0];
-			
-			//Parallel
-			for(int i = 0; i < sets[j][0]; i++) {
-				tmp = System.nanoTime();
-				matrixA.matParallelSimon(matrixB, solutionMatrix);
-				times[j][1] += System.nanoTime() - tmp;
-			}
-			times[j][1] /= sets[j][0];
-			double speedUp = times[j][0] / times[j][1];
-			System.out.printf("\t %d \t | \t %d \t | %d \t | %d \t | %.2f \n", sets[j][0], sets[j][1], times[j][0]/100000, times[j][1]/100000, speedUp);
-		}
 	}
 		
 	@Test
