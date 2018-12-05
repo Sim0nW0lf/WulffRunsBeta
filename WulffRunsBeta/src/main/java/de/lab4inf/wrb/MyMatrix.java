@@ -37,25 +37,24 @@ public class MyMatrix {
 		}
 	}
 	
-	// not needed??
-	public double[][] addition(double[][] otherMatrix) {
+	// Divide and Conquer
+	////////////////////////////////////////////////////////////////////////////////////////////////////
+	
+	public double[][] matAddition(double[][] matrixA, double[][] matrixB) {
 		// check if sizes fit
-		if (otherMatrix.length != this.dmatrix.length || otherMatrix[0].length != this.dmatrix[0].length) {
+		if (matrixB.length != matrixA.length || matrixB[0].length != matrixA[0].length) {
 			throw new IllegalArgumentException("Size of Matrixes differs.");
 		}
 		
 		// Mathemagic
-		double[][] res = new double[this.dmatrix.length][this.dmatrix[0].length];
-		for (int y = 0; y < this.dmatrix.length; y++) {
-			for (int x = 0; x < this.dmatrix[0].length; x++) {
-				res[x][y] = this.dmatrix[x][y] + otherMatrix[x][y];
+		double[][] res = new double[matrixA.length][matrixA[0].length];
+		for (int y = 0; y < matrixA.length; y++) {
+			for (int x = 0; x < matrixA[0].length; x++) {
+				res[x][y] = matrixA[x][y] + matrixB[x][y];
 			}
 		}
 		return res;
 	}
-	
-	// Divide and Conquer
-	////////////////////////////////////////////////////////////////////////////////////////////////////
 	
 	private void matrixSplitByIndex(double[][] matrix, double[][] M1,double[][] M2, double[][] M3, double[][] M4, int middleY, int middleX) {
 		for(int y = 0; y < M1.length; y++) {
@@ -148,29 +147,38 @@ public class MyMatrix {
 		
 		matrixSplitByIndex(this.dmatrix, A1, A2, A3, A4, middleYA, middleXA);
 		matrixSplitByIndex(otherMatrixObjekt.dmatrix, B1, B2, B3, B4, middleXA, middleXB);
-		Thread T1, T2, T3, T4;
-		MatDAndCMulti W1 = new MatDAndCMulti(A1, B1, this), W2 = new MatDAndCMulti(A2, B2, this), W3 = new MatDAndCMulti(A3, B3, this), W4 = new MatDAndCMulti(A4, B4, this);
+		Thread T1, T2, T3, T4, T5, T6, T7, T8;
+		MatDAndCMulti W1 = new MatDAndCMulti(A1, B1, this), W2 = new MatDAndCMulti(A2, B3, this), W3 = new MatDAndCMulti(A1, B2, this), W4 = new MatDAndCMulti(A2, B4, this),
+					W5 = new MatDAndCMulti(A3, B1, this), W6 = new MatDAndCMulti(A4, B3, this), W7 = new MatDAndCMulti(A3, B2, this), W8 = new MatDAndCMulti(A4, B4, this);
 		
 		T1 = new Thread(W1);
 		T2 = new Thread(W2);
 		T3 = new Thread(W3);
 		T4 = new Thread(W4);
+		T5 = new Thread(W5);
+		T6 = new Thread(W6);
+		T7 = new Thread(W7);
+		T8 = new Thread(W8);
 		T1.start();
 		T2.start();
 		T3.start();
 		T4.start();
+		T5.start();
+		T6.start();
+		T7.start();
+		T8.start();
 //		 Wait for all threads to finish
 		Boolean dead = false;
 		while (!dead) {
-			if (!T1.isAlive() && !T2.isAlive() && !T3.isAlive() && !T4.isAlive()) {
+			if (!T1.isAlive() && !T2.isAlive() && !T3.isAlive() && !T4.isAlive() && !T5.isAlive() && !T6.isAlive() && !T7.isAlive() && !T8.isAlive()) {
 				dead = true;
 			}
 		}
 		
-		C1 = W1.getMatrixSolution();
-		C2 = W2.getMatrixSolution();
-		C3 = W3.getMatrixSolution();
-		C4 = W4.getMatrixSolution();
+		C1 = matAddition(W1.getMatrixSolution(), W2.getMatrixSolution());
+		C2 = matAddition(W3.getMatrixSolution(), W4.getMatrixSolution());
+		C3 = matAddition(W5.getMatrixSolution(), W6.getMatrixSolution());
+		C4 = matAddition(W7.getMatrixSolution(), W8.getMatrixSolution());
 		
 		matrixMerge(C1, C2, C3, C4, solutionMatrix);
 		return new MyMatrix(solutionMatrix);
