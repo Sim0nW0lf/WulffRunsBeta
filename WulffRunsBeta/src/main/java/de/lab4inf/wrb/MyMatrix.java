@@ -6,7 +6,7 @@ import de.lab4inf.wrb.DemoParser.ExpressionContext;
 
 public class MyMatrix {
 
-	static int threadNumber = 32;
+	static int threadNumber = 64;
 	protected DemoParser.ExpressionContext[][] matrix;
 	protected double[][] dmatrix;
 	protected ArrayList<int[]> varFields = new ArrayList<int[]>();
@@ -39,6 +39,7 @@ public class MyMatrix {
 	
 	// Divide and Conquer
 	////////////////////////////////////////////////////////////////////////////////////////////////////
+	//TODO: Divide and Conquer funktioniert nur für Matritzen mit NxN Feldern!
 	
 	public double[][] matAddition(double[][] matrixA, double[][] matrixB) {
 		// check if sizes fit
@@ -148,6 +149,7 @@ public class MyMatrix {
 		matrixSplitByIndex(this.dmatrix, A1, A2, A3, A4, middleYA, middleXA);
 		matrixSplitByIndex(otherMatrixObjekt.dmatrix, B1, B2, B3, B4, middleXA, middleXB);
 		Thread T1, T2, T3, T4, T5, T6, T7, T8;
+		//TODO: Diese Rechnung von Wikipedia funktioniert nur für NxN, wie kann man das schön für NxM hinbekommen?
 		MatDAndCMulti W1 = new MatDAndCMulti(A1, B1, this), W2 = new MatDAndCMulti(A2, B3, this), W3 = new MatDAndCMulti(A1, B2, this), W4 = new MatDAndCMulti(A2, B4, this),
 					W5 = new MatDAndCMulti(A3, B1, this), W6 = new MatDAndCMulti(A4, B3, this), W7 = new MatDAndCMulti(A3, B2, this), W8 = new MatDAndCMulti(A4, B4, this);
 		
@@ -276,7 +278,10 @@ public class MyMatrix {
 	}
 	
 	public MyMatrix multiplyParrallel(MyMatrix otherMatrix) {
-		return multiplyParrallel(otherMatrix, MyMatrix.threadNumber);
+		double factorOfThreads = 0.05;
+		int pieces = (int)Math.round(otherMatrix.dmatrix.length*factorOfThreads);
+		if(pieces == 0) pieces = 1;
+		return multiplyParrallel(otherMatrix, pieces); // MyMatrix.threadNumber   
 	}
 
 	public MyMatrix multiplyParrallel(MyMatrix otherMatrix, int piece) {
