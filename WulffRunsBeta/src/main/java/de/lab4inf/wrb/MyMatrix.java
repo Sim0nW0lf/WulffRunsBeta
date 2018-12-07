@@ -201,10 +201,10 @@ public class MyMatrix {
 	}
 	
 	public MyMatrix matMultiTranspose(MyMatrix otherMatrix) {
-////		 Check if columns of first = rows of second
-//		if (this.getHeight() != otherMatrix.getWidth()) {
-//			throw new IllegalArgumentException("Incorrect size.");
-//		}
+//		 Check if columns of first = rows of second
+		if (this.getWidth() != otherMatrix.getHeight()) {
+			throw new IllegalArgumentException("Incorrect size.");
+		}
 		
 		double[][] otherMatrixTrans = transposeMatrix(otherMatrix.dmatrix);
 
@@ -219,7 +219,6 @@ public class MyMatrix {
 				}
 			}
 		}
-		
 		return new MyMatrix(res);
 	}
 
