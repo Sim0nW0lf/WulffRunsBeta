@@ -66,6 +66,29 @@ public class MyTests extends AbstractScriptTest {
 	    return matrixSolution;
 	}
 
+	public double factorial(double x) {
+		if (x == 1)
+			return 1;
+		return x * factorial(x - 1);
+	}
+
+	
+	private MyMatrix matrixGen(int ySize, int xSize) {
+		int range = 10; // range means myRnd(range) can be -range up to range.
+		return matrixGen(ySize, xSize, range);
+	}
+	private MyMatrix matrixGen(int ySize, int xSize, int range) {
+		double[][] matrix = new double[ySize][xSize];
+	    
+	    //Init with random sh**
+		for(int y = 0; y < ySize;y++) {
+			for(int x = 0; x < xSize;x++) {
+				matrix[y][x] = range * (Math.random()+Math.random()-1);
+			}
+		}
+		return new MyMatrix(matrix);
+	}
+
 	@Override
 	protected Script getScript() {
 		return new WRBScript();
@@ -156,12 +179,6 @@ public class MyTests extends AbstractScriptTest {
 		String task = "a + 2";
 		assertEquals(2.0, script.parse(task), EPS);
 	}
-
-	public double factorial(double x) {
-		if (x == 1)
-			return 1;
-		return x * factorial(x - 1);
-	}
 	
 	@Test
 	public final void testMatrixMultiplikation() throws Exception {
@@ -173,7 +190,7 @@ public class MyTests extends AbstractScriptTest {
 	
 	@Test
 	public final void testMatrixMultiRandom() throws Exception {
-		int hightA = 3, widthA_hightB = 2, widthB = 1, range = 10; // range means myRnd(range) can be -range up to range.
+		int hightA = 3, widthA_hightB = 3, widthB = 3, range = 10; // range means myRnd(range) can be -range up to range.
 	    
 		double[][] matrixA = new double[hightA][widthA_hightB];
 	    double[][] matrixB = new double[widthA_hightB][widthB];
@@ -186,21 +203,73 @@ public class MyTests extends AbstractScriptTest {
 		matrixCompare(matrixExpected, script.getMatrixSolution("m:A*m:B"));
 	}
 	
-	private MyMatrix matrixGen(int n, int m) {
-		int range = 10; // range means myRnd(range) can be -range up to range.
-		double[][] matrix = new double[n][m];
+	@Test
+	public final void testMatParallel2x2() throws Exception {
+		int hightA = 2, widthA_hightB = 2, widthB = 2, range = 10; // range means myRnd(range) can be -range up to range.
 	    
-	    //Init with random sh**
-		for(int x = 0; x < n;x++) {
-			for(int y = 0; y < m;y++) {
-				matrix[x][y] = range * (Math.random()+Math.random()-1);
-			}
-		}
+	    MyMatrix matrixA = matrixGen(hightA, widthA_hightB, range);
+	    MyMatrix matrixB = matrixGen(widthA_hightB, widthB, range);
 		
-		return new MyMatrix(matrix);
+	    double[][] matrixExpected = matrixMultiplication(matrixA.dmatrix, matrixB.dmatrix);
+		matrixCompare(matrixExpected, matrixA.multiplyParrallel(matrixB).dmatrix);
 	}
 	
 	@Test
+	public final void testMatParallel3x3() throws Exception {
+		int hightA = 3, widthA_hightB = 3, widthB = 3, range = 10; // range means myRnd(range) can be -range up to range.
+	    
+	    MyMatrix matrixA = matrixGen(hightA, widthA_hightB, range);
+	    MyMatrix matrixB = matrixGen(widthA_hightB, widthB, range);
+		
+	    double[][] matrixExpected = matrixMultiplication(matrixA.dmatrix, matrixB.dmatrix);
+		matrixCompare(matrixExpected, matrixA.multiplyParrallel(matrixB).dmatrix);
+	}
+	
+	@Test
+	public final void testMatParallel3x4X4x5() throws Exception {
+		int hightA = 3, widthA_hightB = 4, widthB = 5, range = 10; // range means myRnd(range) can be -range up to range.
+	    
+	    MyMatrix matrixA = matrixGen(hightA, widthA_hightB, range);
+	    MyMatrix matrixB = matrixGen(widthA_hightB, widthB, range);
+		
+	    double[][] matrixExpected = matrixMultiplication(matrixA.dmatrix, matrixB.dmatrix);
+		matrixCompare(matrixExpected, matrixA.multiplyParrallel(matrixB).dmatrix);
+	}
+	
+	@Test
+	public final void testDivideConquer2x2() throws Exception {
+		int hightA = 2, widthA_hightB = 2, widthB = 2, range = 10; // range means myRnd(range) can be -range up to range.
+	    
+	    MyMatrix matrixA = matrixGen(hightA, widthA_hightB, range);
+	    MyMatrix matrixB = matrixGen(widthA_hightB, widthB, range);
+		
+	    double[][] matrixExpected = matrixMultiplication(matrixA.dmatrix, matrixB.dmatrix);
+		matrixCompare(matrixExpected, matrixA.matDivideConquer(matrixB).dmatrix);
+	}
+	
+	@Test
+	public final void testDivideConquer3x3() throws Exception {
+		int hightA = 3, widthA_hightB = 3, widthB = 3, range = 10; // range means myRnd(range) can be -range up to range.
+	    
+	    MyMatrix matrixA = matrixGen(hightA, widthA_hightB, range);
+	    MyMatrix matrixB = matrixGen(widthA_hightB, widthB, range);
+		
+	    double[][] matrixExpected = matrixMultiplication(matrixA.dmatrix, matrixB.dmatrix);
+		matrixCompare(matrixExpected, matrixA.matDivideConquer(matrixB).dmatrix);
+	}
+	
+	@Test
+	public final void testMatDivideConquer3x4X4x5() throws Exception {
+		int hightA = 3, widthA_hightB = 4, widthB = 5, range = 10; // range means myRnd(range) can be -range up to range.
+	    
+	    MyMatrix matrixA = matrixGen(hightA, widthA_hightB, range);
+	    MyMatrix matrixB = matrixGen(widthA_hightB, widthB, range);
+		
+	    double[][] matrixExpected = matrixMultiplication(matrixA.dmatrix, matrixB.dmatrix);
+		matrixCompare(matrixExpected, matrixA.matDivideConquer(matrixB).dmatrix);
+	}
+	
+//	@Test
 	public final void testDivideAndConquerTiming() throws Exception {
 		int sets[][] = {{1, 64}, {10, 64}, {10, 128}, {5, 256}, {5, 512}, {2, 768}, {2, 1024}, {1, 1536}, {1, 2048}}; //
 
@@ -240,7 +309,7 @@ public class MyTests extends AbstractScriptTest {
 		
 	}
 		
-	@Test
+//	@Test
 	public final void testMatrixMultiTiming() throws Exception {
 		int sets[][] = {{1, 64}, {10, 64}, {10, 128}, {5, 256}, {5, 512}, {2, 768}, {2, 1024}, {1, 1536}, {1, 2048}}; // , {1, 4096}
 
