@@ -12,7 +12,6 @@ import java.util.stream.Stream;
 //import org.antlr.v4.runtime.ParserRuleContext;
 //import org.antlr.v4.runtime.tree.ParseTree;
 
-
 import de.lab4inf.wrb.DemoBaseVisitor;
 //import de.lab4inf.wrb.DemoParser.ExpressionContext;
 
@@ -27,14 +26,13 @@ public class MyVisitor extends DemoBaseVisitor<Double> {
 
 	double[][] solutionMatrix;
 
-
 	/**
 	 * @return the last Entry to solutionList, the most recent solved equation.
 	 */
 	public double getErgebnis() {
 		return solutionList.getLast();
 	}
-	
+
 	public double[][] getMatrixErgebnis() {
 		return solutionMatrix;
 	}
@@ -73,14 +71,14 @@ public class MyVisitor extends DemoBaseVisitor<Double> {
 		this.solutionList.add(d);
 		return d;
 	}
-	
+
 	@Override
 	public Double visitFunctionDefinition(DemoParser.FunctionDefinitionContext ctx) {
 		MyFunction f = new MyFunction(ctx, this);
 		this.funcMap.put(ctx.name.getText(), f);
 		return 0.0;
 	}
-	
+
 	@Override
 	public Double visitAssignment(DemoParser.AssignmentContext ctx) {
 		Double d = visit(ctx.expression());
@@ -110,7 +108,7 @@ public class MyVisitor extends DemoBaseVisitor<Double> {
 
 	@Override
 	public Double visitNumber(DemoParser.NumberContext ctx) {
-		Double d = Double.parseDouble(ctx.NUMBER().getText()); 
+		Double d = Double.parseDouble(ctx.NUMBER().getText());
 		if (ctx.getChildCount() > 1 && ctx.sign.getType() == DemoParser.SUB) {
 			d *= -1;
 		}
@@ -224,19 +222,19 @@ public class MyVisitor extends DemoBaseVisitor<Double> {
 
 		throw new IllegalArgumentException("Unknown Function called: " + ctx.getText());
 	}
-	
+
 	@Override
 	public Double visitMatrixDefinition(DemoParser.MatrixDefinitionContext ctx) {
 		MyMatrix m = new MyMatrix(this, ctx, ctx.matrixRow().size(), ctx.matrixRow(0).expression().size());
 		this.matrixMap.put(ctx.name.getText(), m);
-		
+
 		MatrixVisitor mV = new MatrixVisitor();
-		
-		int[] i = {0, 0};
-		for(DemoParser.MatrixRowContext c : ctx.matrixRow()) {
-			for(DemoParser.ExpressionContext d : c.expression()) {
-				if(mV.visitExpression(d)) {
-					m.addVarField(i[0], i[1], d); //getVarFields().add(i);
+
+		int[] i = { 0, 0 };
+		for (DemoParser.MatrixRowContext c : ctx.matrixRow()) {
+			for (DemoParser.ExpressionContext d : c.expression()) {
+				if (mV.visitExpression(d)) {
+					m.addVarField(i[0], i[1], d); // getVarFields().add(i);
 				} else {
 					try {
 						m.getDmatrix()[i[0]][i[1]] = visit(d);
@@ -249,11 +247,10 @@ public class MyVisitor extends DemoBaseVisitor<Double> {
 			i[1] = 0;
 			i[0]++;
 		}
-		
-		
+
 		return 0.0;
 	}
-	
+
 	// matParallel Matrix Multi
 	////////////////////////////////////////////////////////////////////////////////
 //	@Override
@@ -271,24 +268,21 @@ public class MyVisitor extends DemoBaseVisitor<Double> {
 //				);
 //		return 0.0;
 //	}
-	
+
 	// Divide and Conquer Matrix Multi
 	////////////////////////////////////////////////////////////////////////////////
 	@Override
-		public Double visitMatrixMultiplikation(DemoParser.MatrixMultiplikationContext ctx) {
-			// calculate remaining fields if there are any
-			if(this.matrixMap.get(ctx.links.name.getText()).varFields != null)
-				this.matrixMap.get(ctx.links.name.getText()).refreshNumbers();
-			if(this.matrixMap.get(ctx.rechts.name.getText()).varFields != null)
-				this.matrixMap.get(ctx.rechts.name.getText()).refreshNumbers();
-			
-			this.matrixMap.put(ctx.getText(), 
-					this.matrixMap.get(ctx.links.name.getText()).matDivideConquer(
-							this.matrixMap.get(ctx.rechts.name.getText())
-							)
-					);
-			return 0.0;
-		}
+	public Double visitMatrixMultiplikation(DemoParser.MatrixMultiplikationContext ctx) {
+		// calculate remaining fields if there are any
+		if (this.matrixMap.get(ctx.links.name.getText()).varFields != null)
+			this.matrixMap.get(ctx.links.name.getText()).refreshNumbers();
+		if (this.matrixMap.get(ctx.rechts.name.getText()).varFields != null)
+			this.matrixMap.get(ctx.rechts.name.getText()).refreshNumbers();
+
+		this.matrixMap.put(ctx.getText(), this.matrixMap.get(ctx.links.name.getText())
+				.matDivideConquer(this.matrixMap.get(ctx.rechts.name.getText())));
+		return 0.0;
+	}
 
 	// Serial transposed Matrix Multi
 	////////////////////////////////////////////////////////////////////////////////
@@ -307,6 +301,23 @@ public class MyVisitor extends DemoBaseVisitor<Double> {
 //				);
 //		return 0.0;
 //	}
+
+	@Override
+	public Double visitFromToFunction(DemoParser.FromToFunctionContext ctx) {
+		switch (ctx.type.getType()) {
+		case DemoParser.DIFFERENTIATE:
+			//need to do this once the Differentiator is at least created. 
+			break;
+		case DemoParser.INTEGRATE:
+			Integrator integ = new Integrator();
+			Double ret = integ.integrate(this.funcMap.get(ctx.f.getText()), visit(ctx.a), visit(ctx.b));
+			return ret;
+		}
+		
+		//Im a sneaky bastard, so heres a safe copy for the javah config i used: 
+		//-classpath ${project_classpath} -v -d ${workspace_loc:/${project_name}/src/main/c} ${java_type_name}
+		return 0.0;
+	}
 
 	@Override
 	protected Double aggregateResult(Double aggregate, Double nextResult) {
@@ -352,7 +363,7 @@ public class MyVisitor extends DemoBaseVisitor<Double> {
 			// this.varList.add(new Variable(varName, varValue));
 		}
 	}
-	
+
 	/**
 	 * @param matName Name of the Matrix to search
 	 * @return the Matrix with matching name
@@ -365,7 +376,7 @@ public class MyVisitor extends DemoBaseVisitor<Double> {
 			return this.matrixMap.get(matName);
 		}
 	}
-	
+
 	public double[][] getMatrixSolution(String matName) throws IllegalArgumentException {
 		if (!this.matrixMap.containsKey(matName)) {
 			throw new IllegalArgumentException("Error 404: Solution to '" + matName + "' not found. ");

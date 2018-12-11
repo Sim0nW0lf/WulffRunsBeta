@@ -22,6 +22,11 @@ MOD: 'mod' | '%';
 TERMINATOR: ';';
 SEPERATOR: ',';
 MATRIX_PREFIX: 'm:';
+FROM: 'from';
+TO: 'to';
+FROMTOFUNCTIONS: DIFFERENTIATE | INTEGRATE;
+DIFFERENTIATE: 'div';
+INTEGRATE: 'int';
 
 root: statement (TERMINATOR statement)* TERMINATOR ? EOF;
 
@@ -29,7 +34,6 @@ statement: (assignment | expression | functionDefinition | matrixExpression | ma
 
 matrixDefinition: name=VARIABLE ASSIGN L_CBRACKET (matrixRow TERMINATOR)* R_CBRACKET;
 matrixRow: expression (SEPERATOR expression)*;
-// TODO: Matrix schöner multiplizieren durch überprüfung um was für eine Variable es sich handelt?
 matrixCall: MATRIX_PREFIX name = VARIABLE;
 
 assignment : VARIABLE ASSIGN expression;
@@ -52,3 +56,5 @@ expression: sign = SUB? L_BRACKET expression R_BRACKET						#Bracket
 
 matrixExpression: links = matrixCall MUL rechts = matrixCall				#MatrixMultiplikation
 				;
+				
+fromToFunction: type = FROMTOFUNCTIONS FROM a = expression TO b = expression f = functionCall;
