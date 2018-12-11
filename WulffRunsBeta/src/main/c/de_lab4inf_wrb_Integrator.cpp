@@ -4,6 +4,7 @@
 #include "Function.h"
 #include "JavaFunction.h"
 #include "Integrator.h"
+#include "de_lab4inf_wrb_Integrator.h"
 
 #ifdef __cplusplus
 extern "C" {

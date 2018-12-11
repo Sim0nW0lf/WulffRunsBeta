@@ -306,16 +306,17 @@ public class MyVisitor extends DemoBaseVisitor<Double> {
 	public Double visitFromToFunction(DemoParser.FromToFunctionContext ctx) {
 		switch (ctx.type.getType()) {
 		case DemoParser.DIFFERENTIATE:
-			//need to do this once the Differentiator is at least created. 
+			// need to do this once the Differentiator is at least created.
 			break;
 		case DemoParser.INTEGRATE:
 			Integrator integ = new Integrator();
 			Double ret = integ.integrate(this.funcMap.get(ctx.f.getText()), visit(ctx.a), visit(ctx.b));
 			return ret;
 		}
-		
-		//Im a sneaky bastard, so heres a safe copy for the javah config i used: 
-		//-classpath ${project_classpath} -v -d ${workspace_loc:/${project_name}/src/main/c} ${java_type_name}
+
+		// Im a sneaky bastard, so heres a safe copy for the javah config i used:
+		// -classpath ${project_classpath} -v -d
+		// ${workspace_loc:/${project_name}/src/main/c} ${java_type_name}
 		return 0.0;
 	}
 

@@ -260,7 +260,7 @@ public class MyTests extends AbstractScriptTest {
 	
 	@Test
 	public final void testMatDivideConquer3x4X4x5() throws Exception {
-		int hightA = 3, widthA_hightB = 4, widthB = 5, range = 10; // range means myRnd(range) can be -range up to range.
+		int hightA = 3, widthA_hightB = 3, widthB = 3, range = 10; // range means myRnd(range) can be -range up to range.
 	    
 	    MyMatrix matrixA = matrixGen(hightA, widthA_hightB, range);
 	    MyMatrix matrixB = matrixGen(widthA_hightB, widthB, range);
@@ -359,7 +359,6 @@ public class MyTests extends AbstractScriptTest {
 		for(int j = 0; j < sets.length; j++) {
 			MyMatrix matrixA = matrixGen(sets[j][1]-1, sets[j][1]);
 			MyMatrix matrixB = matrixGen(sets[j][1], sets[j][1]+1);
-			double[][] solutionMatrix = new double[sets[j][1]-1][sets[j][1]+1];
 
 			long tmp;
 			//Serial
@@ -373,7 +372,7 @@ public class MyTests extends AbstractScriptTest {
 			//Parallel
 			for(int i = 0; i < sets[j][0]; i++) {
 				tmp = System.nanoTime();
-				matrixA.matParallelSimon(matrixB, solutionMatrix);
+				matrixA.matDivideConquer(matrixB);
 				times[j][1] += System.nanoTime() - tmp;
 			}
 			times[j][1] /= sets[j][0];
