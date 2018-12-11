@@ -3,13 +3,13 @@ package de.lab4inf.wrb;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 
+import java.text.DecimalFormat;
 import java.text.DecimalFormatSymbols;
 import java.util.Arrays;
 import java.util.Locale;
 
 import org.junit.Test;
 
-import com.ibm.icu.text.DecimalFormat;
 
 public class MyTests extends AbstractScriptTest {
 	
@@ -64,6 +64,29 @@ public class MyTests extends AbstractScriptTest {
 			}
 	    }
 	    return matrixSolution;
+	}
+
+	public double factorial(double x) {
+		if (x == 1)
+			return 1;
+		return x * factorial(x - 1);
+	}
+
+	
+	private MyMatrix matrixGen(int ySize, int xSize) {
+		int range = 10; // range means myRnd(range) can be -range up to range.
+		return matrixGen(ySize, xSize, range);
+	}
+	private MyMatrix matrixGen(int ySize, int xSize, int range) {
+		double[][] matrix = new double[ySize][xSize];
+	    
+	    //Init with random sh**
+		for(int y = 0; y < ySize;y++) {
+			for(int x = 0; x < xSize;x++) {
+				matrix[y][x] = range * (Math.random()+Math.random()-1);
+			}
+		}
+		return new MyMatrix(matrix);
 	}
 
 	@Override
@@ -156,12 +179,6 @@ public class MyTests extends AbstractScriptTest {
 		String task = "a + 2";
 		assertEquals(2.0, script.parse(task), EPS);
 	}
-
-	public double factorial(double x) {
-		if (x == 1)
-			return 1;
-		return x * factorial(x - 1);
-	}
 	
 	@Test
 	public final void testMatrixMultiplikation() throws Exception {
@@ -173,7 +190,7 @@ public class MyTests extends AbstractScriptTest {
 	
 	@Test
 	public final void testMatrixMultiRandom() throws Exception {
-		int hightA = 10, widthA_hightB = 4, widthB = 4, range = 10; // range means myRnd(range) can be -range up to range.
+		int hightA = 3, widthA_hightB = 3, widthB = 3, range = 10; // range means myRnd(range) can be -range up to range.
 	    
 		double[][] matrixA = new double[hightA][widthA_hightB];
 	    double[][] matrixB = new double[widthA_hightB][widthB];
@@ -186,75 +203,147 @@ public class MyTests extends AbstractScriptTest {
 		matrixCompare(matrixExpected, script.getMatrixSolution("m:A*m:B"));
 	}
 	
-	private long matrixParallel(int n) {
-		int heightA = n-1, widthA_heightB = n, widthB =n+1, range = 10; // range means myRnd(range) can be -range up to range.
+	@Test
+	public final void testMatParallel2x2() throws Exception {
+		int hightA = 2, widthA_hightB = 2, widthB = 2, range = 10; // range means myRnd(range) can be -range up to range.
 	    
-		double[][] matrixA = new double[heightA][widthA_heightB];
-	    double[][] matrixB = new double[widthA_heightB][widthB];
-	    
-	    //Init with random sh**
-		for(int x = 0; x < heightA;x++) {
-			for(int y = 0; y < widthA_heightB;y++) {
-				matrixA[x][y] = range * (Math.random()+Math.random()-1);
-			}
-		}
-		for(int x = 0; x < widthA_heightB;x++) {
-			for(int y = 0; y < widthB;y++) {
-				matrixB[x][y] = range * (Math.random()+Math.random()-1);
-			}
-		}
+	    MyMatrix matrixA = matrixGen(hightA, widthA_hightB, range);
+	    MyMatrix matrixB = matrixGen(widthA_hightB, widthB, range);
 		
-	    double[][] matrixExpected = matrixMultiplication(matrixA, matrixB);
-	    MyMatrix m1 = new MyMatrix(matrixA);
-	    MyMatrix m2 = new MyMatrix(matrixB);
-	    long l = System.nanoTime();
-		matrixCompare(matrixExpected, m1.multiplyParrallel(m2).getDmatrix());
-		l -= System.nanoTime();
-		
-		return l * -1;
+	    double[][] matrixExpected = matrixMultiplication(matrixA.dmatrix, matrixB.dmatrix);
+		matrixCompare(matrixExpected, matrixA.multiplyParrallel(matrixB).dmatrix);
 	}
 	
-	private MyMatrix matrixGen(int n, int m) {
-		int range = 10; // range means myRnd(range) can be -range up to range.
-		double[][] matrix = new double[n][m];
+	@Test
+	public final void testMatParallel3x3() throws Exception {
+		int hightA = 3, widthA_hightB = 3, widthB = 3, range = 10; // range means myRnd(range) can be -range up to range.
 	    
-	    //Init with random sh**
-		for(int x = 0; x < n;x++) {
-			for(int y = 0; y < m;y++) {
-				matrix[x][y] = range * (Math.random()+Math.random()-1);
-			}
-		}
+	    MyMatrix matrixA = matrixGen(hightA, widthA_hightB, range);
+	    MyMatrix matrixB = matrixGen(widthA_hightB, widthB, range);
 		
-		return new MyMatrix(matrix);
+	    double[][] matrixExpected = matrixMultiplication(matrixA.dmatrix, matrixB.dmatrix);
+		matrixCompare(matrixExpected, matrixA.multiplyParrallel(matrixB).dmatrix);
+	}
+	
+	@Test
+	public final void testMatParallel3x4X4x5() throws Exception {
+		int hightA = 3, widthA_hightB = 4, widthB = 5, range = 10; // range means myRnd(range) can be -range up to range.
+	    
+	    MyMatrix matrixA = matrixGen(hightA, widthA_hightB, range);
+	    MyMatrix matrixB = matrixGen(widthA_hightB, widthB, range);
+		
+	    double[][] matrixExpected = matrixMultiplication(matrixA.dmatrix, matrixB.dmatrix);
+		matrixCompare(matrixExpected, matrixA.multiplyParrallel(matrixB).dmatrix);
+	}
+	
+	@Test
+	public final void testDivideConquer2x2() throws Exception {
+		int hightA = 2, widthA_hightB = 2, widthB = 2, range = 10; // range means myRnd(range) can be -range up to range.
+	    
+	    MyMatrix matrixA = matrixGen(hightA, widthA_hightB, range);
+	    MyMatrix matrixB = matrixGen(widthA_hightB, widthB, range);
+		
+	    double[][] matrixExpected = matrixMultiplication(matrixA.dmatrix, matrixB.dmatrix);
+		matrixCompare(matrixExpected, matrixA.matDivideConquer(matrixB).dmatrix);
+	}
+	
+	@Test
+	public final void testDivideConquer3x3() throws Exception {
+		int hightA = 3, widthA_hightB = 3, widthB = 3, range = 10; // range means myRnd(range) can be -range up to range.
+	    
+	    MyMatrix matrixA = matrixGen(hightA, widthA_hightB, range);
+	    MyMatrix matrixB = matrixGen(widthA_hightB, widthB, range);
+		
+	    double[][] matrixExpected = matrixMultiplication(matrixA.dmatrix, matrixB.dmatrix);
+		matrixCompare(matrixExpected, matrixA.matDivideConquer(matrixB).dmatrix);
+	}
+	
+	@Test
+	public final void testMatDivideConquer3x4X4x5() throws Exception {
+		int hightA = 3, widthA_hightB = 4, widthB = 5, range = 10; // range means myRnd(range) can be -range up to range.
+	    
+	    MyMatrix matrixA = matrixGen(hightA, widthA_hightB, range);
+	    MyMatrix matrixB = matrixGen(widthA_hightB, widthB, range);
+		
+	    double[][] matrixExpected = matrixMultiplication(matrixA.dmatrix, matrixB.dmatrix);
+		matrixCompare(matrixExpected, matrixA.matDivideConquer(matrixB).dmatrix);
 	}
 	
 //	@Test
-	public final void testMatrixMultiTiming() throws Exception {
-		int sets[][] = {{1, 64}, {10, 64}, {10, 128}, {5, 256}, {5, 512}, {2, 768}}; //, {2, 1024}, {1, 1536}, {1, 2048}
-		
-		//do sh*
+	public final void testDivideAndConquerTiming() throws Exception {
+		int sets[][] = {{1, 64}, {10, 64}, {10, 128}, {5, 256}, {5, 512}, {2, 768}, {2, 1024}, {1, 1536}, {1, 2048}}; //
+
+		System.out.printf("Divide and Conquer:\n");
 		System.out.printf("\n repetitions \t | dimension \t | serial \t | parallel \t | speedup \n");
-		long[][] times = new long[sets.length][2];
+		Long[][] times = new Long[sets.length][2];
+		for(int j = 0; j < sets.length; j++) {
+			MyMatrix matrixA = matrixGen(sets[j][1], sets[j][1]);
+			MyMatrix matrixB = matrixGen(sets[j][1], sets[j][1]);
+			long tmp;
+			//Serial
+			times[j][0] = Long.valueOf(0);
+			for(int i = 0; i < sets[j][0]; i++) {
+				tmp = System.nanoTime();
+//				Comparing with MultiTranspose so it doesn't take that long
+//				matrixA.multiplication(matrixB);
+				matrixA.matMultiTranspose(matrixB);
+				times[j][0] += Long.valueOf(System.nanoTime() - tmp);
+			}
+			times[j][0] /= sets[j][0];
+			
+//			for(int i = 0; i < 5; i++) {
+//				matrixA.multiplyParrallel(matrixB);				
+//			}
+			
+			//Parallel
+			times[j][1] = Long.valueOf(0);
+			for(int i = 0; i < sets[j][0]; i++) {
+				tmp = System.nanoTime();
+				matrixA.matDivideConquer(matrixB);
+				times[j][1] += Long.valueOf(System.nanoTime() - tmp);
+			}
+			times[j][1] /= sets[j][0];
+			double speedUp = times[j][0].doubleValue() / times[j][1].doubleValue();
+			System.out.printf("\t %d \t | \t %d \t | %d \t | %d \t | %.2f \n", sets[j][0], sets[j][1], times[j][0]/100, times[j][1]/100, speedUp);
+		}
+		
+	}
+		
+//	@Test
+	public final void testMatrixMultiTiming() throws Exception {
+		int sets[][] = {{1, 64}, {10, 64}, {10, 128}, {5, 256}, {5, 512}, {2, 768}, {2, 1024}, {1, 1536}, {1, 2048}}; // , {1, 4096}
+
+		System.out.printf("matParallel:\n");
+		System.out.printf("\n repetitions \t | dimension \t | serial \t | parallel \t | speedup \n");
+		Long[][] times = new Long[sets.length][2];
 		for(int j = 0; j < sets.length; j++) {
 			MyMatrix matrixA = matrixGen(sets[j][1]-1, sets[j][1]);
 			MyMatrix matrixB = matrixGen(sets[j][1], sets[j][1]+1);
 			long tmp;
 			//Serial
+			times[j][0] = Long.valueOf(0);
 			for(int i = 0; i < sets[j][0]; i++) {
 				tmp = System.nanoTime();
-				matrixA.multiplication(matrixB);
-				times[j][0] += System.nanoTime() - tmp;
+//				Comparing with MultiTranspose so it doesn't take that long
+//				matrixA.multiplication(matrixB);
+				matrixA.matMultiTranspose(matrixB);
+				times[j][0] += Long.valueOf(System.nanoTime() - tmp);
 			}
 			times[j][0] /= sets[j][0];
 			
+//			for(int i = 0; i < 5; i++) {
+//				matrixA.multiplyParrallel(matrixB);				
+//			}
+			
 			//Parallel
+			times[j][1] = Long.valueOf(0);
 			for(int i = 0; i < sets[j][0]; i++) {
 				tmp = System.nanoTime();
 				matrixA.multiplyParrallel(matrixB);
-				times[j][1] += System.nanoTime() - tmp;
+				times[j][1] += Long.valueOf(System.nanoTime() - tmp);
 			}
 			times[j][1] /= sets[j][0];
-			double speedUp = times[j][0] / times[j][1];
+			double speedUp = times[j][0].doubleValue() / times[j][1].doubleValue();
 			System.out.printf("\t %d \t | \t %d \t | %d \t | %d \t | %.2f \n", sets[j][0], sets[j][1], times[j][0]/100, times[j][1]/100, speedUp);
 		}
 		
