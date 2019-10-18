@@ -11,7 +11,6 @@ import de.lab4inf.wrb.DemoBaseVisitor;
 //import de.lab4inf.wrb.MyVisitor;
 
 //import de.lab4inf.wrb.DemoParser.ExpressionContext;
-
 public class WRBObserver extends DemoBaseVisitor<String> {
 	public static void main(String[] args) throws Exception {
 		CharStream input = CharStreams.fromFileName("code.demo");
