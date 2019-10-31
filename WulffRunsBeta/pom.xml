@@ -46,18 +46,7 @@
              mvn antlr4:antlr4
            In any case, Maven will invoke this plugin before the Java source is compiled
         -->
-      <plugin>
-        <groupId>org.antlr</groupId>
-        <artifactId>antlr4-maven-plugin</artifactId>
-        <version>4.5</version>
-        <executions>
-          <execution>
-            <goals>
-              <goal>antlr4</goal>
-            </goals>
-          </execution>
-        </executions>
-      </plugin>
+    
       <!-- plugin to create a self-contained portable package
            This allows us to execute our application like this:
            java -cp target/array-init-1.0-jar-with-dependencies.jar org.abcd.examples.ArrayInit.ArrayInit
@@ -94,13 +83,12 @@
 			<plugin>
 				<groupId>org.antlr</groupId>
 				<artifactId>antlr4-maven-plugin</artifactId>
-				<version>4.7.1</version>
+				<version>4.7.2</version>
 				<configuration>
-					<!--<sourceDirectory>${basedir}/src/main/antlr4/de/lab4inf/wrb/</sourceDirectory> -->
-					<!-- <libDirectory>${basedir}/src/main/antlr4/</libDirectory> -->
+					<sourceDirectory>${basedir}/src/main/antlr4/de/lab4inf/wrb/</sourceDirectory>					
 					<listener>true</listener>
 					<visitor>true</visitor>
-					<outputDirectory>target/generated-sources/antlr4/</outputDirectory>
+					<outputDirectory>target/generated-sources/antlr4/de/lab4inf/wrb/</outputDirectory>
 				</configuration>
 
 				<executions>
@@ -121,13 +109,13 @@
 		<dependency>
 			<groupId>org.antlr</groupId>
 			<artifactId>antlr4-runtime</artifactId>
-			<version>4.7.1</version>
+			<version>4.7.2</version>
 		</dependency>
 
 		<dependency>
 			<groupId>org.antlr</groupId>
 			<artifactId>antlr4</artifactId>
-			<version>4.7.1</version>
+			<version>4.7.2</version>
 		</dependency>
 
 		<dependency>

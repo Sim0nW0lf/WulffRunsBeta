@@ -34,7 +34,7 @@ import org.junit.Test;
  * @since 16.10.2013
  * @version $Id: SimpleWRBScriptTest.java,v 1.3 2017/10/05 22:13:09 nwulff Exp $
  */
-public class SimpleWRBScriptTest {
+public class SimpleWRBScriptTest_old {
     final double eps = 1.E-8;
     Script script;
 

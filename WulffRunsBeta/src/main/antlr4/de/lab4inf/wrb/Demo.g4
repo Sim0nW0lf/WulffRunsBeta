@@ -1,5 +1,5 @@
 grammar Demo;
-
+@header {package de.lab4inf.wrb;}
 
 WHITESPACE: [ \t\n\r]+->skip;	
 
@@ -58,7 +58,3 @@ matrixExpression: links = matrixCall MUL rechts = matrixCall				#MatrixMultiplik
 				;
 				
 fromToFunction: type = FROMTOFUNCTIONS FROM a = expression TO b = expression f = functionCall;
-
-
-
-

@@ -160,7 +160,6 @@ public class SimpleWRBScriptTest {
     @Test(expected = IllegalArgumentException.class)
     public final void testWrongToken() throws Exception {
         String task = "2 + ?3";
-        ((WRBScript) script).setThrowing(true);
         script.parse(task);
         fail("keine Exception geworfen");
     }
