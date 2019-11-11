@@ -70,13 +70,11 @@ import org.junit.runner.Description;
  * Test of the WRB-Script language.
  * 
  * @author nwulff
- * @since 16.10.2013
- * @version $Id: AbstractScriptTest.java,v 1.27 2018/10/23 16:31:40 nwulff Exp $
+ * @since 16.10.2013 Version of WS19/20.
+ * @version $Id: AbstractScriptTest.java,v 1.28 2018/11/13 17:15:30 nwulff Exp $
  */
 public abstract class AbstractScriptTest {
-    /**
-     * 
-     */
+    /** no exception message.    */
     protected static final String NO_EXCEPTION_THROWN = "no Exception thrown";
     /** some powers of 10 for quick digit position calculations. */
     private static long[] pow10 = { 1, 10, 100, 1000, 10000, 100000, 1000000, 100000000, 10000000000L };
@@ -86,6 +84,8 @@ public abstract class AbstractScriptTest {
     private static final PrintStream SYSERR = System.err;
     /** messages accumulated during the test.       */
     protected static List<String> errorMessages = new ArrayList<>();
+    /** messages accumulated during the test.       */
+    protected static List<String> antlrMessages = new ArrayList<>();
     /** access to some test informations.           */
     public @Rule TestInfo tm = new TestInfo();
     /** Name of the running test method.            */
@@ -140,18 +140,13 @@ public abstract class AbstractScriptTest {
         }
 
         @Override
-        public void println(final String s) {
-            if (null!=s&&s.startsWith(LINE)) {
-                errorMessages.add(s);
-            } else {
-                super.println(s);
-            }
-        }
-
-        @Override
         public void print(final String s) {
-            if (null!=s&&s.startsWith(LINE)) {
-                errorMessages.add(s);
+            if (null!=s) {
+                if (s.startsWith(LINE)) {
+                    antlrMessages.add(s);
+                } else {
+                    errorMessages.add(s);
+                }
             } else {
                 super.print(s);
             }
@@ -201,15 +196,31 @@ public abstract class AbstractScriptTest {
     public final void scriptTestTearDown() throws Exception {
         System.setErr(SYSERR);
         int numErrors = errorMessages.size();
+        int antlrErrors = antlrMessages.size();
+        boolean printAll = true;
         try {
-            if (numErrors>0) {
-                System.err.printf("%s logged #%d Antlr error messages \n", testName, numErrors);
-                for (String err : errorMessages) {
+            if (printAll&&antlrErrors>0) {
+                System.err.printf("%s logged #%d Antlr error messages \n", testName, antlrErrors);
+                for (String err : antlrMessages) {
                     System.err.println(err);
                 }
-                errorMessages.clear();
-                fail(format("#%d Antlr error messages logged", numErrors));
             }
+            if (printAll&&numErrors>0) {
+                System.err.printf("%s logged #%d java error messages \n", testName, numErrors);
+                if (printAll)
+                    for (String err : errorMessages) {
+                        System.err.println(err);
+                    }
+            }
+            errorMessages.clear();
+            antlrMessages.clear();
+            if (numErrors>0||antlrErrors>0) {
+                String msg = format("%s logged #%d java and %d AntLR error messages \n", testName, numErrors,
+                        antlrErrors);
+                System.err.println(msg);
+                fail(msg);
+            }
+
         } finally {
             tearDown();
         }
@@ -220,17 +231,20 @@ public abstract class AbstractScriptTest {
      */
     @Before
     public final void scriptTestSetUp() throws Exception {
-        testName = tm.getMethodName();
-        script = getScript();
-        assertFalse(script==null);
-        assertNotNull("no script implementation", script);
+        try {
+            testName = tm.getMethodName();
+            script = getScript();
+            assertNotNull("no script implementation", script);
+            assertFalse(script==null);
+        } finally {
+            setUp();
+        }
     }
 
     /**
      * Override the test setup if needed.
      * @throws java.lang.Exception
      */
-    @Before
     public void setUp() throws Exception {
     }
 
@@ -238,7 +252,6 @@ public abstract class AbstractScriptTest {
      * Override the test cleanup if needed.
      * @throws java.lang.Exception
      */
-    @After
     public void tearDown() throws Exception {
     }
 
@@ -265,7 +278,7 @@ public abstract class AbstractScriptTest {
     /**
      * Test method for
      * {@link de.lab4inf.wrb.Script#setVariable(java.lang.String,double)}. and
-     * {@link de.lab4inf.wrb.WRBScript#getVariable(java.lang.String)}.
+     * {@link de.lab4inf.wrb.Script#getVariable(java.lang.String)}.
      */
     @Test
     public final void testSetGetVariable() throws Exception {
@@ -347,7 +360,7 @@ public abstract class AbstractScriptTest {
 
     @Test(expected = IllegalArgumentException.class)
     public final void testGetIllegalVariable() throws Exception {
-        String task = "x=3; y =4x+3";
+        String task = "x=3; y =4x+3;";
         script.parse(task);
         fail("illegal variable name or lazy multiplication: "+task);
     }
@@ -463,11 +476,11 @@ public abstract class AbstractScriptTest {
         assertEquals((2./3.)/5., script.parse(task), EPS);
     }
 
-        @Test
-        public final void testLongMixed() throws Exception {
-            String task = "2.0 * 3 * 4.0 - 5 + 6.0 / 3 ";
-            assertEquals(21, script.parse(task), EPS);
-        }
+    //    @Test
+    //    public final void testLongMixed() throws Exception {
+    //        String task = "2.0 * 3 * 4.0 - 5 + 6.0 / 3 ";
+    //        assertEquals(21, script.parse(task), EPS);
+    //    }
 
     @Test
     public void testParseBracket() throws Exception {
@@ -481,14 +494,15 @@ public abstract class AbstractScriptTest {
         assertEquals(1.0, script.parse(task), EPS);
     }
 
-        @Test
-        public final void testAssignMultiLineEval() throws Exception {
-            String task = "x = 4; y=x*x; z=x-y";
-            assertEquals( -12, script.parse(task), EPS);
-            assertEquals(4, script.getVariable("x"), EPS);
-            assertEquals(16, script.getVariable("y"), EPS);
-            assertEquals( -12, script.getVariable("z"), EPS);
-        }
+    //    @Test
+    //    @Ignore
+    //    public final void testAssignMultiLineEval() throws Exception {
+    //        String task = "x = 4; y=x*x; z=x-y";
+    //        assertEquals( -12, script.parse(task), EPS);
+    //        assertEquals(4, script.getVariable("x"), EPS);
+    //        assertEquals(16, script.getVariable("y"), EPS);
+    //        assertEquals( -12, script.getVariable("z"), EPS);
+    //    }
 
     @Test
     public final void testParseMultBrackets() throws Exception {
@@ -589,14 +603,14 @@ public abstract class AbstractScriptTest {
 
     @Test
     public void testParsePowOrder() throws Exception {
-        String task = " 4^3^5";
-        assertEquals(pow(4, pow(3, 5)), script.parse(task), EPS);
+        String task = " 4.1^3.2^5.3";
+        assertEquals(pow(4.1, pow(3.2, 5.3)), script.parse(task), EPS);
 
-        task = " 2^(3^5)";
-        assertEquals(pow(2, pow(3, 5)), script.parse(task), EPS);
+        task = " 2.1^(3.2^5.3)";
+        assertEquals(pow(2.1, pow(3.2, 5.3)), script.parse(task), EPS);
 
-        task = "(5^3)^2";
-        assertEquals(pow(pow(5, 3), 2), script.parse(task), EPS);
+        task = "(5.1^3.2)^2.3";
+        assertEquals(pow(pow(5.1, 3.2), 2.3), script.parse(task), EPS);
     }
 
     @Test
@@ -736,7 +750,9 @@ public abstract class AbstractScriptTest {
     public final void testEvalFunctionTwice() throws Exception {
         String task;
         task = "z=4; h(x)=x*2; x=h(5); y=h(z); ";
-        assertEquals(8, script.parse(task), EPS);
+        assertEquals(8.0, script.parse(task), EPS);
+        assertEquals(10.0, script.getVariable("x"), EPS);
+        assertEquals(8.0, script.getVariable("y"), EPS);
     }
 
     @Test
@@ -1257,7 +1273,7 @@ public abstract class AbstractScriptTest {
             // test positive values
             x = random();
             assertEquals(x, it.eval(x), EPS);
-            // test negative values  
+            // test negative values
             x = -x;
             assertEquals(x, it.eval(x), EPS);
         }
@@ -1340,7 +1356,8 @@ public abstract class AbstractScriptTest {
      * @throws Exception
      */
     @Test
-    public void testTimingCachedFunctions() throws Exception {
+    public final void testTimingCachedFunctions() throws Exception {
+        System.setErr(SYSERR);
         final String fmt = "\n\n"+"  Parser Timing Test    \n"+"=====================    \n"
                 +"cached :%6d \u03BCs/call  \n"+"parsed :%6d \u03BCs/call  \n"+"speedup: %.2f => %s  \n\n";
         final int MAX_PARSE_TIME = 1000;
@@ -1368,14 +1385,16 @@ public abstract class AbstractScriptTest {
 
         // now calculate the timing; knowing the calculations are correct
         timeCached = System.nanoTime();
-        x = rnd()/2;
         for (int k = 0; k<MAX_LOOPS; k++ ) {
+            x = rnd()/2;
             fct.eval(x);
         }
         timeCached -= System.nanoTime();
 
         timeParsed = System.nanoTime();
         for (int k = 0; k<MAX_LOOPS; k++ ) {
+            x = rnd()/2;
+            script.setVariable("x", x);
             script.parse(task);
         }
         timeParsed -= System.nanoTime();
@@ -1397,6 +1416,7 @@ public abstract class AbstractScriptTest {
         System.err.printf(format(fmt, timeCached, timeParsed, speedup, rating));
 
         assertTrue("function syntax tree not cached", speedup>3);
+        System.setErr(new JUnitTestPrintStream(System.err));
     }
 
 }
