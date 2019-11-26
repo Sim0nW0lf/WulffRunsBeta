@@ -14,11 +14,20 @@ import org.junit.Test;
 public class MyTests extends AbstractScriptTest {
 	
 	static public void matrixCompare(double[][] matrixExpected, double[][] matrixActual) {
+		for(int y = 0; y < matrixExpected.length; y++) {
+			for(int x = 0; x < matrixExpected[0].length; x++) {
+				if(Math.abs(matrixExpected[y][x] - matrixActual[y][x]) > EPS) {
+					throw new IllegalArgumentException("\nExpected: " + MyMatrix.print(matrixExpected) + " but got: " + MyMatrix.print(matrixActual));
+				}
+			}
+		}
+		/*
         if (Arrays.deepEquals(matrixExpected, matrixActual) == true) {
             return;
         } else {
         	throw new IllegalArgumentException("\nExpected: " + MyMatrix.print(matrixExpected) + " but got: " + MyMatrix.print(matrixActual));
         }
+        */
     }
 	
 	public final double myRnd(int range) {
@@ -74,7 +83,7 @@ public class MyTests extends AbstractScriptTest {
 
 	
 	private MyMatrix matrixGen(int ySize, int xSize) {
-		int range = 10; // range means myRnd(range) can be -range up to range.
+		int range = 10; // range means myRnd(range) can be +-range
 		return matrixGen(ySize, xSize, range);
 	}
 	private MyMatrix matrixGen(int ySize, int xSize, int range) {
@@ -190,13 +199,13 @@ public class MyTests extends AbstractScriptTest {
 	
 	@Test
 	public final void testMatrixMultiRandom() throws Exception {
-		int hightA = 3, widthA_hightB = 3, widthB = 3, range = 10; // range means myRnd(range) can be -range up to range.
+		int hightA = 3, widthA_hightB = 3, widthB = 3, range = 10; // range means myRnd(range) can be +-range
 	    
 		double[][] matrixA = new double[hightA][widthA_hightB];
 	    double[][] matrixB = new double[widthA_hightB][widthB];
-		String task = rndMatrixDefinition(matrixA, "A", hightA, widthA_hightB, range) +
-					rndMatrixDefinition(matrixB, "B", widthA_hightB, widthB, range) +
-					"m:A*m:B";
+		String task = rndMatrixDefinition(matrixA, "A", hightA, widthA_hightB, range)
+				    + rndMatrixDefinition(matrixB, "B", widthA_hightB, widthB, range)
+				    + "m:A*m:B";
 		
 	    double[][] matrixExpected = matrixMultiplication(matrixA, matrixB);
 		script.parse(task);
@@ -205,7 +214,7 @@ public class MyTests extends AbstractScriptTest {
 	
 	@Test
 	public final void testMatParallel2x2() throws Exception {
-		int hightA = 2, widthA_hightB = 2, widthB = 2, range = 10; // range means myRnd(range) can be -range up to range.
+		int hightA = 2, widthA_hightB = 2, widthB = 2, range = 10; // range means myRnd(range) can be +-range
 	    
 	    MyMatrix matrixA = matrixGen(hightA, widthA_hightB, range);
 	    MyMatrix matrixB = matrixGen(widthA_hightB, widthB, range);
@@ -216,7 +225,7 @@ public class MyTests extends AbstractScriptTest {
 	
 	@Test
 	public final void testMatParallel3x3() throws Exception {
-		int hightA = 3, widthA_hightB = 3, widthB = 3, range = 10; // range means myRnd(range) can be -range up to range.
+		int hightA = 3, widthA_hightB = 3, widthB = 3, range = 10; // range means myRnd(range) can be +-range
 	    
 	    MyMatrix matrixA = matrixGen(hightA, widthA_hightB, range);
 	    MyMatrix matrixB = matrixGen(widthA_hightB, widthB, range);
@@ -227,7 +236,7 @@ public class MyTests extends AbstractScriptTest {
 	
 	@Test
 	public final void testMatParallel3x4X4x5() throws Exception {
-		int hightA = 3, widthA_hightB = 4, widthB = 5, range = 10; // range means myRnd(range) can be -range up to range.
+		int hightA = 3, widthA_hightB = 4, widthB = 5, range = 10; // range means myRnd(range) can be +-range
 	    
 	    MyMatrix matrixA = matrixGen(hightA, widthA_hightB, range);
 	    MyMatrix matrixB = matrixGen(widthA_hightB, widthB, range);
@@ -238,7 +247,7 @@ public class MyTests extends AbstractScriptTest {
 	
 	@Test
 	public final void testDivideConquer2x2() throws Exception {
-		int hightA = 2, widthA_hightB = 2, widthB = 2, range = 10; // range means myRnd(range) can be -range up to range.
+		int hightA = 2, widthA_hightB = 2, widthB = 2, range = 10; // range means myRnd(range) can be +-range
 	    
 	    MyMatrix matrixA = matrixGen(hightA, widthA_hightB, range);
 	    MyMatrix matrixB = matrixGen(widthA_hightB, widthB, range);
@@ -249,7 +258,7 @@ public class MyTests extends AbstractScriptTest {
 	
 	@Test
 	public final void testDivideConquer3x3() throws Exception {
-		int hightA = 3, widthA_hightB = 3, widthB = 3, range = 10; // range means myRnd(range) can be -range up to range.
+		int hightA = 3, widthA_hightB = 3, widthB = 3, range = 10; // range means myRnd(range) can be +-range
 	    
 	    MyMatrix matrixA = matrixGen(hightA, widthA_hightB, range);
 	    MyMatrix matrixB = matrixGen(widthA_hightB, widthB, range);
@@ -260,7 +269,7 @@ public class MyTests extends AbstractScriptTest {
 	
 	@Test
 	public final void testMatDivideConquer3x4X4x5() throws Exception {
-		int hightA = 3, widthA_hightB = 3, widthB = 3, range = 10; // range means myRnd(range) can be -range up to range.
+		int hightA = 3, widthA_hightB = 2, widthB = 2, range = 10; // range means myRnd(range) can be +-range.
 	    
 	    MyMatrix matrixA = matrixGen(hightA, widthA_hightB, range);
 	    MyMatrix matrixB = matrixGen(widthA_hightB, widthB, range);
@@ -269,7 +278,7 @@ public class MyTests extends AbstractScriptTest {
 		matrixCompare(matrixExpected, matrixA.matDivideConquer(matrixB).dmatrix);
 	}
 	
-//	@Test
+	@Test
 	public final void testDivideAndConquerTiming() throws Exception {
 		int sets[][] = {{1, 64}, {10, 64}, {10, 128}, {5, 256}, {5, 512}, {2, 768}, {2, 1024}, {1, 1536}, {1, 2048}}; //
 
@@ -285,8 +294,8 @@ public class MyTests extends AbstractScriptTest {
 			for(int i = 0; i < sets[j][0]; i++) {
 				tmp = System.nanoTime();
 //				Comparing with MultiTranspose so it doesn't take that long
-//				matrixA.multiplication(matrixB);
-				matrixA.matMultiTranspose(matrixB);
+				matrixA.multiplication(matrixB);
+//				matrixA.matMultiTranspose(matrixB);
 				times[j][0] += Long.valueOf(System.nanoTime() - tmp);
 			}
 			times[j][0] /= sets[j][0];
@@ -309,7 +318,7 @@ public class MyTests extends AbstractScriptTest {
 		
 	}
 		
-//	@Test
+	@Test
 	public final void testMatrixMultiTiming() throws Exception {
 		int sets[][] = {{1, 64}, {10, 64}, {10, 128}, {5, 256}, {5, 512}, {2, 768}, {2, 1024}, {1, 1536}, {1, 2048}}; // , {1, 4096}
 
@@ -325,8 +334,8 @@ public class MyTests extends AbstractScriptTest {
 			for(int i = 0; i < sets[j][0]; i++) {
 				tmp = System.nanoTime();
 //				Comparing with MultiTranspose so it doesn't take that long
-//				matrixA.multiplication(matrixB);
-				matrixA.matMultiTranspose(matrixB);
+				matrixA.multiplication(matrixB);
+//				matrixA.matMultiTranspose(matrixB);
 				times[j][0] += Long.valueOf(System.nanoTime() - tmp);
 			}
 			times[j][0] /= sets[j][0];
@@ -349,7 +358,7 @@ public class MyTests extends AbstractScriptTest {
 		
 	}
 	
-	@Test
+//	@Test
 	public final void testMatrixMultiTimingAlternative() throws Exception {
 		int sets[][] = {{1, 64}, {10, 64}, {10, 128}, {5, 256}, {5, 512}, {2, 768}, {2, 1024}, {1, 1536}, {1, 2048}}; //
 		

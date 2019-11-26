@@ -73,7 +73,7 @@ import org.junit.runner.Description;
  * @since 16.10.2013
  * @version $Id: AbstractScriptTest.java,v 1.27 2018/10/23 16:31:40 nwulff Exp $
  */
-public abstract class AbstractScriptTest {
+public abstract class AbstractScriptTest_old {
     /**
      * 
      */
@@ -158,7 +158,7 @@ public abstract class AbstractScriptTest {
         }
     }
 
-    protected AbstractScriptTest() {
+    protected AbstractScriptTest_old() {
         System.setErr(new JUnitTestPrintStream(System.err));
     }
 

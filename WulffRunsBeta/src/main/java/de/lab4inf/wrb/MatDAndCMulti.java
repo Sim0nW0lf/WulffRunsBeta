@@ -19,5 +19,4 @@ public class MatDAndCMulti implements Runnable {
 	public double[][] getMatrixSolution() {
 		return c;
 	}
-	
 }

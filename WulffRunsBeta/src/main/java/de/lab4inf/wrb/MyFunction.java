@@ -66,7 +66,7 @@ public class MyFunction implements Function {
 
 		// Restore used Variables to previous value
 		i = 0;
-		for (double arg : args) {
+		for (double arg : args) {  //arg is used as counter for the for loop
 			this.parent.getVariable(this.argList.get(i)).loadSave();
 			i++;
 		}

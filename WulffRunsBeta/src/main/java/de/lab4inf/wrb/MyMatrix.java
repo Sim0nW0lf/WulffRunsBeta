@@ -118,9 +118,9 @@ public class MyMatrix {
 				solutionMatrix[y][x] = M3[y-M1.length][x];
 			}
 		}
-		for(int y = M3.length; y < solutionMatrix.length; y++) {
+		for(int y = M1.length; y < solutionMatrix.length; y++) {
 			for(int x = M1[0].length; x < solutionMatrix[0].length; x++) {
-				solutionMatrix[y][x] = M4[y-M3.length][x-M1[0].length];
+				solutionMatrix[y][x] = M4[y-M1.length][x-M1[0].length];
 			}
 		}
 	}
@@ -130,28 +130,28 @@ public class MyMatrix {
 		int middleYA = this.dmatrix.length/2, middleXA = this.dmatrix[0].length/2, middleYB = otherMatrixObjekt.height/2, middleXB = otherMatrixObjekt.dmatrix[0].length/2;
 		double[][]
 		A1 = new double[middleYA][middleXA],
-		A2 = new double[middleYA][this.dmatrix[0].length-middleXA],
-		A3 = new double[this.dmatrix.length-middleYA][middleXA],
-		A4 = new double[this.dmatrix.length-middleYA][this.dmatrix[0].length-middleXA],
+		A2 = new double[middleYA][this.width-middleXA],
+		A3 = new double[this.height-middleYA][middleXA],
+		A4 = new double[this.height-middleYA][this.width-middleXA],
 		B1 = new double[middleYB][middleXB],
 		B2 = new double[middleYB][otherMatrixObjekt.width-middleXB],
 		B3 = new double[otherMatrixObjekt.height-middleYB][middleXB],
 		B4 = new double[otherMatrixObjekt.height-middleYB][otherMatrixObjekt.width-middleXB],
 		C1 = new double[middleYA][middleXB],
-		C2 = new double[middleYA][otherMatrixObjekt.dmatrix[0].length-middleXB],
-		C3 = new double[this.dmatrix.length-middleYA][otherMatrixObjekt.dmatrix[0].length-middleXB],
-		C4 = new double[this.dmatrix.length-middleYA][this.dmatrix[0].length-middleXA];
+		C2 = new double[middleYA][otherMatrixObjekt.width-middleXB],
+		C3 = new double[this.height-middleYA][otherMatrixObjekt.width-middleXB],
+		C4 = new double[this.height-middleYA][this.width-middleXA];
 
 		// Make sure our numbers are good
 		this.refreshNumbers();
 		otherMatrixObjekt.refreshNumbers();
 		
 		matrixSplitByIndex(this.dmatrix, A1, A2, A3, A4, middleYA, middleXA);
-		matrixSplitByIndex(otherMatrixObjekt.dmatrix, B1, B2, B3, B4, middleXA, middleXB);
+		matrixSplitByIndex(otherMatrixObjekt.dmatrix, B1, B2, B3, B4, middleYB, middleXB);
 		Thread T1, T2, T3, T4, T5, T6, T7, T8;
 		
 		MatDAndCMulti W1 = new MatDAndCMulti(A1, B1, this), W2 = new MatDAndCMulti(A2, B3, this), W3 = new MatDAndCMulti(A1, B2, this), W4 = new MatDAndCMulti(A2, B4, this),
-					W5 = new MatDAndCMulti(A3, B1, this), W6 = new MatDAndCMulti(A4, B3, this), W7 = new MatDAndCMulti(A3, B2, this), W8 = new MatDAndCMulti(A4, B4, this);
+					  W5 = new MatDAndCMulti(A3, B1, this), W6 = new MatDAndCMulti(A4, B3, this), W7 = new MatDAndCMulti(A3, B2, this), W8 = new MatDAndCMulti(A4, B4, this);
 		
 		T1 = new Thread(W1);
 		T2 = new Thread(W2);
