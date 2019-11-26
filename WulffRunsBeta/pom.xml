@@ -85,10 +85,10 @@
 				<artifactId>antlr4-maven-plugin</artifactId>
 				<version>4.7.2</version>
 				<configuration>
-					<sourceDirectory>${basedir}/src/main/antlr4/de/lab4inf/wrb/</sourceDirectory>					
+					<sourceDirectory>${basedir}/src/main/antlr4/</sourceDirectory>					
 					<listener>true</listener>
 					<visitor>true</visitor>
-					<outputDirectory>target/generated-sources/antlr4/de/lab4inf/wrb/</outputDirectory>
+					<outputDirectory>target/generated-sources/antlr4/</outputDirectory>
 				</configuration>
 
 				<executions>
