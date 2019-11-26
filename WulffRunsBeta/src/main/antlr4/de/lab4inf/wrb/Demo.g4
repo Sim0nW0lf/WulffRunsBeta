@@ -1,5 +1,5 @@
 grammar Demo;
-@header {package de.lab4inf.wrb;}
+// @header {package de.lab4inf.wrb;}
 
 WHITESPACE: [ \t\n\r]+->skip;	
 
