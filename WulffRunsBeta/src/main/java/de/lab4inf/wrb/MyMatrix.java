@@ -37,9 +37,57 @@ public class MyMatrix {
 		}
 	}
 	
+	// matSeriell
+	////////////////////////////////////////////////////////////////////////////////////////////////////
+	
+	public MyMatrix matSeriell(MyMatrix otherMatrix) {
+		// Check if columns of first = rows of second
+		if (this.getWidth() != otherMatrix.getHeight()) {
+			throw new IllegalArgumentException("Incorrect size.");
+		}
+		// Make sure our numbers are good
+		this.refreshNumbers();
+		otherMatrix.refreshNumbers();
+
+		// Mathemagic
+		double[][] res = new double[this.getHeight()][otherMatrix.getWidth()];
+		
+		for (int i = 0; i < this.getHeight(); i++) {
+			for (int j = 0; j < otherMatrix.getWidth(); j++) {
+				res[i][j] = 0.0;
+				for (int k = 0; k < otherMatrix.getHeight(); k++) {
+					res[i][j] += this.dmatrix[i][k] * otherMatrix.getDmatrix()[k][j];
+				}
+			}
+		}
+		
+		return new MyMatrix(res);
+	}
+	
 	// Divide and Conquer
 	////////////////////////////////////////////////////////////////////////////////////////////////////
 	//TODO: Divide and Conquer funktioniert nur für Matritzen mit NxN Feldern!
+	
+	public double[][] matSeriell(double[][] A, double[][] B) {
+		// Check if columns of first = rows of second
+		if (A[0].length != B.length) {
+			throw new IllegalArgumentException("Incorrect size.");
+		}
+
+		// Mathemagic
+		double[][] res = new double[A.length][B[0].length];
+		
+		for (int i = 0; i < A.length; i++) {
+			for (int j = 0; j < B[0].length; j++) {
+				res[i][j] = 0.0;
+				for (int k = 0; k < B.length; k++) {
+					res[i][j] += A[i][k] * B[k][j];
+				}
+			}
+		}
+		
+		return res;
+	}
 	
 	public double[][] matAddition(double[][] matrixA, double[][] matrixB) {
 		// check if sizes fit
@@ -127,8 +175,12 @@ public class MyMatrix {
 	
 	public MyMatrix matDivideConquer(MyMatrix otherMatrixObjekt) {
 		double[][] solutionMatrix = new double[height][otherMatrixObjekt.getWidth()];
+		
+		// Setting middle points where to split Matrix A and B
 		int middleYA = this.dmatrix.length/2, middleXA = this.dmatrix[0].length/2, middleYB = otherMatrixObjekt.height/2, middleXB = otherMatrixObjekt.dmatrix[0].length/2;
 		double[][]
+				
+		// Dividing Matrix into 4 Parts
 		A1 = new double[middleYA][middleXA],
 		A2 = new double[middleYA][this.width-middleXA],
 		A3 = new double[this.height-middleYA][middleXA],
@@ -136,11 +188,7 @@ public class MyMatrix {
 		B1 = new double[middleYB][middleXB],
 		B2 = new double[middleYB][otherMatrixObjekt.width-middleXB],
 		B3 = new double[otherMatrixObjekt.height-middleYB][middleXB],
-		B4 = new double[otherMatrixObjekt.height-middleYB][otherMatrixObjekt.width-middleXB],
-		C1 = new double[middleYA][middleXB],
-		C2 = new double[middleYA][otherMatrixObjekt.width-middleXB],
-		C3 = new double[this.height-middleYA][otherMatrixObjekt.width-middleXB],
-		C4 = new double[this.height-middleYA][this.width-middleXA];
+		B4 = new double[otherMatrixObjekt.height-middleYB][otherMatrixObjekt.width-middleXB];
 
 		// Make sure our numbers are good
 		this.refreshNumbers();
@@ -176,14 +224,27 @@ public class MyMatrix {
 				dead = true;
 			}
 		}
+
+		newMatAddition(solutionMatrix, W1.getMatrixSolution(), W2.getMatrixSolution(), 0, 0);
+		newMatAddition(solutionMatrix, W3.getMatrixSolution(), W4.getMatrixSolution(), 0, A1[0].length);
+		newMatAddition(solutionMatrix, W5.getMatrixSolution(), W6.getMatrixSolution(), A1.length, 0);
+		newMatAddition(solutionMatrix, W7.getMatrixSolution(), W8.getMatrixSolution(), A1.length, A1[0].length);
 		
-		C1 = matAddition(W1.getMatrixSolution(), W2.getMatrixSolution());
-		C2 = matAddition(W3.getMatrixSolution(), W4.getMatrixSolution());
-		C3 = matAddition(W5.getMatrixSolution(), W6.getMatrixSolution());
-		C4 = matAddition(W7.getMatrixSolution(), W8.getMatrixSolution());
-		
-		matrixMerge(C1, C2, C3, C4, solutionMatrix);
 		return new MyMatrix(solutionMatrix);
+	}
+	
+	private void newMatAddition(double[][] solutionMatrix, double[][] matrixA, double[][] matrixB, int indexY, int indexX) {
+		// check if sizes fit
+		if (matrixB.length != matrixA.length || matrixB[0].length != matrixA[0].length) {
+			throw new IllegalArgumentException("Size of Matrixes differs.");
+		}
+		
+		// Mathemagic
+		for (int y = 0; y < matrixA.length; y++) {
+			for (int x = 0; x < matrixA[0].length; x++) {
+				solutionMatrix[y+indexY][x+indexX] = matrixA[y][x] + matrixB[y][x];
+			}
+		}
 	}
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
@@ -222,30 +283,6 @@ public class MyMatrix {
 		return new MyMatrix(res);
 	}
 
-	public MyMatrix multiplication(MyMatrix otherMatrix) {
-		// Check if columns of first = rows of second
-		if (this.getWidth() != otherMatrix.getHeight()) {
-			throw new IllegalArgumentException("Incorrect size.");
-		}
-		// Make sure our numbers are good
-		this.refreshNumbers();
-		otherMatrix.refreshNumbers();
-
-		// Mathemagic
-		double[][] res = new double[this.getHeight()][otherMatrix.getWidth()];
-		
-		for (int i = 0; i < this.getHeight(); i++) {
-			for (int j = 0; j < otherMatrix.getWidth(); j++) {
-				res[i][j] = 0.0;
-				for (int k = 0; k < otherMatrix.getHeight(); k++) {
-					res[i][j] += this.dmatrix[i][k] * otherMatrix.getDmatrix()[k][j];
-				}
-			}
-		}
-		
-		return new MyMatrix(res);
-	}
-
 	public ArrayList<MyMatrix> getSplitColMatrix(MyMatrix otherMatrix, int pieces) {
 		// Mathemagic the size of the individual Pieces
 		if(otherMatrix.width < pieces) {
@@ -276,14 +313,14 @@ public class MyMatrix {
 		return ret;
 	}
 	
-	public MyMatrix multiplyParrallel(MyMatrix otherMatrix) {
+	public MyMatrix matParallel(MyMatrix otherMatrix) {
 		double factorOfThreads = 0.05;
 		int pieces = (int)Math.round(otherMatrix.dmatrix.length*factorOfThreads);
 		if(pieces == 0) pieces = 1;
-		return multiplyParrallel(otherMatrix, pieces); // MyMatrix.threadNumber   
+		return matParallel(otherMatrix, pieces); // MyMatrix.threadNumber   
 	}
 
-	public MyMatrix multiplyParrallel(MyMatrix otherMatrix, int piece) {
+	public MyMatrix matParallel(MyMatrix otherMatrix, int piece) {
 		ArrayList<MyMatrix> pieces = getSplitColMatrix(otherMatrix, piece);
 		MatrixWorker[] t = new MatrixWorker[piece];
 		Thread tr[] = new Thread[piece];

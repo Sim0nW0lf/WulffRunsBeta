@@ -7,6 +7,7 @@ public class MatDAndCMulti implements Runnable {
 	volatile protected double[][] c;
 	volatile protected MyMatrix matrixObjekt;
 	int colStart, colEnd;
+	
 	public MatDAndCMulti(double[][] a, double[][] b, MyMatrix matrixObjekt) {
 		this.a = a;
 		this.b = b;
@@ -14,7 +15,7 @@ public class MatDAndCMulti implements Runnable {
 	}
 	@Override
 	public void run() {
-		this. c = matrixObjekt.dAndCMultiTranspose(a, b);
+		this. c = matrixObjekt.matSeriell(a, b);
 	}
 	public double[][] getMatrixSolution() {
 		return c;

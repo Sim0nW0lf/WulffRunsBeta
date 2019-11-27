@@ -190,8 +190,71 @@ public class MyTests extends AbstractScriptTest {
 	}
 	
 	@Test
+	public final void testAllMatrixAlgorithms() throws Exception {
+		int sets[] = {64, 128, 256, 512, 768, 1024, 1536, 2048};
+		for(int j = 0; j < sets.length; j++) {
+			MyMatrix matrixA = matrixGen(sets[j], sets[j]);
+			MyMatrix matrixB = matrixGen(sets[j], sets[j]);
+			// sicher gehen, dass die Lösung stimmt
+			double[][] matrixExpected = matrixMultiplication(matrixA.dmatrix, matrixB.dmatrix);
+			matrixCompare(matrixExpected, matrixA.matSeriell(matrixB).dmatrix);
+			matrixCompare(matrixExpected, matrixA.matParallel(matrixB).dmatrix);
+			matrixCompare(matrixExpected, matrixA.matDivideConquer(matrixB).dmatrix);
+		}
+	}
+	
+//	@Test
+	public final void testMatSeriell() throws Exception {
+		int sets[] = {64, 128, 256, 512, 768, 1024, 1536, 2048};
+		for(int j = 0; j < sets.length; j++) {
+			MyMatrix matrixA = matrixGen(sets[j], sets[j]);
+			MyMatrix matrixB = matrixGen(sets[j], sets[j]);
+			// sicher gehen, dass die Lösung stimmt
+			matrixCompare(matrixMultiplication(matrixA.dmatrix, matrixB.dmatrix), matrixA.matSeriell(matrixB).dmatrix);
+		}
+	}
+	
+//	@Test
+	public final void testMatParallel() throws Exception {
+		int sets[] = {64, 128, 256, 512, 768, 1024, 1536, 2048};
+		for(int j = 0; j < sets.length; j++) {
+			MyMatrix matrixA = matrixGen(sets[j], sets[j]);
+			MyMatrix matrixB = matrixGen(sets[j], sets[j]);
+			// sicher gehen, dass die Lösung stimmt
+			matrixCompare(matrixMultiplication(matrixA.dmatrix, matrixB.dmatrix), matrixA.matParallel(matrixB).dmatrix);
+		}
+	}
+	
+//	@Test
+	public final void matDivideConquer() throws Exception {
+		int sets[] = {64, 128, 256, 512, 768, 1024, 1536, 2048};
+		for(int j = 0; j < sets.length; j++) {
+			MyMatrix matrixA = matrixGen(sets[j], sets[j]);
+			MyMatrix matrixB = matrixGen(sets[j], sets[j]);
+			// sicher gehen, dass die Lösung stimmt
+			matrixCompare(matrixMultiplication(matrixA.dmatrix, matrixB.dmatrix), matrixA.matDivideConquer(matrixB).dmatrix);
+		}
+	}
+	
+	@Test
 	public final void testMatrixMultiplikation() throws Exception {
 		String task = "A = {1,2;3,4;}; B = {4,3;2,1;}; m:A*m:B;";
+		script.parse(task);
+		double[][] matrixExpected = {{8.0, 5.0}, {20.0, 13.0}};
+		matrixCompare(matrixExpected, script.getMatrixSolution("m:A*m:B"));
+	}
+	
+	@Test
+	public final void testMatrixMultiWithVariables() throws Exception {
+		String task = "a = 1; b = 2; A = {a,2;3,4;}; B = {4,3;b,1;}; m:A*m:B;";
+		script.parse(task);
+		double[][] matrixExpected = {{8.0, 5.0}, {20.0, 13.0}};
+		matrixCompare(matrixExpected, script.getMatrixSolution("m:A*m:B"));
+	}
+	
+	@Test
+	public final void testMatrixMultiWithFunctions() throws Exception {
+		String task = "f(x, y) = x + y; a = 1; b = 2; A = {a,2;f(a,b),4;}; B = {4,3;b,1;}; m:A*m:B;";
 		script.parse(task);
 		double[][] matrixExpected = {{8.0, 5.0}, {20.0, 13.0}};
 		matrixCompare(matrixExpected, script.getMatrixSolution("m:A*m:B"));
@@ -220,7 +283,7 @@ public class MyTests extends AbstractScriptTest {
 	    MyMatrix matrixB = matrixGen(widthA_hightB, widthB, range);
 		
 	    double[][] matrixExpected = matrixMultiplication(matrixA.dmatrix, matrixB.dmatrix);
-		matrixCompare(matrixExpected, matrixA.multiplyParrallel(matrixB).dmatrix);
+		matrixCompare(matrixExpected, matrixA.matParallel(matrixB).dmatrix);
 	}
 	
 	@Test
@@ -231,7 +294,7 @@ public class MyTests extends AbstractScriptTest {
 	    MyMatrix matrixB = matrixGen(widthA_hightB, widthB, range);
 		
 	    double[][] matrixExpected = matrixMultiplication(matrixA.dmatrix, matrixB.dmatrix);
-		matrixCompare(matrixExpected, matrixA.multiplyParrallel(matrixB).dmatrix);
+		matrixCompare(matrixExpected, matrixA.matParallel(matrixB).dmatrix);
 	}
 	
 	@Test
@@ -242,7 +305,7 @@ public class MyTests extends AbstractScriptTest {
 	    MyMatrix matrixB = matrixGen(widthA_hightB, widthB, range);
 		
 	    double[][] matrixExpected = matrixMultiplication(matrixA.dmatrix, matrixB.dmatrix);
-		matrixCompare(matrixExpected, matrixA.multiplyParrallel(matrixB).dmatrix);
+		matrixCompare(matrixExpected, matrixA.matParallel(matrixB).dmatrix);
 	}
 	
 	@Test
@@ -288,13 +351,14 @@ public class MyTests extends AbstractScriptTest {
 		for(int j = 0; j < sets.length; j++) {
 			MyMatrix matrixA = matrixGen(sets[j][1], sets[j][1]);
 			MyMatrix matrixB = matrixGen(sets[j][1], sets[j][1]);
+			
 			long tmp;
 			//Serial
 			times[j][0] = Long.valueOf(0);
 			for(int i = 0; i < sets[j][0]; i++) {
 				tmp = System.nanoTime();
 //				Comparing with MultiTranspose so it doesn't take that long
-				matrixA.multiplication(matrixB);
+				matrixA.matSeriell(matrixB);
 //				matrixA.matMultiTranspose(matrixB);
 				times[j][0] += Long.valueOf(System.nanoTime() - tmp);
 			}
@@ -303,7 +367,7 @@ public class MyTests extends AbstractScriptTest {
 //			for(int i = 0; i < 5; i++) {
 //				matrixA.multiplyParrallel(matrixB);				
 //			}
-			
+
 			//Parallel
 			times[j][1] = Long.valueOf(0);
 			for(int i = 0; i < sets[j][0]; i++) {
@@ -328,13 +392,14 @@ public class MyTests extends AbstractScriptTest {
 		for(int j = 0; j < sets.length; j++) {
 			MyMatrix matrixA = matrixGen(sets[j][1]-1, sets[j][1]);
 			MyMatrix matrixB = matrixGen(sets[j][1], sets[j][1]+1);
+
 			long tmp;
 			//Serial
 			times[j][0] = Long.valueOf(0);
 			for(int i = 0; i < sets[j][0]; i++) {
 				tmp = System.nanoTime();
 //				Comparing with MultiTranspose so it doesn't take that long
-				matrixA.multiplication(matrixB);
+				matrixA.matSeriell(matrixB);
 //				matrixA.matMultiTranspose(matrixB);
 				times[j][0] += Long.valueOf(System.nanoTime() - tmp);
 			}
@@ -343,12 +408,12 @@ public class MyTests extends AbstractScriptTest {
 //			for(int i = 0; i < 5; i++) {
 //				matrixA.multiplyParrallel(matrixB);				
 //			}
-			
+
 			//Parallel
 			times[j][1] = Long.valueOf(0);
 			for(int i = 0; i < sets[j][0]; i++) {
 				tmp = System.nanoTime();
-				matrixA.multiplyParrallel(matrixB);
+				matrixA.matParallel(matrixB);
 				times[j][1] += Long.valueOf(System.nanoTime() - tmp);
 			}
 			times[j][1] /= sets[j][0];
@@ -373,7 +438,7 @@ public class MyTests extends AbstractScriptTest {
 			//Serial
 			for(int i = 0; i < sets[j][0]; i++) {
 				tmp = System.nanoTime();
-				matrixA.multiplication(matrixB);
+				matrixA.matSeriell(matrixB);
 				times[j][0] += System.nanoTime() - tmp;
 			}
 			times[j][0] /= sets[j][0];
