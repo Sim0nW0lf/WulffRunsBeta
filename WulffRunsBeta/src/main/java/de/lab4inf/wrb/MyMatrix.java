@@ -37,6 +37,64 @@ public class MyMatrix {
 		}
 	}
 	
+	// matParallel2
+	////////////////////////////////////////////////////////////////////////////////////////////////////
+	public MyMatrix matParallel2(MyMatrix otherMatrix) {
+		// Check if columns of first = rows of second
+		if (this.getWidth() != otherMatrix.getHeight()) {
+			throw new IllegalArgumentException("Incorrect size.");
+		}
+		// Make sure our numbers are good
+		this.refreshNumbers();
+		otherMatrix.refreshNumbers();
+		
+		double[][] r = transposeMatrix(otherMatrix.dmatrix);
+		
+
+		// Mathemagic
+		double[][] res = new double[this.getHeight()][otherMatrix.getWidth()];
+		Thread T[] = new Thread[this.height];
+		matParallel2 W[] = new matParallel2[this.height];
+		
+		for (int i = 0; i < this.height; i++) {
+			
+			 W[i] = new matParallel2(res, i, this.dmatrix, r, this);
+			 T[i] = new Thread(W[i]);
+			 T[i].start();
+		}
+		// Wait for all threads to finish
+		int t = 0;
+		Boolean dead = false;
+		while (!dead) {
+			if (t >= this.height) {
+				dead = true;
+			} else {
+				if (!T[t].isAlive()) {
+					t++;
+				}
+			}
+		}
+		t = 0;
+		
+		return new MyMatrix(res);
+	}
+	
+	public void matParallel2Multi(double[][] res, int i, double[][] A, double[][] B) {
+		// Check if columns of first = rows of second
+		if (A[0].length != B.length) {
+			throw new IllegalArgumentException("Incorrect size.");
+		}
+		
+			for (int j = 0; j < B[0].length; j++) {
+				res[i][j] = 0.0;
+				for (int k = 0; k < B.length; k++) {
+					res[i][j] += A[i][k] * B[k][j];
+				}
+			}
+		
+		//return res[i];
+	}
+	
 	// matSeriell
 	////////////////////////////////////////////////////////////////////////////////////////////////////
 	
@@ -248,7 +306,7 @@ public class MyMatrix {
 	}
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-// matParallel
+// matParallel4
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 	private double[][] transposeMatrix(double[][] matrix) {
 		int width = matrix[0].length, height = matrix.length;
