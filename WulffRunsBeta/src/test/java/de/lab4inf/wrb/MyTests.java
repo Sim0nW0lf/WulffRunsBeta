@@ -203,6 +203,17 @@ public class MyTests extends AbstractScriptTest {
 		}
 	}
 	
+	@Test
+	public final void testMatParallel2() throws Exception {
+		int sets[] = {64, 128, 256, 512, 768, 1024, 1536}; //, 2048
+		for(int j = 0; j < sets.length; j++) {
+			MyMatrix matrixA = matrixGen(sets[j], sets[j]);
+			MyMatrix matrixB = matrixGen(sets[j], sets[j]);
+			// sicher gehen, dass die Lösung stimmt
+			matrixCompare(matrixMultiplication(matrixA.dmatrix, matrixB.dmatrix), matrixA.matParallel2(matrixB).dmatrix);
+		}
+	}
+	
 //	@Test
 	public final void testMatSeriell() throws Exception {
 		int sets[] = {64, 128, 256, 512, 768, 1024, 1536, 2048};
@@ -381,10 +392,51 @@ public class MyTests extends AbstractScriptTest {
 		}
 		
 	}
+	
+	@Test
+	public final void matParallel2() throws Exception {
+		int sets[][] = {{1, 64}, {10, 64}, {10, 128}, {5, 256}, {5, 512}, {2, 768}, {2, 1024}}; //, {1, 1536}, {1, 2048}
+
+		System.out.printf("matParallel2:\n");
+		System.out.printf("\n repetitions \t | dimension \t | serial \t | parallel \t | speedup \n");
+		Long[][] times = new Long[sets.length][2];
+		for(int j = 0; j < sets.length; j++) {
+			MyMatrix matrixA = matrixGen(sets[j][1], sets[j][1]);
+			MyMatrix matrixB = matrixGen(sets[j][1], sets[j][1]);
+			
+			long tmp;
+			//Serial
+			times[j][0] = Long.valueOf(0);
+			for(int i = 0; i < sets[j][0]; i++) {
+				tmp = System.nanoTime();
+//				Comparing with MultiTranspose so it doesn't take that long
+				matrixA.matSeriell(matrixB);
+//				matrixA.matMultiTranspose(matrixB);
+				times[j][0] += Long.valueOf(System.nanoTime() - tmp);
+			}
+			times[j][0] /= sets[j][0];
+			
+//			for(int i = 0; i < 5; i++) {
+//				matrixA.multiplyParrallel(matrixB);				
+//			}
+
+			//Parallel
+			times[j][1] = Long.valueOf(0);
+			for(int i = 0; i < sets[j][0]; i++) {
+				tmp = System.nanoTime();
+				matrixA.matParallel2(matrixB);
+				times[j][1] += Long.valueOf(System.nanoTime() - tmp);
+			}
+			times[j][1] /= sets[j][0];
+			double speedUp = times[j][0].doubleValue() / times[j][1].doubleValue();
+			System.out.printf("\t %d \t | \t %d \t | %d \t | %d \t | %.2f \n", sets[j][0], sets[j][1], times[j][0]/100, times[j][1]/100, speedUp);
+		}
+		
+	}
 		
 	@Test
 	public final void testMatrixMultiTiming() throws Exception {
-		int sets[][] = {{1, 64}, {10, 64}, {10, 128}, {5, 256}, {5, 512}, {2, 768}, {2, 1024}, {1, 1536}, {1, 2048}}; // , {1, 4096}
+		int sets[][] = {{1, 64}, {10, 64}, {10, 128}, {5, 256}, {5, 512}, {2, 768}, {2, 1024}}; // , {1, 4096}, {1, 1536}, {1, 2048}
 
 		System.out.printf("matParallel:\n");
 		System.out.printf("\n repetitions \t | dimension \t | serial \t | parallel \t | speedup \n");

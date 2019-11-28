@@ -47,9 +47,7 @@ public class MyMatrix {
 		// Make sure our numbers are good
 		this.refreshNumbers();
 		otherMatrix.refreshNumbers();
-		
-		double[][] r = transposeMatrix(otherMatrix.dmatrix);
-		
+	
 
 		// Mathemagic
 		double[][] res = new double[this.getHeight()][otherMatrix.getWidth()];
@@ -58,7 +56,7 @@ public class MyMatrix {
 		
 		for (int i = 0; i < this.height; i++) {
 			
-			 W[i] = new matParallel2(res, i, this.dmatrix, r, this);
+			 W[i] = new matParallel2(res, i, this.dmatrix, otherMatrix.dmatrix, this);
 			 T[i] = new Thread(W[i]);
 			 T[i].start();
 		}
@@ -87,7 +85,7 @@ public class MyMatrix {
 		
 			for (int j = 0; j < B[0].length; j++) {
 				res[i][j] = 0.0;
-				for (int k = 0; k < B.length; k++) {
+				for (int k = 0; k < A[0].length; k++) {
 					res[i][j] += A[i][k] * B[k][j];
 				}
 			}
@@ -372,10 +370,10 @@ public class MyMatrix {
 	}
 	
 	public MyMatrix matParallel(MyMatrix otherMatrix) {
-		double factorOfThreads = 0.05;
-		int pieces = (int)Math.round(otherMatrix.dmatrix.length*factorOfThreads);
-		if(pieces == 0) pieces = 1;
-		return matParallel(otherMatrix, pieces); // MyMatrix.threadNumber   
+//		double factorOfThreads = 0.05;
+//		int pieces = (int)Math.round(otherMatrix.dmatrix.length*factorOfThreads);
+//		if(pieces == 0) pieces = 1;
+		return matParallel(otherMatrix, otherMatrix.width); // MyMatrix.threadNumber   pieces
 	}
 
 	public MyMatrix matParallel(MyMatrix otherMatrix, int piece) {

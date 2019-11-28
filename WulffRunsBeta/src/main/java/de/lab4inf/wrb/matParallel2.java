@@ -18,7 +18,7 @@ public class matParallel2 implements Runnable {
 	}
 	@Override
 	public void run() {
-		this. c[i] = matrixObjekt.matParallel2Multi(c, i, a, b);
+		matrixObjekt.matParallel2Multi(c, i, a, b); //this. c[i] = 
 	}
 	public double[][] getMatrixSolution() {
 		return c;
