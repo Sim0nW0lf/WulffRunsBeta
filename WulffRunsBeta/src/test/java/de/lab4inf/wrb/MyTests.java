@@ -12,6 +12,11 @@ import org.junit.Test;
 
 
 public class MyTests extends AbstractScriptTest {
+
+	@Override
+	protected Script getScript() {
+		return new WRBScript();
+	}
 	
 	static public void matrixCompare(double[][] matrixExpected, double[][] matrixActual) {
 		for(int y = 0; y < matrixExpected.length; y++) {
@@ -96,11 +101,6 @@ public class MyTests extends AbstractScriptTest {
 			}
 		}
 		return new MyMatrix(matrix);
-	}
-
-	@Override
-	protected Script getScript() {
-		return new WRBScript();
 	}
 	
 //	@Test
