@@ -25,8 +25,21 @@ public:
 	/**
 	 * Constructor to wrap a Java Function implementation.
 	 */
-	JavaFunction(JNIEnv *env,jobject instance);
-	virtual ~JavaFunction();
+	JavaFunction(JNIEnv *env,jobject instance) {
+		this->env = env;
+		this->instance = instance;
+		jclass clazz = env->GetObjectClass(instance);
+		fct = env->GetMethodID(clazz, "eval", "([D)D");
+//		jmethodID getName = env->GetMethodID(clazz, "getName", "()Ljava/lang/String;");
+//		jname = (jstring)env->CallObjectMethod(instance, getName);
+//		const char *strReturn = env->GetStringUTFChars(jname, 0);
+//		printf("%s", strReturn);
+		array = env->NewDoubleArray(1);
+	}
+
+
+	virtual ~JavaFunction(){};
+
 	// overloaded operator to execute  double y = f(x)
 	// for java functions implementations.
 	virtual double operator()(double x) const {
