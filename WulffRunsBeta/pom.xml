@@ -216,7 +216,7 @@
 	</build>
 	
 	<properties>
-		<java.library.path>${project.basedir}/target/c-build</java.library.path>
+		<java.library.path>${project.basedir}/lib</java.library.path>
 	</properties>
 	
 </project>
