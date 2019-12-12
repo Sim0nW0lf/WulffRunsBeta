@@ -9,6 +9,8 @@
 #define JAVAFUNCTION_H_
 #include <jni.h>
 #include "Function.h"
+#include "Differentiator.h"
+#include "Integrator.h"
 /**
  * A C++ Function suitable for JNI calls.
  */

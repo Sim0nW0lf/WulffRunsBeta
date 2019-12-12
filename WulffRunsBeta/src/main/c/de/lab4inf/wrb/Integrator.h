@@ -8,10 +8,17 @@
 
 #ifndef INTEGRATOR_H_
 #define INTEGRATOR_H_
+
+#include "de_lab4inf_wrb_Integrator.h"
 #include "Function.h"
+
+#define MAX_N 1200
+
 #ifdef __cplusplus
 extern "C" {
 #endif
+extern int int_calls;
+
 /**                                   /b
  * Numerical calculation of F[b,a] = / f(t) dt within integration borders a,b.
  *                                  /a

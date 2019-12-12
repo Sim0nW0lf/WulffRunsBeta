@@ -28,7 +28,7 @@
  *
  *  @since:   23.11.2014
  *  @author:  nwulff
- *  @version: $Id: CUnit.h,v 1.2 2017/12/05 18:24:41 nwulff Exp $
+ *  @version: $Id: CUnit.h,v 1.3 2018/12/04 17:28:20 nwulff Exp $
  */
 
 #ifndef _CUNIT_H_
@@ -36,6 +36,9 @@
 #include <assert.h>
 #include <string.h>
 #include <stdio.h>
+#include <math.h>
+#include <errno.h>
+
 #ifdef __cplusplus
 extern "C" {
 #endif
@@ -93,9 +96,35 @@ int main(int argc, char** argv) {                      \
  */
 extern void cunit_report_error(const char* msg);
 extern void cunit_report_failure(const char* msg);
+/**
+ * Report the number of errors accumulated.
+ * @return number of errors
+ */
+extern int errorCount();
+/**
+ * Report the number of failures accumulated.
+ * @return number of failures
+ */
+extern int failureCount();
+/**
+ * Report the number of fatal errors accumulated.
+ * @return number of fatal errors
+ */
+extern int fatalCount();
 
 #define CUNIT_ABS(x) ((x)<0 ? -(x):(x))
 #define BUFSIZE 128
+
+#define IS_NAN(x) (__isnan(x) ? (errno=0) : (errno)  )
+#define IS_INF(x) (__isinf(x) )
+
+#ifndef INF
+#define INF() {int inf = 0x7F800000; return *(float*)&inf;}
+#endif
+
+#ifndef NAN
+#define NAN() {int nan = 0x7F800001; return *(float*)&nan;}
+#endif
 
 #define __assertEquals__(x,y,fmt) {                \
 	if( (x)!=(y) ) {                               \
@@ -115,7 +144,6 @@ extern void cunit_report_failure(const char* msg);
     __FILE__, __LINE__, msg);                      \
     cunit_report_failure(_test_buf);               \
 }
-
 /**
  * check that the given expression is true.
  */
@@ -152,6 +180,29 @@ extern void cunit_report_failure(const char* msg);
 		char _test_buf[BUFSIZE];                   \
 		sprintf(_test_buf,"ERROR %s:%d %p != %p",  \
         __FILE__, __LINE__,(void*)(x),(void*)(y)); \
+        cunit_report_error(_test_buf);             \
+	}                                              \
+}
+/**
+ * check that a floating number is infinite.
+ */
+#define assertInfinite(x)      {                   \
+	if( !(IS_INF(x)) ) {                           \
+		char _test_buf[BUFSIZE];                   \
+		sprintf(_test_buf,"ERROR %s:%d %g != inf", \
+        __FILE__, __LINE__, x);                    \
+        cunit_report_error(_test_buf);             \
+	}                                              \
+}
+
+/**
+ * check for floating is not a number.
+ */
+#define assertNaN(x)           {                   \
+	if( !(IS_NAN(x)) ) {                           \
+		char _test_buf[BUFSIZE];                   \
+		sprintf(_test_buf,"ERROR %s:%d %g != NaN", \
+        __FILE__, __LINE__, x);                    \
         cunit_report_error(_test_buf);             \
 	}                                              \
 }

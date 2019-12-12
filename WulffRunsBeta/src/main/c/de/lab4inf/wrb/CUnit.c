@@ -3,7 +3,7 @@
  *
  *  @since:   23.11.2014
  *  @author:  nwulff
- *  @version: $Id: CUnit.c,v 1.7 2017/12/05 21:40:22 nwulff Exp $
+ *  @version: $Id: CUnit.c,v 1.1 2018/12/04 17:28:20 nwulff Exp $
  */
 
 #ifdef __cplusplus
@@ -16,8 +16,11 @@ extern "C" {
 #include <setjmp.h>
 #include <signal.h>
 #include <string.h>
-#include <stdarg.h>  // varargs
+#include <errno.h>   /* error in math functions */
+#include <stdarg.h>  /* varargs  */
 #include "CUnit.h"
+
+extern char *strsignal (int );
 
 
 #define NAME_OF_TEST(T) (T).name
@@ -34,6 +37,29 @@ typedef struct test_run {
 } TestRun;
 
 static TestRun testRun;
+
+
+/**
+ * Report the number of errors accumulated.
+ * @return number of errors
+ */
+int errorCount() {
+	return testRun.errors;
+}
+/**
+ * Report the number of failures accumulated.
+ * @return number of failures
+ */
+int failureCount() {
+	return testRun.errors;
+}
+/**
+ * Report the number of fatal errors accumulated.
+ * @return number of fatal errors
+ */
+extern int fatalCount() {
+	return testRun.fatal;
+}
 
 static void output(const char *fmt, ...)  {
     #define MAXBUF 512
@@ -73,9 +99,17 @@ static void cunit_catch_signal_error(int signo) {
     sprintf(msg, "FATAL sig error: %d => %s", signo,  strsignal(signo));
     cunit_report_fatal(msg);
 }
+
+static void cunit_report_mathlib_error(int error) {
+    static char msg[256];
+    sprintf(msg, "MATH/LIB: %d ", error);
+    output("%s", msg);
+    testRun.failure++;
+}
+
 static int setupRunner() {
     if (!signalRegistered) {
-        int signals[] = { SIGILL, SIGFPE, SIGSEGV };
+        int signals[] = { SIGILL, SIGFPE, SIGSEGV, SIGABRT,SIGTERM ,SIGINT};
         int signo, k, numSignals = sizeof(signals) / sizeof(int);
         for (k = 0; k < numSignals ; k++) {
             signo = signals[k];
@@ -96,11 +130,15 @@ static int cunit_consoleRunner(int argc, char** argv, const CUnitTestSuite *suit
     output("\nSTARTING  ALL TESTS \n");
     test = suite[testRun.runs];
     while (TEST_METHOD(test)) {
+    	errno = 0;
         output("BEG Test >>%s<<", NAME_OF_TEST(test));
         if (!setjmp(env)) {
             TEST_METHOD(test)(argc, argv);
         }
         output("END Test >>%s<<", NAME_OF_TEST(test));
+        if(0!=errno) {
+        	cunit_report_mathlib_error(errno);
+        }
         testRun.runs++;
         test = suite[testRun.runs];
     }

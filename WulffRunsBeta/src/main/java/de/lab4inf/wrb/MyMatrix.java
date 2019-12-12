@@ -122,7 +122,6 @@ public class MyMatrix {
 	
 	// Divide and Conquer
 	////////////////////////////////////////////////////////////////////////////////////////////////////
-	//TODO: Divide and Conquer funktioniert nur für Matritzen mit NxN Feldern!
 	
 	public double[][] matSeriell(double[][] A, double[][] B) {
 		// Check if columns of first = rows of second
